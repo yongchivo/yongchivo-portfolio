@@ -12,48 +12,50 @@ const last_posts = posts.slice(0, 3);
 <BaseLayout sideBarActiveItemID="home">
   <div class="pb-12 mt-5">
     <div class="text-xl py-1">Hey there 👋</div>
-    <div class="text-5xl font-bold">I'm Manuel Ernesto</div>
-    <div class="text-3xl py-3 font-bold">Software Engineer and Entrepreneur</div>
+    <div class="text-5xl font-bold">I'm John Akhis Moreno</div>
+    <div class="text-2xl py-1 text-gray-500">aka Yongchivo</div>
+    <div class="text-3xl py-3 font-bold">Cyber Security Student & Builder</div>
     <div class="py-2">
-      <text class="text-lg">
-        This is <b>Astrofy</b> a free and open-source template for your Personal Portfolio Website built with Astro and TailwindCSS.
-        Create in minutes a website with Blog, CV, Project Section, Store and RSS Feed. I hope you find
-        it useful!
-      </text>
+      <p class="text-lg">
+        Welcome! I'm a Cyber Security student at the <b>University of Worcester</b>, passionate about AI, Digital Forensics, and Game Development.
+        I build, experiment, and share what I learn along the way — from successes to failures.
+        This is my space to document the journey.
+      </p>
     </div>
     <div class="mt-8">
-      <a class="btn" href="https://twitter.com/manuelernestog" target="_blank"> Let's connect!</a>
-      <a href="https://github.com/manuelernestog/astrofy" target="_blank" class="btn btn-outline ml-5">
-        Get This template
+      <a class="btn" href="https://github.com/yongchivo" target="_blank">GitHub</a>
+      <a href="mailto:contact@yongchivo.com" class="btn btn-outline ml-5">
+        Get in touch
       </a>
     </div>
   </div>
 
   <div>
-    <div class="text-3xl w-full font-bold mb-2">My last projects {"</>"}</div>
+    <div class="text-3xl w-full font-bold mb-2">My latest projects {"</>"}</div>
   </div>
 
   <HorizontalCard
-    title="Demo Project 1"
+    title="Password Strength Analyzer"
     img="/post_img.webp"
-    desc="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+    desc="Coming soon — A web tool that analyzes password strength locally in the browser, with entropy scoring and breach checking via HaveIBeenPwned API."
     url="#"
-    badge="NEW"
+    badge="WIP"
   />
   <div class="divider my-0"></div>
   <HorizontalCard
-    title="Demo Project 2"
+    title="Phishing URL Checker"
     img="/post_img.webp"
-    desc="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+    desc="Coming soon — Paste a URL, get an instant analysis: domain age, typosquatting heuristics, and reputation checks against public threat feeds."
     url="#"
+    badge="PLANNED"
   />
   <div class="divider my-0"></div>
   <HorizontalCard
-    title="Demo Project 3"
+    title="This Portfolio"
     img="/post_img.webp"
-    desc="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-    url="#"
-    badge="FOSS"
+    desc="An open-source Astro portfolio I built to document my journey into Cyber Security. Feel free to fork it and make it yours."
+    url="https://github.com/yongchivo/yongchivo-portfolio"
+    badge="LIVE"
   />
 
   <div>
