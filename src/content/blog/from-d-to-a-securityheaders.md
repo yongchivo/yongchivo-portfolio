@@ -3,7 +3,7 @@ title: "From D to A on securityheaders.com — what each header actually does"
 description: "How I hardened my Astro portfolio's HTTP security headers in one afternoon, what each header is for, and why CSP is the messy one. A practical write-up from a Cyber Security student."
 pubDate: "May 04 2026"
 heroImage: "/post-securityheaders-hero.webp"
-tags: ["cyber security", "web security", "astro", "cloudflare", "learning in public"]
+tags: ["cyber-security", "web-security", "astro", "cloudflare", "learning-in-public"]
 badge: "NEW"
 ---
 

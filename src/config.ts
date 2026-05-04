@@ -3,5 +3,5 @@
 
 export const SITE_TITLE = 'Yongchivo | Cyber Security / Personal Portfolio';
 export const SITE_DESCRIPTION = 'Cyber Security student at the University of Worcester documenting projects, problems, and progress. Welcome to my blog a place to share, learn, and connect.';
-export const GENERATE_SLUG_FROM_TITLE = true
+export const GENERATE_SLUG_FROM_TITLE = false
 export const TRANSITION_API = true
