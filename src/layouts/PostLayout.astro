@@ -1,6 +1,7 @@
 ---
 import { type BlogSchema } from "../content/config";
 import BaseLayout from "./BaseLayout.astro";
+import Comments from "../components/Comments.astro";
 import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 
@@ -38,6 +39,7 @@ import { Image } from "astro:assets";
       }
       <div class="divider my-2"></div>
       <slot />
+      <Comments />
     </article>
   </main>
 </BaseLayout>
