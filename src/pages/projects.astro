@@ -3,49 +3,71 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import HorizontalCard from "../components/HorizontalCard.astro";
 ---
 
-<BaseLayout title = "Projects" sideBarActiveItemID="projects">
+<BaseLayout title="Projects" sideBarActiveItemID="projects">
+  <div class="mb-5">
+    <div class="text-3xl w-full font-bold">Projects</div>
+    <div class="mt-2 mb-6 opacity-80">A selection of academic, personal, and upcoming projects across cyber security, web, mobile and game development.</div>
+  </div>
+
+  {/* TODO: Add "Practical Tools & Side Projects" section once first real-world project is built */}
+
   <div>
-    <div class="text-3xl w-full font-bold mb-5">Projects Header</div>
+    <div class="text-2xl w-full font-bold mb-3 mt-6">Cyber Security & Forensics</div>
   </div>
 
   <HorizontalCard
-    title="Demo Project 1"
+    title="LLM-Powered Forensic Assistant"
     img="/post_img.webp"
-    desc="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+    desc="My upcoming Final Year dissertation project (2026/27). Exploring how large language models can assist digital forensic investigators with evidence triage, timeline reconstruction and report drafting. Researching prompt design, hallucination mitigation and the role of human-in-the-loop verification in forensic workflows."
     url="#"
-    badge="NEW"
+    badge="DISSERTATION"
   />
   <div class="divider my-0"></div>
   <HorizontalCard
-    title="Demo Project 2"
+    title="Personal Portfolio with Security Hardening"
     img="/post_img.webp"
-    desc="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-    url="#"
+    desc="The site you are reading right now. Built with Astro, Tailwind and Cloudflare Pages, with continuous deployment from GitHub. Hardened HTTP security headers from grade D to A on securityheaders.com by configuring HSTS, Content-Security-Policy, X-Frame-Options, Permissions-Policy and other defences."
+    url="https://github.com/yongchivo/yongchivo-portfolio"
+    badge="LIVE"
   />
 
   <div>
-    <div class="text-3xl w-full font-bold mb-5 mt-10">Projects Header</div>
+    <div class="text-2xl w-full font-bold mb-3 mt-10">Mobile & Web Development</div>
   </div>
 
   <HorizontalCard
-    title="Demo Project 3"
+    title="MyLocation — Android App"
     img="/post_img.webp"
-    desc="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+    desc="A location-aware Android app backed by Google Firebase, with user authentication and real-time data storage to sync locations and events across devices. Built in Java/Kotlin as part of the Mobile Application Development module."
     url="#"
-    badge="FOSS"
+    badge="COURSEWORK"
   />
   <div class="divider my-0"></div>
   <HorizontalCard
-    title="Demo Project 4"
+    title="E-Commerce Web Pages"
     img="/post_img.webp"
-    desc="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+    desc="Designed and built responsive e-commerce front-end pages, including product layouts, navigation and interactive elements. Plain HTML, CSS and JavaScript, focused on layout, accessibility and clean structure."
     url="#"
+    badge="COURSEWORK"
+  />
+
+  <div>
+    <div class="text-2xl w-full font-bold mb-3 mt-10">Game Development & Systems</div>
+  </div>
+
+  <HorizontalCard
+    title="BlackDogHunter — 2D Game"
+    img="/post_img.webp"
+    desc="A complete 2D game built in Unity with C#, covering game mechanics, sprite animation, scene management and level design. Originally developed as a group academic project where the deliverable was a team report — the codebase itself was built from scratch by me."
+    url="#"
+    badge="COURSEWORK"
   />
   <div class="divider my-0"></div>
   <HorizontalCard
-    title="Demo Project 5"
+    title="University Kiosk Operating System"
     img="/post_img.webp"
-    desc="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+    desc="A locked-down kiosk OS based on Ubuntu, with auto-login, restricted user environment and start-up scripts to deliver a reliable single-purpose public terminal. Built as part of the Operating Systems module to explore Linux administration, security policies and system hardening."
     url="#"
+    badge="COURSEWORK"
   />
 </BaseLayout>
