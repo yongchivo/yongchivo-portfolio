@@ -4,7 +4,6 @@ description: "After adding Giscus comments to my blog, I noticed they break in S
 pubDate: "May 7 2026"
 heroImage: "/post-giscus-private.webp"
 tags: ["cyber-security", "web-security", "privacy", "giscus", "learning-in-public"]
-badge: "NEW"
 ---
 
 Shortly after adding [Giscus](https://giscus.app) comments to this blog, I 

@@ -4,7 +4,6 @@ description: "How I hardened my Astro portfolio's HTTP security headers in one a
 pubDate: "May 04 2026"
 heroImage: "/post-securityheaders-hero.webp"
 tags: ["cyber-security", "web-security", "astro", "cloudflare", "learning-in-public"]
-badge: "NEW"
 ---
 
 This is the first real post on this site. I figured a good way to break the ice was to write about the first proper bit of security work I did on the portfolio itself: taking my HTTP security header score from **D** to **A** on [securityheaders.com](https://securityheaders.com).
