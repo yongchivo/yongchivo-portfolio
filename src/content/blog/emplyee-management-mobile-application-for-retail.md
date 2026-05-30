@@ -4,6 +4,7 @@ description: "I'm currently building a staff management system for a local tobac
 pubDate: "May 10 2026"
 heroImage: "/post-estanco-app.webp"
 tags: ["firebase", "astro", "web-development", "authentication", "learning-in-public"]
+badge: "APP DEVELOPMENT"
 ---
 
 For the last few weeks, I've been working on a hybrid application designed to 

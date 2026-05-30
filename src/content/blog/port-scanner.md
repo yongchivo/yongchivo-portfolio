@@ -4,7 +4,7 @@ description: "I followed LinkedIn Learning's Python for Security module and buil
 pubDate: "May 17 2026"
 heroImage: "/post-port-scanner.webp"
 tags: ["cyber-security", "python", "networking", "learning-in-public"]
-badge: "NEW"
+badge: "CYBERSECUIRTY JOURNEY"
 ---
 
 Today I worked through the "Python for Security" module on LinkedIn 
