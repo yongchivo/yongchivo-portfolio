@@ -1,14 +1,13 @@
 ---
 title: "PHV Prep UK — App Store Listing (final, paste-ready)"
-subtitle: "Wolverhampton Private Hire"
 description: "Preparing for the Wolverhampton private hire test? PHV Prep UK gives you everything you need to walk in confident and pass first time.This isn't a generic taxi app. It's built specifically for the Wolverhampton PHV exam, so every question reflects the kind of thing you'll be asked on the day."
 pubDate: "May 7 2026"
-heroImage: "/post-phv-prep-uk-lauch.webp"
-tags: ["licence,exam,knowledge,driver,questions,minicab,revision,licensing,mock,training,2026,key,theory"]
+heroImage: "/post-phv-prep-uk-launch.webp"
+tags: ["knowledge","drivers","exams","licensing","training"]
 ---
 
 
-WHAT YOU GET
+## WHAT YOU GET
 
 Pass your Wolverhampton PHV test first time. 300+ exam-style questions, timed mock tests and an AI tutor. One payment, lifetime access — no subscription.
 
