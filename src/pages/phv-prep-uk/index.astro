@@ -1,0 +1,57 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { Image } from "astro:assets";
+import phvImage from "../../../public/phv-prep-uk.webp";
+---
+
+<BaseLayout
+  title="PHV Prep UK — Taxi Badge Test Prep"
+  description="PHV Prep UK: exam preparation for the Wolverhampton private hire vehicle (taxi badge) licensing test. Download on the App Store, plus support and privacy policy."
+  sideBarActiveItemID="projects"
+>
+  <div class="mb-6">
+    <a href="/projects" class="text-sm opacity-70 hover:opacity-100">&larr; Back to projects</a>
+  </div>
+
+  <div class="hero-content flex-col md:flex-row items-start px-0 gap-6">
+    <Image
+      src={phvImage}
+      width={750}
+      height={422}
+      format="webp"
+      alt="PHV Prep UK app"
+      class="max-w-full md:max-w-[16rem] rounded-lg"
+    />
+    <div class="grow">
+      <h1 class="text-3xl font-bold">
+        PHV Prep UK
+        <div class="badge badge-secondary mx-2 align-middle">LIVE</div>
+      </h1>
+      <p class="text-lg mt-2 opacity-90">
+        Exam preparation for the Wolverhampton private hire vehicle ("taxi
+        badge") licensing test. 300+ practice questions, realistic timed mock
+        exams that mirror the real exam's pass logic, and an AI tutor for UK
+        taxi law. Built solo with Flutter and Firebase.
+      </p>
+    </div>
+  </div>
+
+  <div class="flex flex-wrap gap-3 mt-8">
+    <a
+      class="btn btn-primary"
+      href="https://apps.apple.com/app/phv-prep-uk-taxi-badge-test/id6776364932"
+      target="_blank"
+      rel="noopener"
+    >
+      Download on the App Store
+    </a>
+    <a class="btn btn-outline" href="/phv-prep-uk/support">Support</a>
+    <a class="btn btn-outline" href="/phv-prep-uk/privacy">Privacy Policy</a>
+  </div>
+
+  <p class="text-sm opacity-70 mt-8 max-w-[700px]">
+    PHV Prep UK is an independent study aid. It is not affiliated with,
+    authorised by, or endorsed by City of Wolverhampton Council or any
+    licensing authority.
+  </p>
+</BaseLayout>
