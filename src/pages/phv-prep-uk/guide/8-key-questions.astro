@@ -1,0 +1,215 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "What are the 8 key questions on the Wolverhampton PHV test?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "The 8 key questions are a set of critical questions inside the Wolverhampton PHV knowledge test that you must answer correctly to pass. They cover safeguarding, plying for hire, and disability awareness. Getting even one key question wrong means you fail the whole test, no matter how high your overall score is.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What happens if you get a key question wrong?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "You fail the test automatically. Even if you score 27 out of 28 overall, one wrong key question means the paper fails. The pass rule has two parts: you must score at least 21 out of 28 AND answer all 8 key questions correctly.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How many questions are on the Wolverhampton PHV test?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "The test has 28 questions and you have 45 minutes to complete it. To pass, you need at least 21 correct answers (75%) and all 8 key questions correct.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What happens if I fail the Wolverhampton PHV test 3 times?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "You're only permitted 3 attempts at the test. If you don't pass within these 3 attempts, your application is voided and you'll need to wait 12 months before you can start the application and training process again. Each attempt costs around £50 for the course and test combined.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How do I prepare for the key questions?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Focus your revision on the key question topics — safeguarding, plying for hire, and disability awareness — until your answers are automatic. Practise under timed exam conditions with 28 questions in 45 minutes, review every question you get wrong, and keep repeating the key topics until you stop making mistakes in them.",
+      },
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title="What Are the 8 Key Questions? — Wolverhampton PHV Test"
+  description="What are the 8 key questions on the Wolverhampton PHV test? Get one wrong and you fail. Learn what they cover and how to prepare for your taxi badge test."
+>
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
+  <main class="md:flex md:justify-center">
+    <article class="prose prose-lg max-w-[750px]">
+      <h1>What Are the 8 Key Questions on the Wolverhampton PHV Test?</h1>
+
+      <p>
+        If you are preparing for the Wolverhampton PHV test (the "taxi badge"
+        knowledge test), the <strong>8 key questions</strong> are the single
+        most important thing to understand. Here is the rule that catches
+        drivers out: <strong>if you get even one key question wrong, you fail
+        the whole test</strong> — no matter how good your overall score is.
+        You could answer 27 out of 28 questions correctly and still fail,
+        because the one you missed was a key question.
+      </p>
+
+      <p>
+        This page explains what the key questions are, what topics they cover,
+        and how to prepare for them, in plain English.
+      </p>
+
+      <h2>What happens if you get a key question wrong?</h2>
+
+      <p>
+        You fail automatically. The pass rule for the Wolverhampton PHV test
+        has <strong>two parts</strong>, and you must meet both:
+      </p>
+
+      <ul>
+        <li>
+          Score at least <strong>21 out of 28</strong> overall (75%),
+          <strong>and</strong>
+        </li>
+        <li>
+          Answer <strong>all 8 key questions correctly</strong>.
+        </li>
+      </ul>
+
+      <p>
+        Miss either one and the paper fails. This is why two drivers with the
+        same overall score can get different results: one passed all the key
+        questions, the other slipped up on just one of them.
+      </p>
+
+      <h2>How many questions are on the Wolverhampton PHV test?</h2>
+
+      <p>
+        The test has <strong>28 questions</strong> and you have
+        <strong>45 minutes</strong> to complete it. That is plenty of time if
+        you know the material — the danger is not the clock, it is rushing and
+        misreading a key question. Read every question twice before you
+        answer.
+      </p>
+
+      <h2>What topics do the 8 key questions cover?</h2>
+
+      <p>
+        The key questions focus on the areas where a driver's mistake could
+        put a passenger at risk. They cover:
+      </p>
+
+      <ul>
+        <li>
+          <strong>Safeguarding</strong> — recognising and responding to signs
+          that a child or vulnerable adult may be at risk, and knowing what a
+          driver must do about it.
+        </li>
+        <li>
+          <strong>Plying for hire</strong> — the legal difference between a
+          private hire vehicle and a hackney carriage, and why a PHV driver
+          must never pick up passengers who have not pre-booked.
+        </li>
+        <li>
+          <strong>Disability awareness</strong> — a driver's legal duties
+          towards disabled passengers, including assistance dogs and
+          wheelchair users, under equality law.
+        </li>
+      </ul>
+
+      <p>
+        These are not trick questions. The council treats them as
+        non-negotiable because they are about passenger safety and the law —
+        the things a licensed driver simply must know. The rest of the test
+        draws on the wider syllabus, including customer care, licensing and
+        compliance, vehicle and road safety, and law and regulations.
+      </p>
+
+      <h2>How many attempts do you get?</h2>
+
+      <p>
+        Only <strong>3 attempts</strong> are permitted. If you don't pass
+        within these 3 attempts, your application is voided and you'll need to
+        wait <strong>12 months</strong> before starting the application and
+        training process again. Each attempt costs around
+        <strong>£50</strong> (training course plus test).
+      </p>
+
+      <h2>How do I prepare for the key questions?</h2>
+
+      <p>
+        Three things work, and they work together:
+      </p>
+
+      <ol>
+        <li>
+          <strong>Drill the key topics until they are automatic.</strong>
+          Safeguarding, plying for hire, and disability awareness are a small
+          part of the syllabus, but they decide your result. Keep practising
+          them until you stop getting any wrong — not "mostly right", but
+          every time.
+        </li>
+        <li>
+          <strong>Practise under real exam conditions.</strong> Take timed
+          mock tests with 28 questions in 45 minutes, marked the same way as
+          the real thing — 21 correct plus all 8 key questions. If your mock
+          passes are relying on a high overall score while you still drop key
+          questions, you are not ready yet.
+        </li>
+        <li>
+          <strong>Learn from every mistake.</strong> Do not just note that an
+          answer was wrong — understand why the correct answer is correct.
+          Wrong answers you have understood rarely come back to bite you on
+          test day.
+        </li>
+      </ol>
+
+      <p>
+        If you want a structured way to do this, the
+        <a
+          href="https://apps.apple.com/gb/app/phv-prep-uk-taxi-badge-test/id6776364932"
+          target="_blank"
+          rel="noopener">PHV Prep UK app</a
+        >
+        lets you drill the key questions until they're automatic, with timed
+        mock exams scored exactly like the real test and a plain-English AI
+        tutor for anything you don't understand.
+      </p>
+
+      <h2>Where to go next</h2>
+
+      <p>
+        The key questions are one part of a wider preparation plan — see our
+        full guide on
+        <a href="/phv-prep-uk/guide/how-to-pass"
+          >how to pass the Wolverhampton PHV test</a
+        >. You can also learn more about the app on the
+        <a href="/phv-prep-uk">PHV Prep UK page</a>, get help via
+        <a href="/phv-prep-uk/support">support</a>, or read our
+        <a href="/phv-prep-uk/privacy">privacy policy</a>.
+      </p>
+
+      <p>
+        <strong>PHV Prep UK is an independent study aid.</strong> It is not
+        affiliated with, authorised by, or endorsed by City of Wolverhampton
+        Council or any licensing authority. Always check the council's
+        official guidance for the latest test requirements and fees.
+      </p>
+    </article>
+  </main>
+</BaseLayout>
