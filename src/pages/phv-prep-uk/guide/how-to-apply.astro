@@ -1,0 +1,240 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "Who can apply for a Wolverhampton private hire licence?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "You must be at least 21 years old, have held a full UK driving licence for at least 12 months, have the right to work in the UK, pass a Group 2 medical examination, and pass an enhanced DBS (criminal record) check.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Do I need a medical to get a Wolverhampton PHV licence?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. You'll need a Group 2 medical — the higher standard that applies to professional drivers such as bus and lorry drivers. Your doctor confirms you meet the standard as part of your application.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What test do I have to pass for a Wolverhampton private hire licence?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "A multiple-choice knowledge test taken alongside a short training course. It has 28 questions, and you must score at least 21 out of 28 (75%) AND answer all 8 key questions correctly — getting even one key question wrong is an automatic fail.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How many attempts do I get at the Wolverhampton knowledge test?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Only 3 attempts are permitted. If you don't pass within these 3 attempts, your application is voided and you'll need to wait 12 months before starting the application and training process again. Each attempt costs around £50 (training course plus test).",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What happens after I pass the Wolverhampton knowledge test?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Passing the test is one part of the application. Once your medical, DBS check, documents and test are all complete and approved by the council, your private hire driver's licence (badge) can be issued — and you must wear the badge, clearly visible, whenever you're working.",
+      },
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title="How to Apply for a Wolverhampton Private Hire Licence"
+  description="How to apply for a Wolverhampton private hire licence: eligibility, documents, the medical and DBS checks, the knowledge test, and what happens after."
+>
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
+  <main class="md:flex md:justify-center">
+    <article class="prose prose-lg max-w-[750px]">
+      <h1>How to Apply for a Wolverhampton Private Hire Licence</h1>
+
+      <p>
+        This page explains <strong>how to apply for a Wolverhampton private
+        hire licence</strong> (the PHV driver's licence, often called the
+        "taxi badge") — who can apply, what you'll need, the training and
+        test, and what happens after you pass. Everything is in plain
+        English, in the order you'll actually do it.
+      </p>
+
+      <h2>Am I eligible?</h2>
+
+      <p>Before you start, check you meet the basic requirements:</p>
+
+      <ul>
+        <li>
+          <strong>Be at least 21 years old</strong> and have held a full UK
+          driving licence for at least 12 months.
+        </li>
+        <li>
+          <strong>Have the right to work in the UK.</strong>
+        </li>
+        <li>
+          <strong>Pass a Group 2 medical</strong> — the higher standard that
+          applies to professional drivers.
+        </li>
+        <li>
+          <strong>Pass an enhanced DBS check</strong> (criminal record check).
+        </li>
+      </ul>
+
+      <p>
+        If any of these might be an issue — for example points on your
+        licence or a past conviction — check the council's official guidance
+        before you spend money on the application, as decisions on individual
+        cases rest with the council.
+      </p>
+
+      <h2>What documents do I need?</h2>
+
+      <p>You'll need to gather:</p>
+
+      <ul>
+        <li>Your <strong>full UK driving licence</strong> (copy)</li>
+        <li>
+          <strong>Proof of identity</strong> — passport or government-issued
+          ID
+        </li>
+        <li>
+          <strong>Proof of address</strong> — a recent utility bill or bank
+          statement
+        </li>
+        <li>Your <strong>Group 2 medical certificate</strong></li>
+        <li>Your <strong>enhanced DBS certificate</strong></li>
+        <li>
+          <strong>Proof of right to work</strong>, if applicable — passport,
+          residence permit or visa
+        </li>
+      </ul>
+
+      <p>
+        Have originals or approved copies ready, and make sure names and
+        addresses match across your documents — mismatches are a common
+        cause of delays.
+      </p>
+
+      <h2>How does the application process work?</h2>
+
+      <p>At a high level, the process runs in this order:</p>
+
+      <ol>
+        <li>Confirm you meet the eligibility requirements above.</li>
+        <li>Gather your documents.</li>
+        <li>Apply for your enhanced DBS check.</li>
+        <li>
+          Complete the Private Hire Driver Application Form, available from
+          the Wolverhampton Council website.
+        </li>
+        <li>Pass the knowledge test.</li>
+        <li>Attend an interview with a licensing officer, if required.</li>
+        <li>Submit your application and pay the fee.</li>
+        <li>Wait for processing — then your badge is issued.</li>
+      </ol>
+
+      <h2>What training and testing is involved?</h2>
+
+      <p>
+        The knowledge test is taken alongside a short training course. The
+        test itself is multiple-choice: <strong>28 questions</strong>, and to
+        pass you must score at least <strong>21 out of 28</strong> (75%)
+        <strong>and</strong> answer all <strong>8 key questions</strong>
+        correctly — getting even one key question wrong is an automatic fail,
+        whatever your overall score. Read our guides to
+        <a href="/phv-prep-uk/guide/how-to-pass/"
+          >passing the Wolverhampton PHV test</a
+        >
+        and
+        <a href="/phv-prep-uk/guide/8-key-questions/"
+          >the 8 key questions</a
+        >
+        before you book.
+      </p>
+
+      <p>
+        Once you've booked your test, start practising early — the
+        <a
+          href="https://apps.apple.com/gb/app/phv-prep-uk-taxi-badge-test/id6776364932"
+          target="_blank"
+          rel="noopener">PHV Prep UK app</a
+        >
+        has 300+ exam-style questions and timed mock exams scored exactly
+        like the real test, so you know you're ready before test day.
+      </p>
+
+      <h2>How much does it cost?</h2>
+
+      <p>
+        Each attempt at the training course and test costs around
+        <strong>£50</strong> (training course plus test). And the attempts are
+        limited: only <strong>3 attempts</strong> are permitted. If you don't
+        pass within these 3 attempts, your application is voided and you'll
+        need to wait <strong>12 months</strong> before starting the
+        application and training process again — see
+        <a href="/phv-prep-uk/guide/if-you-fail/"
+          >what happens if you fail the Wolverhampton PHV test</a
+        >
+        for the full picture.
+      </p>
+
+      <p>
+        The course and test cost is separate from the council's own licence
+        and application fee, the DBS check fee, and the cost of your medical.
+        Those amounts vary, so check the current rates directly on the
+        Wolverhampton Council website before you budget — and remember
+        you're budgeting for the whole process, not just the test.
+      </p>
+
+      <h2>What happens after I pass?</h2>
+
+      <p>
+        Passing the knowledge test is one part of the application, not the
+        end of it. Once your medical, DBS check, documents and test are all
+        complete and approved by the council, your private hire driver's
+        licence can be issued. From then on, remember the basics of staying
+        licensed: wear your badge on the upper part of your body, clearly
+        visible, whenever you're working, and only carry passengers whose
+        journeys are pre-booked through a licensed operator. Your licence
+        also needs renewing periodically
+        <!-- VERIFY: renewal period — third-party source suggests ~3 years; confirm with the Council before stating a figure -->
+        — check your expiry date and the council's renewal requirements in
+        good time.
+      </p>
+
+      <h2>Where to go next</h2>
+
+      <p>
+        The application is the paperwork — the test is the hurdle. Start with
+        our full guide on
+        <a href="/phv-prep-uk/guide/how-to-pass/"
+          >how to pass the Wolverhampton PHV test</a
+        >, make sure you understand
+        <a href="/phv-prep-uk/guide/8-key-questions/"
+          >the 8 key questions</a
+        >, and try some free
+        <a href="/phv-prep-uk/guide/practice-questions/"
+          >practice questions and answers</a
+        >. You can also learn more about the app on the
+        <a href="/phv-prep-uk">PHV Prep UK page</a>, get help via
+        <a href="/phv-prep-uk/support">support</a>, or read our
+        <a href="/phv-prep-uk/privacy">privacy policy</a>.
+      </p>
+
+      <p>
+        <strong>PHV Prep UK is an independent study aid.</strong> It is not
+        affiliated with, authorised by, or endorsed by City of Wolverhampton
+        Council or any licensing authority. Always check the council's
+        official guidance for the latest application requirements and fees.
+      </p>
+    </article>
+  </main>
+</BaseLayout>
