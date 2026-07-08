@@ -1,0 +1,198 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "Can I retake the Wolverhampton PHV test if I fail?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes, but only within limits. You're permitted 3 attempts in total. Each attempt costs around £50 (training course plus test), so a failed attempt means paying again as well as waiting for a new test date.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What happens if I fail the Wolverhampton PHV test 3 times?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Your application is voided and you'll need to wait 12 months before you can start the application and training process again. That means a full year without your badge, then starting from the beginning.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How much does it cost to resit the Wolverhampton PHV test?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Each attempt costs around £50 for the training course and test combined. There's no discount for resits — every attempt is paid for in full.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Why do drivers fail the Wolverhampton PHV test?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Two ways: scoring below 21 out of 28 (75%), or getting even one of the 8 key questions wrong — which is an automatic fail regardless of your overall score. The key questions cover safeguarding, plying for hire and disability awareness, and they catch out many drivers who scored well overall.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How do I make sure I pass the retake?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Find out what went wrong last time, then fix it specifically: drill the key question topics until your answers are automatic, practise timed mock tests of 28 questions in 45 minutes marked with the real pass rules, and review every wrong answer until you understand why the correct one is correct.",
+      },
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title="What Happens If You Fail the Wolverhampton PHV Test?"
+  description="Failed the Wolverhampton PHV test? What happens next: how many attempts you get, the 12-month rule, resit costs around £50, and how to pass your retake."
+>
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
+  <main class="md:flex md:justify-center">
+    <article class="prose prose-lg max-w-[750px]">
+      <h1>What Happens If You Fail the Wolverhampton PHV Test?</h1>
+
+      <p>
+        Failing the <strong>Wolverhampton PHV test</strong> is not the end of
+        the road — but the rules around retakes are stricter than many drivers
+        expect, and each failed attempt costs you money and time. This page
+        explains exactly what happens if you fail, what it costs, and how to
+        make sure your next attempt is your last.
+      </p>
+
+      <h2>Can I retake the Wolverhampton PHV test?</h2>
+
+      <p>
+        Yes — but not indefinitely. Only <strong>3 attempts</strong> are
+        permitted. If you don't pass within these 3 attempts, your application
+        is voided and you'll need to wait <strong>12 months</strong> before
+        starting the application and training process again. Each attempt
+        costs around <strong>£50</strong> (training course plus test).
+      </p>
+
+      <p>
+        So after a first fail, you have two attempts left. That's why it pays
+        to treat a failed attempt as a warning, not just bad luck — go back
+        over what went wrong before you book again.
+      </p>
+
+      <h2>What happens if I fail all 3 attempts?</h2>
+
+      <p>
+        This is the outcome to avoid at all costs: your application is
+        <strong>voided</strong>, and you must wait <strong>12 months</strong>
+        before you can start again. That means a full year without your badge
+        — a year of lost earnings if you were counting on driving — and then
+        starting the whole application and training process from the
+        beginning, including paying again.
+      </p>
+
+      <h2>How much does failing cost?</h2>
+
+      <p>
+        Each attempt costs around <strong>£50</strong> for the training course
+        and test combined, and there's no discount for resits — every attempt
+        is paid in full. Fail twice and you've spent roughly £150 to reach a
+        final, must-pass attempt. Compared with that, the time spent preparing
+        properly before your first attempt is by far the cheapest part of the
+        whole process.
+      </p>
+
+      <h2>Why do most drivers fail?</h2>
+
+      <p>There are only two ways to fail, and both are avoidable:</p>
+
+      <ul>
+        <li>
+          <strong>Scoring below 21 out of 28</strong> (75%) — usually a sign
+          of not covering the full syllabus, or not practising under timed
+          conditions.
+        </li>
+        <li>
+          <strong>Getting a key question wrong.</strong> The test contains 8
+          key questions on safeguarding, plying for hire and disability
+          awareness — and getting even one wrong is an automatic fail, no
+          matter how good your overall score is. This is the one that catches
+          out well-prepared drivers. Read our full guide to
+          <a href="/phv-prep-uk/guide/8-key-questions/"
+            >the 8 key questions on the Wolverhampton PHV test</a
+          >
+          if you're not sure what they cover.
+        </li>
+      </ul>
+
+      <p>
+        If you failed with a strong overall score, a key question almost
+        certainly cost you the pass — so that's where your revision should
+        start.
+      </p>
+
+      <h2>How do I make sure I pass the retake?</h2>
+
+      <ol>
+        <li>
+          <strong>Work out what went wrong.</strong> Was it your overall
+          score, or a key question? Your preparation should target the actual
+          problem, not just repeat what you did last time.
+        </li>
+        <li>
+          <strong>Drill the key question topics until they're
+          automatic.</strong> Safeguarding, plying for hire and disability
+          awareness must be perfect — every time, not most of the time.
+        </li>
+        <li>
+          <strong>Practise under real exam conditions.</strong> Timed mock
+          tests — 28 questions in 45 minutes — marked with the real pass
+          rules: 21 correct plus all 8 key questions. Try our free
+          <a href="/phv-prep-uk/guide/practice-questions/"
+            >Wolverhampton taxi badge test practice questions</a
+          >
+          to see the style of question you'll face.
+        </li>
+        <li>
+          <strong>Learn from every mistake.</strong> Review each wrong answer
+          until you understand why the correct one is correct — that's what
+          stops the same mistake costing you twice.
+        </li>
+      </ol>
+
+      <p>
+        If you want a structured way to do all of that, the
+        <a
+          href="https://apps.apple.com/gb/app/phv-prep-uk-taxi-badge-test/id6776364932"
+          target="_blank"
+          rel="noopener">PHV Prep UK app</a
+        >
+        lets you retry the questions you got wrong, tracks your weak
+        categories, and scores its timed mock exams exactly like the real
+        test — so you know you're ready before you spend another £50.
+      </p>
+
+      <h2>Where to go next</h2>
+
+      <p>
+        For the full picture from application to pass, read our
+        <a href="/phv-prep-uk/guide/how-to-pass/"
+          >guide to passing the Wolverhampton PHV test</a
+        >. You can also learn more about the app on the
+        <a href="/phv-prep-uk">PHV Prep UK page</a>, get help via
+        <a href="/phv-prep-uk/support">support</a>, or read our
+        <a href="/phv-prep-uk/privacy">privacy policy</a>.
+      </p>
+
+      <p>
+        <strong>PHV Prep UK is an independent study aid.</strong> It is not
+        affiliated with, authorised by, or endorsed by City of Wolverhampton
+        Council or any licensing authority. Always check the council's
+        official guidance for the latest test requirements and fees.
+      </p>
+    </article>
+  </main>
+</BaseLayout>
