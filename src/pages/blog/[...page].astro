@@ -26,6 +26,20 @@ const { page } = Astro.props;
       </div>
     ) : (
       <ul>
+        {/* Pinned entry: standalone page outside the blog content collection (posted 10 July 2026) */}
+        {page.currentPage === 1 && (
+          <>
+            <HorizontalCard
+              title="Help Us Test PHV Prep UK on Android — Be a Beta Tester"
+              img="/images/android-beta-testers.png"
+              desc="PHV Prep UK is coming to Android. We need 12 beta testers before we can launch on the Play Store. Join now — it's free."
+              url="/phv-prep-uk/blog/android-beta-testers/"
+              target="_self"
+              badge="ANDROID BETA"
+            />
+            <div class="divider my-0" />
+          </>
+        )}
         {page.data.map((post) => (
           <>
             <HorizontalCard
