@@ -26,9 +26,19 @@ const { page } = Astro.props;
       </div>
     ) : (
       <ul>
-        {/* Pinned entry: standalone page outside the blog content collection (posted 10 July 2026) */}
+        {/* Pinned entries: standalone pages outside the blog content collection, newest first */}
         {page.currentPage === 1 && (
           <>
+            {/* Posted 17 July 2026 */}
+            <HorizontalCard
+              title="Join the PHV Prep UK Android Beta — Test It Now"
+              desc="PHV Prep UK is in closed beta on Android. Opt in and download it directly using the links below."
+              url="/phv-prep-uk/blog/join-android-beta/"
+              target="_self"
+              badge="ANDROID BETA"
+            />
+            <div class="divider my-0" />
+            {/* Posted 10 July 2026 */}
             <HorizontalCard
               title="Help Us Test PHV Prep UK on Android — Be a Beta Tester"
               img="/images/android-beta-testers.png"
