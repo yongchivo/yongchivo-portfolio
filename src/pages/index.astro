@@ -1,12 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import HorizontalCard from "../components/HorizontalCard.astro";
-import { getCollection } from "astro:content";
-import createSlug from "../lib/createSlug"
-
-const posts = (await getCollection("blog")).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-
-const last_posts = posts.slice(0, 3);
 ---
 
 <BaseLayout sideBarActiveItemID="home">
@@ -64,19 +58,31 @@ const last_posts = posts.slice(0, 3);
     <div class="text-3xl w-full font-bold mb-5 mt-10">Latest from blog</div>
   </div>
 
-  {
-    last_posts.map((post) => (
-      <>
-        <HorizontalCard
-          title={post.data.title}
-          img={post.data.heroImage}
-          desc={post.data.description}
-          url={"/blog/" + createSlug(post.data.title, post.slug)}
-          target="_self"
-          badge={post.data.badge}
-        />
-        <div class="divider my-0" />
-      </>
-    ))
-  }
+  {/* Newest posts are standalone pages outside the blog collection — keep in sync with the pinned cards in blog/[...page].astro */}
+  <HorizontalCard
+    title="Join the PHV Prep UK Android Beta — Test It Now"
+    img="/images/join-android-beta.png"
+    desc="PHV Prep UK is in closed beta on Android. Opt in and download it directly using the links below."
+    url="/phv-prep-uk/blog/join-android-beta/"
+    target="_self"
+    badge="ANDROID BETA"
+  />
+  <div class="divider my-0"></div>
+  <HorizontalCard
+    title="We Made a Promo Video for PHV Prep UK"
+    img="/images/promo-video-announcement.png"
+    desc="Check out our new promotional video for PHV Prep UK — the exam prep app for the Wolverhampton private hire test."
+    url="/phv-prep-uk/blog/promo-video/"
+    target="_self"
+  />
+  <div class="divider my-0"></div>
+  <HorizontalCard
+    title="Help Us Test PHV Prep UK on Android — Be a Beta Tester"
+    img="/images/android-beta-testers.png"
+    desc="PHV Prep UK is coming to Android. We need 12 beta testers before we can launch on the Play Store. Join now — it's free."
+    url="/phv-prep-uk/blog/android-beta-testers/"
+    target="_self"
+    badge="ANDROID BETA"
+  />
+  <div class="divider my-0"></div>
 </BaseLayout>
