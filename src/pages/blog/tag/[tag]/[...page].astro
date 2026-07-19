@@ -27,7 +27,7 @@ const params = Astro.params;
 
 <BaseLayout title={"Blog - " + params.tag} sideBarActiveItemID="blog">
   <div class="mb-5">
-    <div class="text-3xl w-full font-bold">Blog - {params.tag}</div>
+    <div class="text-3xl w-fit font-bold bg-gradient-to-r from-brand-magenta via-brand-purple to-brand-cyan bg-clip-text text-transparent">Blog - {params.tag}</div>
   </div>
   {
     page.data.length === 0 ? (

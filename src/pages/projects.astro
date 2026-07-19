@@ -5,7 +5,7 @@ import HorizontalCard from "../components/HorizontalCard.astro";
 
 <BaseLayout title="Projects" sideBarActiveItemID="projects">
   <div class="mb-5">
-    <div class="text-3xl w-full font-bold">Projects</div>
+    <div class="text-3xl w-fit font-bold bg-gradient-to-r from-brand-magenta via-brand-purple to-brand-cyan bg-clip-text text-transparent">Projects</div>
     <div class="mt-2 mb-6 opacity-80">A selection of academic, personal, and upcoming projects across cyber security, web, mobile and game development.</div>
   </div>
 
@@ -28,6 +28,15 @@ import HorizontalCard from "../components/HorizontalCard.astro";
     img="/portfolio.webp"
     desc="The site you are reading right now. Built with Astro, Tailwind and Cloudflare Pages, with continuous deployment from GitHub. Hardened HTTP security headers from grade D to A on securityheaders.com by configuring HSTS, Content-Security-Policy, X-Frame-Options, Permissions-Policy and other defences."
     url="https://github.com/yongchivo/yongchivo-portfolio"
+    badge="LIVE"
+  />
+  <div class="divider my-0"></div>
+  <HorizontalCard
+    title="Yongchivo Tools"
+    img="/tools-cover.webp"
+    desc="A hub of free, bilingual (EN/ES) cybersecurity micro-tools at tools.yongchivo.com. Each tool is a self-contained, privacy-first utility that runs entirely client-side — nothing leaves the browser. Built with Astro, Tailwind and Cloudflare Workers. Currently launching with Password Generator, Password Strength Analyzer and Subnet Calculator, with a Worker-backed Security Headers Checker and Breach Checker planned next."
+    url="https://tools.yongchivo.com"
+    target="_blank"
     badge="LIVE"
   />
 
