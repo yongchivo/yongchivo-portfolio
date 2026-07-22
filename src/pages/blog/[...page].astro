@@ -5,9 +5,50 @@ import { getCollection } from "astro:content";
 import createSlug from "../../lib/createSlug"
 
 export async function getStaticPaths({ paginate }) {
+  // Standalone pages that live outside the blog content collection but belong in this
+  // listing. Keep pubDate accurate — these are merged with the collection and sorted
+  // newest first. Must stay inside getStaticPaths: Astro hoists it into its own scope.
+  const standalonePosts = [
+    {
+      title: "Join the PHV Prep UK Android Beta — Test It Now",
+      img: "/images/join-android-beta.png",
+      desc: "PHV Prep UK is in closed beta on Android. Opt in and download it directly using the links below.",
+      url: "/phv-prep-uk/blog/join-android-beta/",
+      badge: "ANDROID BETA",
+      pubDate: new Date("2026-07-17"),
+    },
+    {
+      title: "We Made a Promo Video for PHV Prep UK",
+      img: "/images/promo-video-announcement.png",
+      desc: "Check out our new promotional video for PHV Prep UK — the exam prep app for the Wolverhampton private hire test.",
+      url: "/phv-prep-uk/blog/promo-video/",
+      pubDate: new Date("2026-07-17"),
+    },
+    {
+      title: "Help Us Test PHV Prep UK on Android — Be a Beta Tester",
+      img: "/images/android-beta-testers.png",
+      desc: "PHV Prep UK is coming to Android. We need 12 beta testers before we can launch on the Play Store. Join now — it's free.",
+      url: "/phv-prep-uk/blog/android-beta-testers/",
+      badge: "ANDROID BETA",
+      pubDate: new Date("2026-07-10"),
+    },
+  ];
+
   const posts = await getCollection("blog");
-  posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-  return paginate(posts, { pageSize: 10 });
+  const entries = [
+    ...standalonePosts,
+    ...posts.map((post) => ({
+      title: post.data.title,
+      img: post.data.heroImage,
+      desc: post.data.description,
+      url: "/blog/" + createSlug(post.data.title, post.slug),
+      badge: post.data.badge,
+      tags: post.data.tags,
+      pubDate: post.data.pubDate,
+    })),
+  ];
+  entries.sort((a, b) => b.pubDate.valueOf() - a.pubDate.valueOf());
+  return paginate(entries, { pageSize: 10 });
 }
 
 const { page } = Astro.props;
@@ -26,50 +67,16 @@ const { page } = Astro.props;
       </div>
     ) : (
       <ul>
-        {/* Pinned entries: standalone pages outside the blog content collection, newest first */}
-        {page.currentPage === 1 && (
-          <>
-            {/* Posted 17 July 2026 */}
-            <HorizontalCard
-              title="Join the PHV Prep UK Android Beta — Test It Now"
-              img="/images/join-android-beta.png"
-              desc="PHV Prep UK is in closed beta on Android. Opt in and download it directly using the links below."
-              url="/phv-prep-uk/blog/join-android-beta/"
-              target="_self"
-              badge="ANDROID BETA"
-            />
-            <div class="divider my-0" />
-            {/* Posted 17 July 2026 */}
-            <HorizontalCard
-              title="We Made a Promo Video for PHV Prep UK"
-              img="/images/promo-video-announcement.png"
-              desc="Check out our new promotional video for PHV Prep UK — the exam prep app for the Wolverhampton private hire test."
-              url="/phv-prep-uk/blog/promo-video/"
-              target="_self"
-            />
-            <div class="divider my-0" />
-            {/* Posted 10 July 2026 */}
-            <HorizontalCard
-              title="Help Us Test PHV Prep UK on Android — Be a Beta Tester"
-              img="/images/android-beta-testers.png"
-              desc="PHV Prep UK is coming to Android. We need 12 beta testers before we can launch on the Play Store. Join now — it's free."
-              url="/phv-prep-uk/blog/android-beta-testers/"
-              target="_self"
-              badge="ANDROID BETA"
-            />
-            <div class="divider my-0" />
-          </>
-        )}
         {page.data.map((post) => (
           <>
             <HorizontalCard
-              title={post.data.title}
-              img={post.data.heroImage}
-              desc={post.data.description}
-              url={"/blog/" + createSlug(post.data.title, post.slug)}
+              title={post.title}
+              img={post.img}
+              desc={post.desc}
+              url={post.url}
               target="_self"
-              badge={post.data.badge}
-              tags={post.data.tags}
+              badge={post.badge}
+              tags={post.tags}
             />
             <div class="divider my-0" />
           </>

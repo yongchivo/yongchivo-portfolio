@@ -2,6 +2,7 @@
 // Import the global.css file here so that it is included on
 // all pages through the use of the <BaseHead /> component.
 import '../styles/global.css';
+import { SITE_TITLE } from '../config';
 
 export interface Props {
 	title: string;
@@ -24,6 +25,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 <meta name="apple-mobile-web-app-title" content="Yongchivo" />
 <link rel="manifest" href="/site.webmanifest" />
+<link rel="alternate" type="application/rss+xml" title={SITE_TITLE} href={new URL("rss.xml", Astro.site)} />
 <meta name="generator" content={Astro.generator} />
 <meta name="google-site-verification" content="Vusdj-ybzscmIMnvBNuxZ6oH-T4oj_PzmA1HGjpC2GM" />
 

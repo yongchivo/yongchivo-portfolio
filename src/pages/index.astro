@@ -29,6 +29,15 @@ import HorizontalCard from "../components/HorizontalCard.astro";
   </div>
 
 <HorizontalCard
+  title="Yongchivo Tools"
+  img="/tools-cover.webp"
+  desc="A hub of free, bilingual (EN/ES) cybersecurity micro-tools at tools.yongchivo.com — six tools now live. Client-side utilities that run entirely in the browser: Password Generator, Password Strength Analyzer, Subnet Calculator and a 'Which cyber role are you?' quiz; plus two Cloudflare Worker-backed tools — a Security Headers Checker (with strict SSRF-safe URL validation) and a Breach Checker (XposedOrNot). Built with Astro, Tailwind and Cloudflare Workers, with automatic deploys and its own A-grade security headers."
+  url="https://tools.yongchivo.com"
+  target="_blank"
+  badge="LIVE"
+/>
+<div class="divider my-0"></div>
+<HorizontalCard
     title="PHV Prep UK — iOS Exam Prep App"
     img="/phv-prep-uk.webp"
     desc="My first app submitted to the App Store: exam preparation for the Wolverhampton private hire vehicle (&quot;taxi badge&quot;) licensing test. 300+ practice questions, realistic timed mock exams that mirror the real exam's pass logic, and an AI tutor for UK taxi law. Built solo with Flutter and Firebase (Auth, Firestore, Cloud Functions, europe-west2). Security-focused: server-side StoreKit 2 purchase verification, the Anthropic API key kept entirely server-side in Secret Manager (never shipped in the client), Firestore rules locking premium status to the backend, and content-safety controls on the AI feature."
@@ -37,15 +46,6 @@ import HorizontalCard from "../components/HorizontalCard.astro";
     badge="LIVE"
   />
   <div class="divider my-0"></div>
-<HorizontalCard
-  title="Yongchivo Tools"
-  img="/tools-cover.webp"
-  desc="A hub of free, bilingual (EN/ES) cybersecurity micro-tools at tools.yongchivo.com. Each tool is a self-contained, privacy-first utility that runs entirely client-side — nothing leaves the browser. Built with Astro, Tailwind and Cloudflare Workers. Currently launching with Password Generator, Password Strength Analyzer and Subnet Calculator, with a Worker-backed Security Headers Checker and Breach Checker planned next."
-  url="https://tools.yongchivo.com"
-  target="_blank"
-  badge="LIVE"
-/>
-<div class="divider my-0"></div>
 <HorizontalCard
   title="BlackDogHunter — 2D Game"
   img="/blackdoghunter.webp"
@@ -66,7 +66,16 @@ import HorizontalCard from "../components/HorizontalCard.astro";
     <div class="text-3xl w-full font-bold mb-5 mt-10">Latest from blog</div>
   </div>
 
-  {/* Newest posts are standalone pages outside the blog collection — keep in sync with the pinned cards in blog/[...page].astro */}
+  {/* Newest first — keep in sync with the listing in blog/[...page].astro */}
+  <HorizontalCard
+    title="Launching Yongchivo Tools: six cybersecurity micro-tools, bilingual, no tracking"
+    img="/post-yongchivo-tools.webp"
+    desc="I just shipped a hub of six free cybersecurity tools — built with Astro and Cloudflare Workers, with Claude Code as my only development hands. Here's what's live, an SSRF hardening story, a real secret-leak-and-rotation incident, and the day my own tool gave my own site an F."
+    url="/blog/yongchivo-tools-launch"
+    target="_self"
+    badge="SECURITY"
+  />
+  <div class="divider my-0"></div>
   <HorizontalCard
     title="Join the PHV Prep UK Android Beta — Test It Now"
     img="/images/join-android-beta.png"
