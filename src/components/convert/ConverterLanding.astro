@@ -1,0 +1,70 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { conversions, type Lang } from "../../convert/registry";
+import { strings } from "../../convert/i18n";
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = strings[lang];
+const base = lang === "es" ? "/es/convert" : "/convert";
+const other = lang === "es" ? "/convert/" : "/es/convert/";
+
+const title =
+  lang === "es"
+    ? "Conversor de Archivos — Gratis y 100% en tu Navegador | Yongchivo"
+    : "File Converter — Free & 100% In Your Browser | Yongchivo";
+const description = t.landingIntro;
+
+// Group the format badges by their accent colour for a little visual rhythm.
+const badgeClass = (to: string) =>
+  to === "WebP"
+    ? "badge-accent"
+    : to === "PNG"
+      ? "badge-secondary"
+      : "badge-primary";
+---
+
+<BaseLayout title={title} description={description} lang={lang}>
+  <link slot="head" rel="alternate" hreflang={lang} href={new URL(`${base}/`, Astro.site)} />
+  <link slot="head" rel="alternate" hreflang={lang === "es" ? "en" : "es"} href={new URL(other, Astro.site)} />
+  <link slot="head" rel="alternate" hreflang="x-default" href={new URL("/convert/", Astro.site)} />
+
+  <div class="mb-6">
+    <div class="flex items-center gap-3 flex-wrap">
+      <h1 class="text-3xl md:text-4xl font-bold bg-gradient-to-r from-brand-magenta via-brand-purple to-brand-cyan bg-clip-text text-transparent w-fit">
+        {t.landingTitle}
+      </h1>
+      <a href={other} class="badge badge-outline">{lang === "es" ? "EN" : "ES"}</a>
+    </div>
+    <p class="mt-3 opacity-80 max-w-2xl">{t.landingIntro}</p>
+    <div class="mt-4 inline-flex items-center gap-2 rounded-lg border border-base-300 bg-base-200 px-3 py-2 text-sm">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 0h10.5a1.5 1.5 0 0 1 1.5 1.5v6a1.5 1.5 0 0 1-1.5 1.5H6.75a1.5 1.5 0 0 1-1.5-1.5v-6a1.5 1.5 0 0 1 1.5-1.5Z"></path>
+      </svg>
+      <span>{t.landingNote}</span>
+    </div>
+  </div>
+
+  <div class="grid gap-3 sm:grid-cols-2">
+    {
+      conversions.map((c) => (
+        <a
+          href={`${base}/${c.id}/`}
+          class="group rounded-xl border border-base-300 bg-base-200 p-4 transition hover:border-primary hover:scale-[101%]"
+        >
+          <div class="flex items-center gap-2 font-mono text-sm font-semibold">
+            <span class="badge badge-ghost">{c.from}</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 opacity-60 group-hover:translate-x-0.5 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"></path>
+            </svg>
+            <span class={`badge ${badgeClass(c.to)}`}>{c.to}</span>
+          </div>
+          <div class="mt-2 text-sm opacity-80">{c.copy[lang].card}</div>
+        </a>
+      ))
+    }
+  </div>
+</BaseLayout>

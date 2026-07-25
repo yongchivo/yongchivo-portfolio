@@ -14,13 +14,15 @@ const {
   includeSidebar = true,
   sideBarActiveItemID,
   ogType,
+  lang = "en",
 } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en" data-theme="yongchivo">
+<html lang={lang} data-theme="yongchivo">
   <head>
     <BaseHead title={title} description={description} image={image} , ogType={ogType} />
+    <slot name="head" />
     {TRANSITION_API && <ViewTransitions />}
   </head>
   <body>

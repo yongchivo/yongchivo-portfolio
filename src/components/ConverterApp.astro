@@ -1,0 +1,99 @@
+---
+import type { Conversion, Lang } from "../convert/registry";
+import { strings } from "../convert/i18n";
+
+interface Props {
+  conversion: Conversion;
+  lang: Lang;
+}
+
+const { conversion, lang } = Astro.props;
+const t = strings[lang];
+---
+
+<div
+  data-converter
+  data-conv-id={conversion.id}
+  data-lang={lang}
+  class="not-prose"
+>
+  <!-- Dropzone (label wraps the hidden input so the whole area is clickable) -->
+  <label
+    data-cv-drop
+    class="flex flex-col items-center justify-center text-center gap-2 rounded-xl border-2 border-dashed border-base-300 bg-base-100 px-6 py-10 cursor-pointer transition hover:border-primary"
+  >
+    <input
+      data-cv-input
+      type="file"
+      multiple
+      accept={conversion.accept}
+      class="hidden"
+    />
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="w-10 h-10 opacity-70"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      stroke-width="1.5"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5"
+      ></path>
+    </svg>
+    <div class="text-lg font-semibold">{t.dropTitle}</div>
+    <div class="text-sm opacity-70">{t.dropHint}</div>
+    <span class="btn btn-primary btn-sm mt-2">{t.browse}</span>
+    <div class="mt-3 badge badge-accent badge-outline gap-1">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 0h10.5a1.5 1.5 0 0 1 1.5 1.5v6a1.5 1.5 0 0 1-1.5 1.5H6.75a1.5 1.5 0 0 1-1.5-1.5v-6a1.5 1.5 0 0 1 1.5-1.5Z"></path>
+      </svg>
+      {t.noUploads}
+    </div>
+  </label>
+
+  {
+    conversion.lossy && (
+      <div class="flex items-center gap-3 mt-4">
+        <label class="text-sm opacity-80" for={`q-${conversion.id}`}>
+          {t.quality}
+        </label>
+        <input
+          data-cv-quality
+          id={`q-${conversion.id}`}
+          type="range"
+          min="40"
+          max="100"
+          value="92"
+          class="range range-primary range-xs grow max-w-xs"
+        />
+        <span data-cv-quality-value class="text-sm tabular-nums w-12 text-right">92%</span>
+      </div>
+    )
+  }
+
+  <div data-cv-actions class="hidden flex-wrap items-center gap-2 mt-5">
+    <button data-cv-download-all class="btn btn-primary btn-sm" disabled>
+      {t.downloadAll}
+    </button>
+    <button data-cv-clear class="btn btn-ghost btn-sm">{t.clear}</button>
+  </div>
+
+  <ul data-cv-list class="flex flex-col gap-2 mt-4"></ul>
+
+  <p class="text-xs opacity-60 mt-4 flex items-start gap-2">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"></path>
+    </svg>
+    <span>{t.privacyNote}</span>
+  </p>
+</div>
+
+<script>
+  import { initConverter } from "../convert/controller";
+  document
+    .querySelectorAll<HTMLElement>("[data-converter]")
+    .forEach((el) => initConverter(el));
+</script>

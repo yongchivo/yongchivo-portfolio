@@ -1,0 +1,15 @@
+---
+import ConverterDetail from "../../../components/convert/ConverterDetail.astro";
+import { conversions } from "../../../convert/registry";
+
+export function getStaticPaths() {
+  return conversions.map((conversion) => ({
+    params: { conversion: conversion.id },
+    props: { conversion },
+  }));
+}
+
+const { conversion } = Astro.props;
+---
+
+<ConverterDetail conversion={conversion} lang="es" />
