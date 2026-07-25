@@ -4,11 +4,14 @@
 // privacy promise is the whole point of the tool, so keep it that way: never
 // add a fetch/upload path to this module.
 //
-// Extensibility: `convertFile` dispatches on `conversion.kind`. Today there are
-// two kinds: "image" (canvas-based, with a WASM decode step for HEIC) and
-// "data" (pure-JS CSV/JSON/YAML/XML, see ./data.ts). To add PDF or audio later,
-// add a new kind in ./registry.ts and a matching branch here — routing and SEO
-// don't change; the widget only needs a new branch if its shape differs.
+// Extensibility: `convertFile` dispatches on `conversion.kind` for the 1-file
+// -> 1-file kinds: "image" (canvas, with a WASM decode step for HEIC) and
+// "data" (pure-JS CSV/JSON/YAML/XML, see ./data.ts).
+//
+// The PDF kinds ("pdf" and "operation") are many->one / one->many, so they don't
+// fit this 1:1 signature — they have their own batch entry point, runPdfTool()
+// in ./pdf.ts, which the controller calls directly. Audio/video (next session)
+// will likely fit convertFile; if so, add a kind here.
 
 import type { Conversion, DecodeStrategy } from "./registry";
 

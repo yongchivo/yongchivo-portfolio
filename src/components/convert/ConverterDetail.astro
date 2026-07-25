@@ -31,7 +31,9 @@ const related = conversion.related
   <nav class="text-sm opacity-70 mb-4 flex items-center gap-2 flex-wrap">
     <a href={`${base}/`} class="link link-hover">{t.backToAll}</a>
     <span>/</span>
-    <span class="font-medium opacity-100">{conversion.from} → {conversion.to}</span>
+    <span class="font-medium opacity-100">
+      {conversion.from && conversion.to ? `${conversion.from} → ${conversion.to}` : copy.h1}
+    </span>
     <a href={otherLangPath} class="badge badge-outline ml-auto">{lang === "es" ? "EN" : "ES"}</a>
   </nav>
 
@@ -54,7 +56,7 @@ const related = conversion.related
             class="rounded-lg border border-base-300 bg-base-200 px-4 py-3 transition hover:border-primary"
           >
             <div class="font-mono text-sm font-semibold">
-              {c.from} → {c.to}
+              {c.from && c.to ? `${c.from} → ${c.to}` : c.copy[lang].h1}
             </div>
             <div class="mt-1 text-xs opacity-70">{c.copy[lang].card}</div>
           </a>

@@ -35,6 +35,8 @@ export function initConverter(root: HTMLElement): void {
 
   if (conversion.kind === "data") {
     initDataConverter(root, conversion, t);
+  } else if (conversion.kind === "pdf" || conversion.kind === "operation") {
+    initPdfConverter(root, conversion, t);
   } else {
     initImageConverter(root, conversion, t);
   }
@@ -372,4 +374,263 @@ function initDataConverter(
   });
 
   clearOutput();
+}
+
+// --- PDF widget -----------------------------------------------------------
+//
+// Multi-file capable (image->pdf, merge) with reorder; single-file for the
+// rest. Produces one or many result files, each individually downloadable.
+// pdf.ts (pdf-lib + pdf.js) is imported on demand so it code-splits onto PDF
+// pages only.
+
+function initPdfConverter(
+  root: HTMLElement,
+  conversion: Conversion,
+  t: ConverterStrings
+): void {
+  const box = root.querySelector<HTMLElement>("[data-cv-mode]");
+  const input = root.querySelector<HTMLInputElement>("[data-cv-input]");
+  const drop = root.querySelector<HTMLElement>("[data-cv-drop]");
+  const filesList = root.querySelector<HTMLElement>("[data-cv-files]");
+  const runBtn = root.querySelector<HTMLButtonElement>("[data-cv-run]");
+  const clearBtn = root.querySelector<HTMLButtonElement>("[data-cv-clear]");
+  const errorBox = root.querySelector<HTMLElement>("[data-cv-error]");
+  const results = root.querySelector<HTMLElement>("[data-cv-results]");
+  const qualityInput = root.querySelector<HTMLInputElement>("[data-cv-quality]");
+  const qualityValue = root.querySelector<HTMLElement>("[data-cv-quality-value]");
+  if (!box || !input || !filesList || !runBtn || !results) return;
+
+  const mode = box.dataset.cvMode ?? "";
+  const multi = box.dataset.cvMulti === "1";
+
+  let files: File[] = [];
+  let urls: string[] = [];
+
+  function hideError() {
+    errorBox?.classList.add("hidden");
+  }
+  function showError(message: string) {
+    if (errorBox) {
+      errorBox.textContent = message;
+      errorBox.classList.remove("hidden");
+    }
+  }
+
+  function clearResults() {
+    urls.forEach((u) => URL.revokeObjectURL(u));
+    urls = [];
+    if (results) results.innerHTML = "";
+  }
+
+  function renderFiles() {
+    if (!filesList) return;
+    filesList.innerHTML = "";
+    files.forEach((file, index) => {
+      const li = document.createElement("li");
+      li.className =
+        "flex items-center gap-2 rounded-lg bg-base-200 border border-base-300 px-3 py-2";
+
+      const meta = document.createElement("div");
+      meta.className = "min-w-0 grow";
+      const name = document.createElement("div");
+      name.className = "truncate text-sm font-medium";
+      name.textContent = `${index + 1}. ${file.name}`;
+      const sub = document.createElement("div");
+      sub.className = "text-xs opacity-70";
+      sub.textContent = humanSize(file.size);
+      meta.append(name, sub);
+
+      const controls = document.createElement("div");
+      controls.className = "flex items-center gap-1 shrink-0";
+
+      if (multi) {
+        controls.appendChild(
+          iconButton("↑", t.moveUp, index === 0, () => {
+            [files[index - 1], files[index]] = [files[index], files[index - 1]];
+            renderFiles();
+          })
+        );
+        controls.appendChild(
+          iconButton("↓", t.moveDown, index === files.length - 1, () => {
+            [files[index + 1], files[index]] = [files[index], files[index + 1]];
+            renderFiles();
+          })
+        );
+      }
+      controls.appendChild(
+        iconButton("✕", t.remove, false, () => {
+          files.splice(index, 1);
+          renderFiles();
+        })
+      );
+
+      li.append(meta, controls);
+      filesList.appendChild(li);
+    });
+  }
+
+  function iconButton(
+    label: string,
+    title: string,
+    disabled: boolean,
+    onClick: () => void
+  ): HTMLButtonElement {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "btn btn-ghost btn-xs";
+    b.textContent = label;
+    b.title = title;
+    b.setAttribute("aria-label", title);
+    b.disabled = disabled;
+    b.addEventListener("click", onClick);
+    return b;
+  }
+
+  function addFiles(incoming: FileList | File[]) {
+    const valid = Array.from(incoming).filter((f) => accepts(conversion, f));
+    if (valid.length === 0) {
+      showError(t.wrongType);
+      return;
+    }
+    hideError();
+    files = multi ? [...files, ...valid] : [valid[0]];
+    renderFiles();
+  }
+
+  function readOptions() {
+    const opts: Record<string, unknown> = {};
+    if (conversion.pdf?.imageFormat) {
+      opts.format = conversion.pdf.imageFormat;
+      opts.ext = conversion.targetExt;
+    }
+    const pagesize = root.querySelector<HTMLSelectElement>("[data-cv-pagesize]");
+    if (pagesize) opts.pageSize = pagesize.value;
+    const ranges = root.querySelector<HTMLInputElement>("[data-cv-ranges]");
+    if (ranges) opts.ranges = ranges.value;
+    const angle = root.querySelector<HTMLSelectElement>("[data-cv-angle]");
+    if (angle) opts.angle = Number(angle.value);
+    const pages = root.querySelector<HTMLInputElement>("[data-cv-pages]");
+    if (pages) opts.pages = pages.value;
+    if (qualityInput)
+      opts.quality = Math.max(0, Math.min(1, Number(qualityInput.value) / 100));
+    return opts;
+  }
+
+  function renderResults(items: ConversionResult[]) {
+    if (!results) return;
+    clearResults();
+
+    if (items.length > 1) {
+      const bar = document.createElement("div");
+      bar.className = "flex justify-end";
+      const all = document.createElement("button");
+      all.type = "button";
+      all.className = "btn btn-primary btn-sm";
+      all.textContent = t.downloadAll;
+      all.addEventListener("click", () => {
+        results.querySelectorAll<HTMLAnchorElement>("a[download]").forEach((a) => {
+          const link = document.createElement("a");
+          link.href = a.href;
+          link.download = a.download;
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+        });
+      });
+      bar.appendChild(all);
+      results.appendChild(bar);
+    }
+
+    for (const item of items) {
+      const url = URL.createObjectURL(item.blob);
+      urls.push(url);
+
+      const li = document.createElement("li");
+      li.className =
+        "flex items-center gap-3 rounded-lg bg-base-200 border border-base-300 px-3 py-2";
+      const meta = document.createElement("div");
+      meta.className = "min-w-0 grow";
+      const name = document.createElement("div");
+      name.className = "truncate text-sm font-medium";
+      name.textContent = item.filename;
+      const sub = document.createElement("div");
+      sub.className = "text-xs opacity-70";
+      sub.textContent = humanSize(item.blob.size);
+      meta.append(name, sub);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = item.filename;
+      a.className = "btn btn-sm btn-primary shrink-0";
+      a.textContent = t.download;
+
+      li.append(meta, a);
+      results.appendChild(li);
+    }
+  }
+
+  async function run() {
+    if (files.length === 0) {
+      showError(t.wrongType);
+      return;
+    }
+    hideError();
+    clearResults();
+    const label = runBtn!.textContent;
+    runBtn!.disabled = true;
+    runBtn!.textContent = t.working;
+    try {
+      const { runPdfTool } = await import("./pdf");
+      const items = await runPdfTool(mode as never, files, readOptions());
+      renderResults(items);
+    } catch (err) {
+      showError(err instanceof Error ? err.message : t.error);
+    } finally {
+      runBtn!.disabled = false;
+      runBtn!.textContent = label;
+    }
+  }
+
+  // --- wiring -------------------------------------------------------------
+
+  input.addEventListener("change", () => {
+    if (input.files && input.files.length) addFiles(input.files);
+    input.value = "";
+  });
+
+  if (drop) {
+    ["dragenter", "dragover"].forEach((ev) =>
+      drop.addEventListener(ev, (e) => {
+        e.preventDefault();
+        drop.classList.add("border-primary", "bg-base-200");
+      })
+    );
+    ["dragleave", "drop"].forEach((ev) =>
+      drop.addEventListener(ev, (e) => {
+        e.preventDefault();
+        if (ev === "dragleave" && drop.contains((e as DragEvent).relatedTarget as Node)) return;
+        drop.classList.remove("border-primary", "bg-base-200");
+      })
+    );
+    drop.addEventListener("drop", (e) => {
+      const dt = (e as DragEvent).dataTransfer;
+      if (dt?.files?.length) addFiles(dt.files);
+    });
+  }
+
+  if (qualityInput && qualityValue) {
+    qualityValue.textContent = `${qualityInput.value}%`;
+    qualityInput.addEventListener(
+      "input",
+      () => (qualityValue.textContent = `${qualityInput.value}%`)
+    );
+  }
+
+  runBtn.addEventListener("click", run);
+  clearBtn?.addEventListener("click", () => {
+    files = [];
+    renderFiles();
+    clearResults();
+    hideError();
+  });
 }

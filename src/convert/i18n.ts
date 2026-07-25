@@ -33,6 +33,30 @@ export interface ConverterStrings {
   copy: string;
   copied: string;
   emptyOutput: string;
+  // PDF widget + landing categories.
+  catPdf: string;
+  catPdfTools: string;
+  pdfDropImages: string;
+  pdfDropPdf: string;
+  runCreatePdf: string;
+  runConvert: string;
+  runMerge: string;
+  runSplit: string;
+  runRotate: string;
+  runCompress: string;
+  working: string;
+  resultsTitle: string;
+  moveUp: string;
+  moveDown: string;
+  remove: string;
+  pageSizeLabel: string;
+  pageSizeFit: string;
+  splitLabel: string;
+  splitPlaceholder: string;
+  rotationLabel: string;
+  rotatePagesLabel: string;
+  rotatePagesPlaceholder: string;
+  compressQualityHint: string;
 }
 
 export const strings: Record<Lang, ConverterStrings> = {
@@ -66,6 +90,29 @@ export const strings: Record<Lang, ConverterStrings> = {
     copy: "Copy",
     copied: "Copied!",
     emptyOutput: "Your converted result will appear here.",
+    catPdf: "PDF",
+    catPdfTools: "PDF tools",
+    pdfDropImages: "Drop images here, or click to choose",
+    pdfDropPdf: "Drop a PDF here, or click to choose",
+    runCreatePdf: "Create PDF",
+    runConvert: "Convert to images",
+    runMerge: "Merge PDFs",
+    runSplit: "Split PDF",
+    runRotate: "Rotate PDF",
+    runCompress: "Compress PDF",
+    working: "Working…",
+    resultsTitle: "Result",
+    moveUp: "Move up",
+    moveDown: "Move down",
+    remove: "Remove",
+    pageSizeLabel: "Page size",
+    pageSizeFit: "Fit to image",
+    splitLabel: "Pages to extract",
+    splitPlaceholder: "e.g. 1-3, 5, 8-10",
+    rotationLabel: "Rotation",
+    rotatePagesLabel: "Pages (optional)",
+    rotatePagesPlaceholder: "blank = all, or e.g. 1-3, 5",
+    compressQualityHint: "Lower quality = smaller file",
   },
   es: {
     dropTitle: "Suelta los archivos aquí",
@@ -98,5 +145,28 @@ export const strings: Record<Lang, ConverterStrings> = {
     copy: "Copiar",
     copied: "¡Copiado!",
     emptyOutput: "Tu resultado convertido aparecerá aquí.",
+    catPdf: "PDF",
+    catPdfTools: "Herramientas PDF",
+    pdfDropImages: "Suelta imágenes aquí, o haz clic para elegir",
+    pdfDropPdf: "Suelta un PDF aquí, o haz clic para elegir",
+    runCreatePdf: "Crear PDF",
+    runConvert: "Convertir a imágenes",
+    runMerge: "Unir PDFs",
+    runSplit: "Dividir PDF",
+    runRotate: "Rotar PDF",
+    runCompress: "Comprimir PDF",
+    working: "Procesando…",
+    resultsTitle: "Resultado",
+    moveUp: "Subir",
+    moveDown: "Bajar",
+    remove: "Quitar",
+    pageSizeLabel: "Tamaño de página",
+    pageSizeFit: "Ajustar a la imagen",
+    splitLabel: "Páginas a extraer",
+    splitPlaceholder: "p. ej. 1-3, 5, 8-10",
+    rotationLabel: "Rotación",
+    rotatePagesLabel: "Páginas (opcional)",
+    rotatePagesPlaceholder: "vacío = todas, o p. ej. 1-3, 5",
+    compressQualityHint: "Menor calidad = archivo más pequeño",
   },
 };

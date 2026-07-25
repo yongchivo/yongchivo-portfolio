@@ -23,6 +23,8 @@ const description = t.landingIntro;
 const categories: { key: ConversionKind; name: string }[] = [
   { key: "image", name: t.catImage },
   { key: "data", name: t.catData },
+  { key: "pdf", name: t.catPdf },
+  { key: "operation", name: t.catPdfTools },
 ];
 const groups = categories
   .map((c) => ({ ...c, items: conversions.filter((x) => x.kind === c.key) }))
@@ -40,6 +42,7 @@ const badgeClass = (to: string) =>
       YAML: "badge-secondary",
       XML: "badge-accent",
       CSV: "badge-info",
+      PDF: "badge-warning",
     } as Record<string, string>
   )[to] ?? "badge-primary");
 ---
@@ -76,11 +79,17 @@ const badgeClass = (to: string) =>
               class="group rounded-xl border border-base-300 bg-base-200 p-4 transition hover:border-primary hover:scale-[101%]"
             >
               <div class="flex items-center gap-2 font-mono text-sm font-semibold">
-                <span class="badge badge-ghost">{c.from}</span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 opacity-60 group-hover:translate-x-0.5 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                </svg>
-                <span class={`badge ${badgeClass(c.to)}`}>{c.to}</span>
+                {c.from && c.to ? (
+                  <>
+                    <span class="badge badge-ghost">{c.from}</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 opacity-60 group-hover:translate-x-0.5 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                    </svg>
+                    <span class={`badge ${badgeClass(c.to)}`}>{c.to}</span>
+                  </>
+                ) : (
+                  <span class="badge badge-warning">{c.copy[lang].h1}</span>
+                )}
               </div>
               <div class="mt-2 text-sm opacity-80">{c.copy[lang].card}</div>
             </a>

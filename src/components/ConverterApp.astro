@@ -9,11 +9,31 @@ interface Props {
 
 const { conversion, lang } = Astro.props;
 const t = strings[lang];
+const isImage = conversion.kind === "image";
 const isData = conversion.kind === "data";
+const isPdf = conversion.kind === "pdf" || conversion.kind === "operation";
 const placeholder =
   lang === "es"
     ? `Pega tu ${conversion.from} aquí…`
     : `Paste your ${conversion.from} here…`;
+
+// PDF widget config, derived from the registry entry.
+const mode =
+  conversion.kind === "operation" ? conversion.op! : conversion.pdf?.direction;
+const multi = conversion.multi === true;
+const runLabel: Record<string, string> = {
+  "images-to-pdf": t.runCreatePdf,
+  "pdf-to-images": t.runConvert,
+  merge: t.runMerge,
+  split: t.runSplit,
+  rotate: t.runRotate,
+  compress: t.runCompress,
+};
+const pdfDropLabel = mode === "images-to-pdf" ? t.pdfDropImages : t.pdfDropPdf;
+const showQuality =
+  mode === "compress" ||
+  (mode === "pdf-to-images" && conversion.pdf?.imageFormat === "image/jpeg");
+const qualityDefault = mode === "compress" ? 60 : 92;
 ---
 
 <div
@@ -24,7 +44,7 @@ const placeholder =
   class="not-prose"
 >
   {
-    !isData && (
+    isImage && (
       <>
         {/* Dropzone (label wraps the hidden input so the whole area is clickable) */}
         <label
@@ -120,6 +140,94 @@ const placeholder =
           {t.noUploads}
         </div>
       </>
+    )
+  }
+
+  {
+    isPdf && (
+      <div data-cv-mode={mode} data-cv-multi={multi ? "1" : "0"}>
+        {/* Dropzone */}
+        <label
+          data-cv-drop
+          class="flex flex-col items-center justify-center text-center gap-2 rounded-xl border-2 border-dashed border-base-300 bg-base-100 px-6 py-8 cursor-pointer transition hover:border-primary"
+        >
+          <input data-cv-input type="file" multiple={multi} accept={conversion.accept} class="hidden" />
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-9 h-9 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+          </svg>
+          <div class="text-base font-semibold">{pdfDropLabel}</div>
+          <span class="btn btn-primary btn-sm mt-1">{t.browse}</span>
+          <div class="mt-2 badge badge-accent badge-outline gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 0h10.5a1.5 1.5 0 0 1 1.5 1.5v6a1.5 1.5 0 0 1-1.5 1.5H6.75a1.5 1.5 0 0 1-1.5-1.5v-6a1.5 1.5 0 0 1 1.5-1.5Z" />
+            </svg>
+            {t.noUploads}
+          </div>
+        </label>
+
+        {/* Selected files (reorderable for multi-file tools) */}
+        <ul data-cv-files class="flex flex-col gap-2 mt-4" />
+
+        {/* Tool-specific options */}
+        <div class="mt-4 flex flex-wrap items-end gap-x-6 gap-y-3">
+          {mode === "images-to-pdf" && (
+            <label class="flex flex-col gap-1 text-sm">
+              <span class="opacity-80">{t.pageSizeLabel}</span>
+              <select data-cv-pagesize class="select select-bordered select-sm">
+                <option value="fit">{t.pageSizeFit}</option>
+                <option value="a4">A4</option>
+                <option value="letter">Letter</option>
+              </select>
+            </label>
+          )}
+
+          {mode === "split" && (
+            <label class="flex flex-col gap-1 text-sm grow max-w-xs">
+              <span class="opacity-80">{t.splitLabel}</span>
+              <input data-cv-ranges type="text" placeholder={t.splitPlaceholder} class="input input-bordered input-sm font-mono" />
+            </label>
+          )}
+
+          {mode === "rotate" && (
+            <>
+              <label class="flex flex-col gap-1 text-sm">
+                <span class="opacity-80">{t.rotationLabel}</span>
+                <select data-cv-angle class="select select-bordered select-sm">
+                  <option value="90">90°</option>
+                  <option value="180">180°</option>
+                  <option value="270">270°</option>
+                </select>
+              </label>
+              <label class="flex flex-col gap-1 text-sm grow max-w-xs">
+                <span class="opacity-80">{t.rotatePagesLabel}</span>
+                <input data-cv-pages type="text" placeholder={t.rotatePagesPlaceholder} class="input input-bordered input-sm font-mono" />
+              </label>
+            </>
+          )}
+
+          {showQuality && (
+            <div class="flex flex-col gap-1 text-sm">
+              <span class="opacity-80">
+                {t.quality}
+                {mode === "compress" && <span class="opacity-60"> · {t.compressQualityHint}</span>}
+              </span>
+              <div class="flex items-center gap-3">
+                <input data-cv-quality type="range" min="30" max="100" value={qualityDefault} class="range range-primary range-xs w-40" />
+                <span data-cv-quality-value class="tabular-nums w-12 text-right">{qualityDefault}%</span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div class="mt-5 flex flex-wrap items-center gap-2">
+          <button data-cv-run class="btn btn-primary btn-sm">{mode ? runLabel[mode] : ""}</button>
+          <button data-cv-clear class="btn btn-ghost btn-sm">{t.clear}</button>
+        </div>
+
+        <div data-cv-error class="hidden alert alert-error rounded-lg text-xs py-2 mt-4" />
+
+        <ul data-cv-results class="flex flex-col gap-2 mt-4" />
+      </div>
     )
   }
 

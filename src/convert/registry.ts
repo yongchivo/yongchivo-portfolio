@@ -4,14 +4,20 @@
 // landing-page grid, so adding a new conversion is a single entry here plus,
 // if it needs a new decode strategy, a handler in ./engine.ts.
 //
-// Two kinds ship today: "image" (canvas / libheif-WASM) and "data" (pure-JS
-// CSV/JSON/YAML/XML parsing). Later sessions will add documents (PDF) and
-// audio: give those entries a new `kind`, teach `convertFile` in ./engine.ts
-// how to handle it, and — if the widget needs a different shape — branch
-// <ConverterApp> on the kind. Everything else here (routing, SEO, hreflang,
-// related blocks, the category-grouped landing) keeps working unchanged.
+// Kinds shipping today:
+//  - "image"     canvas / libheif-WASM
+//  - "data"      pure-JS CSV/JSON/YAML/XML parsing
+//  - "pdf"       PDF <-> image FORMAT conversions (pdf-lib + pdf.js)
+//  - "operation" PDF TOOLS that aren't a from->to conversion (merge / split /
+//                rotate / compress). Modelled as their own kind so they don't
+//                get forced into the "X to Y" shape, but they still live in the
+//                same registry array and reuse routing, SEO, hreflang, the
+//                landing grid and the widget shell.
+// Adding a family = new `kind` here + a branch in ./engine.ts or ./pdf.ts, and
+// (only if the UI differs) a branch in <ConverterApp>. Routing/SEO don't change.
+// Audio/video are the last block, next session.
 
-export type ConversionKind = "image" | "data";
+export type ConversionKind = "image" | "data" | "pdf" | "operation";
 
 // How an image source is turned into something the canvas can draw.
 //  - "canvas": the browser can decode it natively (PNG/JPG/WebP).
@@ -20,6 +26,14 @@ export type DecodeStrategy = "canvas" | "heic";
 
 // The text data formats the "data" kind can parse and emit.
 export type DataFormat = "csv" | "json" | "yaml" | "xml";
+
+// PDF FORMAT conversions (kind "pdf").
+//  - "images-to-pdf": combine N images into one PDF, in order.
+//  - "pdf-to-images": render each page to an image (one PDF -> N images).
+export type PdfDirection = "images-to-pdf" | "pdf-to-images";
+
+// PDF TOOLS (kind "operation").
+export type PdfOperation = "merge" | "split" | "rotate" | "compress";
 
 export type Lang = "en" | "es";
 
@@ -41,9 +55,12 @@ export interface Conversion {
   id: string;
   kind: ConversionKind;
 
-  /** Display labels for the formats, e.g. "PNG" -> "JPG". */
-  from: string;
-  to: string;
+  /**
+   * Display labels for a from->to conversion, e.g. "PNG" -> "JPG". Operations
+   * (merge/split/rotate/compress) aren't conversions, so they leave these out.
+   */
+  from?: string;
+  to?: string;
 
   /** `accept` attribute for the file input. */
   accept: string;
@@ -59,16 +76,39 @@ export interface Conversion {
 
   /** Image kind only: how to decode the source pixels. */
   decode?: DecodeStrategy;
-  /** Lossy target (JPG/WebP) -> expose a quality control. Always false for data. */
-  lossy: boolean;
+  /** Lossy target (JPG/WebP) -> expose a quality control. Omitted = false. */
+  lossy?: boolean;
 
   /** Data kind only: the parse -> serialize formats. */
   data?: { from: DataFormat; to: DataFormat };
+
+  /** PDF format-conversion kind only ("pdf"). */
+  pdf?: {
+    direction: PdfDirection;
+    /** For "pdf-to-images": the image MIME each page is rendered to. */
+    imageFormat?: "image/jpeg" | "image/png";
+  };
+
+  /** Operation kind only ("operation"): which PDF tool this page is. */
+  op?: PdfOperation;
+  /** Whether the widget accepts multiple files (image->pdf, merge). */
+  multi?: boolean;
 
   /** ids of 2-3 sibling conversions to cross-link. */
   related: string[];
 
   copy: Record<Lang, LocalisedCopy>;
+}
+
+/** True for PDF-tool entries (merge/split/rotate/compress). */
+export function isOperation(c: Conversion): boolean {
+  return c.kind === "operation";
+}
+
+/** The little mono chip shown on cards/breadcrumbs. */
+export function chipLabel(c: Conversion): string {
+  if (c.from && c.to) return `${c.from} → ${c.to}`;
+  return c.to ?? c.from ?? c.id;
 }
 
 const PNG_MIME = "image/png";
@@ -688,6 +728,271 @@ export const conversions: Conversion[] = [
         intro:
           "Pasa las filas de un CSV a una lista YAML legible. Pega tus datos o suelta un archivo: todo se ejecuta en tu dispositivo, nada se sube.",
         card: "Pasa filas CSV a una lista YAML",
+      },
+    },
+  },
+
+  // --- PDF format conversions (kind "pdf"; see ./pdf.ts) -------------------
+
+  {
+    id: "jpg-to-pdf",
+    kind: "pdf",
+    from: "JPG",
+    to: "PDF",
+    accept: ".jpg,.jpeg,image/jpeg",
+    sourceExts: ["jpg", "jpeg"],
+    sourceMimes: ["image/jpeg"],
+    targetMime: "application/pdf",
+    targetExt: "pdf",
+    pdf: { direction: "images-to-pdf" },
+    multi: true,
+    related: ["png-to-pdf", "pdf-to-jpg", "merge-pdf"],
+    copy: {
+      en: {
+        title: "JPG to PDF Converter — Free, Private, In Your Browser",
+        description:
+          "Convert JPG to PDF for free. Combine several JPGs into one PDF, in order — 100% in your browser, nothing uploaded.",
+        h1: "JPG to PDF converter",
+        intro:
+          "Combine one or many JPG images into a single PDF, in the order you choose. Fast, free and private — nothing ever leaves your device.",
+        card: "Combine JPG images into one PDF",
+      },
+      es: {
+        title: "Convertir JPG a PDF — Gratis, Privado y en tu Navegador",
+        description:
+          "Convierte JPG a PDF gratis. Combina varios JPG en un solo PDF, en orden — 100% en tu navegador, nada se sube.",
+        h1: "Convertir JPG a PDF",
+        intro:
+          "Combina una o varias imágenes JPG en un único PDF, en el orden que elijas. Rápido, gratis y privado: nada sale de tu dispositivo.",
+        card: "Combina imágenes JPG en un PDF",
+      },
+    },
+  },
+  {
+    id: "png-to-pdf",
+    kind: "pdf",
+    from: "PNG",
+    to: "PDF",
+    accept: ".png,image/png",
+    sourceExts: ["png"],
+    sourceMimes: ["image/png"],
+    targetMime: "application/pdf",
+    targetExt: "pdf",
+    pdf: { direction: "images-to-pdf" },
+    multi: true,
+    related: ["jpg-to-pdf", "pdf-to-png", "merge-pdf"],
+    copy: {
+      en: {
+        title: "PNG to PDF Converter — Free, Private, In Your Browser",
+        description:
+          "Convert PNG to PDF for free. Combine several PNGs into one PDF, in order — 100% in your browser, nothing uploaded.",
+        h1: "PNG to PDF converter",
+        intro:
+          "Combine one or many PNG images into a single PDF, in the order you choose. Fast, free and private — nothing ever leaves your device.",
+        card: "Combine PNG images into one PDF",
+      },
+      es: {
+        title: "Convertir PNG a PDF — Gratis, Privado y en tu Navegador",
+        description:
+          "Convierte PNG a PDF gratis. Combina varios PNG en un solo PDF, en orden — 100% en tu navegador, nada se sube.",
+        h1: "Convertir PNG a PDF",
+        intro:
+          "Combina una o varias imágenes PNG en un único PDF, en el orden que elijas. Rápido, gratis y privado: nada sale de tu dispositivo.",
+        card: "Combina imágenes PNG en un PDF",
+      },
+    },
+  },
+  {
+    id: "pdf-to-jpg",
+    kind: "pdf",
+    from: "PDF",
+    to: "JPG",
+    accept: ".pdf,application/pdf",
+    sourceExts: ["pdf"],
+    sourceMimes: ["application/pdf"],
+    targetMime: "image/jpeg",
+    targetExt: "jpg",
+    pdf: { direction: "pdf-to-images", imageFormat: "image/jpeg" },
+    related: ["pdf-to-png", "jpg-to-pdf", "split-pdf"],
+    copy: {
+      en: {
+        title: "PDF to JPG Converter — Free, Private, In Your Browser",
+        description:
+          "Convert PDF to JPG for free. Every page becomes a JPG image, downloaded individually — 100% in your browser, nothing uploaded.",
+        h1: "PDF to JPG converter",
+        intro:
+          "Render each page of a PDF to a JPG image and download them individually. Fast, free and private — nothing ever leaves your device.",
+        card: "Render PDF pages to JPG images",
+      },
+      es: {
+        title: "Convertir PDF a JPG — Gratis, Privado y en tu Navegador",
+        description:
+          "Convierte PDF a JPG gratis. Cada página se convierte en una imagen JPG, descargable por separado — 100% en tu navegador, nada se sube.",
+        h1: "Convertir PDF a JPG",
+        intro:
+          "Convierte cada página de un PDF en una imagen JPG y descárgalas por separado. Rápido, gratis y privado: nada sale de tu dispositivo.",
+        card: "Convierte páginas PDF en imágenes JPG",
+      },
+    },
+  },
+  {
+    id: "pdf-to-png",
+    kind: "pdf",
+    from: "PDF",
+    to: "PNG",
+    accept: ".pdf,application/pdf",
+    sourceExts: ["pdf"],
+    sourceMimes: ["application/pdf"],
+    targetMime: "image/png",
+    targetExt: "png",
+    pdf: { direction: "pdf-to-images", imageFormat: "image/png" },
+    related: ["pdf-to-jpg", "png-to-pdf", "split-pdf"],
+    copy: {
+      en: {
+        title: "PDF to PNG Converter — Free, Private, In Your Browser",
+        description:
+          "Convert PDF to PNG for free. Every page becomes a lossless PNG image — 100% in your browser, nothing uploaded.",
+        h1: "PDF to PNG converter",
+        intro:
+          "Render each page of a PDF to a lossless PNG image and download them individually. Fast, free and private — nothing ever leaves your device.",
+        card: "Render PDF pages to PNG images",
+      },
+      es: {
+        title: "Convertir PDF a PNG — Gratis, Privado y en tu Navegador",
+        description:
+          "Convierte PDF a PNG gratis. Cada página se convierte en una imagen PNG sin pérdida — 100% en tu navegador, nada se sube.",
+        h1: "Convertir PDF a PNG",
+        intro:
+          "Convierte cada página de un PDF en una imagen PNG sin pérdida y descárgalas por separado. Rápido, gratis y privado: nada sale de tu dispositivo.",
+        card: "Convierte páginas PDF en imágenes PNG",
+      },
+    },
+  },
+
+  // --- PDF tools (kind "operation"; see ./pdf.ts) -------------------------
+
+  {
+    id: "merge-pdf",
+    kind: "operation",
+    op: "merge",
+    accept: ".pdf,application/pdf",
+    sourceExts: ["pdf"],
+    sourceMimes: ["application/pdf"],
+    targetMime: "application/pdf",
+    targetExt: "pdf",
+    multi: true,
+    related: ["split-pdf", "rotate-pdf", "jpg-to-pdf"],
+    copy: {
+      en: {
+        title: "Merge PDF — Combine PDFs Free, Private, In Your Browser",
+        description:
+          "Merge PDF files into one for free. Reorder them, then combine — 100% in your browser, nothing uploaded.",
+        h1: "Merge PDF",
+        intro:
+          "Combine several PDFs into a single document, in the order you choose. Fast, free and private — nothing ever leaves your device.",
+        card: "Combine several PDFs into one",
+      },
+      es: {
+        title: "Unir PDF — Combina PDFs Gratis y Privado en tu Navegador",
+        description:
+          "Une archivos PDF en uno solo gratis. Reordénalos y combínalos — 100% en tu navegador, nada se sube.",
+        h1: "Unir PDF",
+        intro:
+          "Combina varios PDF en un único documento, en el orden que elijas. Rápido, gratis y privado: nada sale de tu dispositivo.",
+        card: "Combina varios PDF en uno",
+      },
+    },
+  },
+  {
+    id: "split-pdf",
+    kind: "operation",
+    op: "split",
+    accept: ".pdf,application/pdf",
+    sourceExts: ["pdf"],
+    sourceMimes: ["application/pdf"],
+    targetMime: "application/pdf",
+    targetExt: "pdf",
+    related: ["merge-pdf", "rotate-pdf", "pdf-to-jpg"],
+    copy: {
+      en: {
+        title: "Split PDF — Extract Pages Free, Private, In Your Browser",
+        description:
+          "Split a PDF by page ranges into separate files for free. 100% in your browser — nothing is uploaded.",
+        h1: "Split PDF",
+        intro:
+          "Extract page ranges (e.g. 1-3, 5, 8-10) from a PDF into separate files. Fast, free and private — nothing ever leaves your device.",
+        card: "Extract page ranges into new PDFs",
+      },
+      es: {
+        title: "Dividir PDF — Extrae Páginas Gratis y Privado en tu Navegador",
+        description:
+          "Divide un PDF por rangos de páginas en archivos separados, gratis. 100% en tu navegador: nada se sube.",
+        h1: "Dividir PDF",
+        intro:
+          "Extrae rangos de páginas (p. ej. 1-3, 5, 8-10) de un PDF en archivos separados. Rápido, gratis y privado: nada sale de tu dispositivo.",
+        card: "Extrae rangos de páginas en nuevos PDF",
+      },
+    },
+  },
+  {
+    id: "rotate-pdf",
+    kind: "operation",
+    op: "rotate",
+    accept: ".pdf,application/pdf",
+    sourceExts: ["pdf"],
+    sourceMimes: ["application/pdf"],
+    targetMime: "application/pdf",
+    targetExt: "pdf",
+    related: ["merge-pdf", "split-pdf", "compress-pdf"],
+    copy: {
+      en: {
+        title: "Rotate PDF — Turn Pages 90/180/270 Free, In Your Browser",
+        description:
+          "Rotate PDF pages 90, 180 or 270 degrees for free. All pages or selected ones — 100% in your browser, nothing uploaded.",
+        h1: "Rotate PDF",
+        intro:
+          "Turn every page — or only the pages you pick — by 90°, 180° or 270°. Fast, free and private — nothing ever leaves your device.",
+        card: "Rotate pages 90 / 180 / 270°",
+      },
+      es: {
+        title: "Rotar PDF — Gira Páginas 90/180/270 Gratis en tu Navegador",
+        description:
+          "Rota páginas de PDF 90, 180 o 270 grados gratis. Todas o solo algunas — 100% en tu navegador, nada se sube.",
+        h1: "Rotar PDF",
+        intro:
+          "Gira todas las páginas — o solo las que elijas — 90°, 180° o 270°. Rápido, gratis y privado: nada sale de tu dispositivo.",
+        card: "Rota páginas 90 / 180 / 270°",
+      },
+    },
+  },
+  {
+    id: "compress-pdf",
+    kind: "operation",
+    op: "compress",
+    accept: ".pdf,application/pdf",
+    sourceExts: ["pdf"],
+    sourceMimes: ["application/pdf"],
+    targetMime: "application/pdf",
+    targetExt: "pdf",
+    related: ["rotate-pdf", "merge-pdf", "pdf-to-jpg"],
+    copy: {
+      en: {
+        title: "Compress PDF — Reduce PDF Size Free, In Your Browser",
+        description:
+          "Compress a PDF to reduce its file size, free and in your browser. Re-renders pages as images and strips metadata — nothing uploaded.",
+        h1: "Compress PDF",
+        intro:
+          "Shrink a PDF by re-rendering each page as an image at a quality you choose and stripping metadata. Best for scanned or image-heavy PDFs; mostly-text files may not shrink much, and page text becomes non-selectable. All in your browser.",
+        card: "Reduce a PDF's file size",
+      },
+      es: {
+        title: "Comprimir PDF — Reduce el Tamaño Gratis en tu Navegador",
+        description:
+          "Comprime un PDF para reducir su tamaño, gratis y en tu navegador. Re-renderiza las páginas como imágenes y elimina metadatos — nada se sube.",
+        h1: "Comprimir PDF",
+        intro:
+          "Reduce un PDF re-renderizando cada página como imagen con la calidad que elijas y eliminando metadatos. Ideal para PDF escaneados o con muchas imágenes; los de solo texto quizá no se reduzcan mucho y el texto deja de ser seleccionable. Todo en tu navegador.",
+        card: "Reduce el tamaño de un PDF",
       },
     },
   },
