@@ -8,13 +8,18 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "predev": "node scripts/copy-ffmpeg.mjs",
+    "prebuild": "node scripts/copy-ffmpeg.mjs",
+    "prestart": "node scripts/copy-ffmpeg.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^2.0.3",
     "@astrojs/rss": "^3.0.0",
     "@astrojs/sitemap": "^3.2.1",
     "@astrojs/tailwind": "^5.0.3",
+    "@ffmpeg/core": "^0.12.10",
+    "@ffmpeg/ffmpeg": "^0.12.15",
     "astro": "^4.0.2",
     "daisyui": "^4.4.10",
     "dayjs": "^1.11.9",

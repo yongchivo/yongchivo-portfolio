@@ -57,6 +57,19 @@ export interface ConverterStrings {
   rotatePagesLabel: string;
   rotatePagesPlaceholder: string;
   compressQualityHint: string;
+  // Audio/video (FFmpeg) widget + landing categories.
+  catAudio: string;
+  catVideo: string;
+  mediaDropAudio: string;
+  mediaDropVideo: string;
+  runConvertMedia: string;
+  mediaLoading: string;
+  mediaConverting: string;
+  gifFpsLabel: string;
+  gifWidthLabel: string;
+  /** {mb} is replaced with the size limit. */
+  mediaTooLarge: string;
+  safariVideoNote: string;
 }
 
 export const strings: Record<Lang, ConverterStrings> = {
@@ -113,6 +126,19 @@ export const strings: Record<Lang, ConverterStrings> = {
     rotatePagesLabel: "Pages (optional)",
     rotatePagesPlaceholder: "blank = all, or e.g. 1-3, 5",
     compressQualityHint: "Lower quality = smaller file",
+    catAudio: "Audio",
+    catVideo: "Video",
+    mediaDropAudio: "Drop an audio file, or click to choose",
+    mediaDropVideo: "Drop a video file, or click to choose",
+    runConvertMedia: "Convert",
+    mediaLoading: "Loading the converter — one-time ~32 MB download…",
+    mediaConverting: "Converting… video can take a while",
+    gifFpsLabel: "Frames per second",
+    gifWidthLabel: "Width (px)",
+    mediaTooLarge:
+      "This file is too large for in-browser conversion (max {mb} MB). Try a shorter or smaller clip.",
+    safariVideoNote:
+      "Heads up: video conversion is memory-heavy and may fail on Safari for iPhone/iPad. For large files, use a desktop browser like Chrome or Firefox.",
   },
   es: {
     dropTitle: "Suelta los archivos aquí",
@@ -168,5 +194,18 @@ export const strings: Record<Lang, ConverterStrings> = {
     rotatePagesLabel: "Páginas (opcional)",
     rotatePagesPlaceholder: "vacío = todas, o p. ej. 1-3, 5",
     compressQualityHint: "Menor calidad = archivo más pequeño",
+    catAudio: "Audio",
+    catVideo: "Vídeo",
+    mediaDropAudio: "Suelta un archivo de audio, o haz clic para elegir",
+    mediaDropVideo: "Suelta un archivo de vídeo, o haz clic para elegir",
+    runConvertMedia: "Convertir",
+    mediaLoading: "Cargando el conversor — descarga única de ~32 MB…",
+    mediaConverting: "Convirtiendo… el vídeo puede tardar un poco",
+    gifFpsLabel: "Fotogramas por segundo",
+    gifWidthLabel: "Ancho (px)",
+    mediaTooLarge:
+      "Este archivo es demasiado grande para convertir en el navegador (máx. {mb} MB). Prueba un clip más corto o pequeño.",
+    safariVideoNote:
+      "Aviso: la conversión de vídeo consume mucha memoria y puede fallar en Safari de iPhone/iPad. Para archivos grandes, usa un navegador de escritorio como Chrome o Firefox.",
   },
 };

@@ -25,6 +25,8 @@ const categories: { key: ConversionKind; name: string }[] = [
   { key: "data", name: t.catData },
   { key: "pdf", name: t.catPdf },
   { key: "operation", name: t.catPdfTools },
+  { key: "audio", name: t.catAudio },
+  { key: "video", name: t.catVideo },
 ];
 const groups = categories
   .map((c) => ({ ...c, items: conversions.filter((x) => x.kind === c.key) }))
@@ -43,6 +45,11 @@ const badgeClass = (to: string) =>
       XML: "badge-accent",
       CSV: "badge-info",
       PDF: "badge-warning",
+      MP3: "badge-success",
+      WAV: "badge-info",
+      MP4: "badge-primary",
+      WebM: "badge-accent",
+      GIF: "badge-secondary",
     } as Record<string, string>
   )[to] ?? "badge-primary");
 ---

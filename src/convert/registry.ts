@@ -13,11 +13,20 @@
 //                get forced into the "X to Y" shape, but they still live in the
 //                same registry array and reuse routing, SEO, hreflang, the
 //                landing grid and the widget shell.
-// Adding a family = new `kind` here + a branch in ./engine.ts or ./pdf.ts, and
-// (only if the UI differs) a branch in <ConverterApp>. Routing/SEO don't change.
-// Audio/video are the last block, next session.
+//  - "audio"     audio conversions + audio extraction (FFmpeg.wasm) — grouped
+//                under "Audio" on the landing (by OUTPUT family).
+//  - "video"     video conversions + video->GIF (FFmpeg.wasm) — "Video" group.
+// Adding a family = new `kind` here + a branch in ./engine.ts / ./pdf.ts /
+// ./media.ts, and (only if the UI differs) a branch in <ConverterApp>.
+// Routing/SEO don't change. This is the final block — the converter is complete.
 
-export type ConversionKind = "image" | "data" | "pdf" | "operation";
+export type ConversionKind =
+  | "image"
+  | "data"
+  | "pdf"
+  | "operation"
+  | "audio"
+  | "video";
 
 // How an image source is turned into something the canvas can draw.
 //  - "canvas": the browser can decode it natively (PNG/JPG/WebP).
@@ -993,6 +1002,396 @@ export const conversions: Conversion[] = [
         intro:
           "Reduce un PDF re-renderizando cada página como imagen con la calidad que elijas y eliminando metadatos. Ideal para PDF escaneados o con muchas imágenes; los de solo texto quizá no se reduzcan mucho y el texto deja de ser seleccionable. Todo en tu navegador.",
         card: "Reduce el tamaño de un PDF",
+      },
+    },
+  },
+
+  // --- Audio (FFmpeg.wasm; see ./media.ts) --------------------------------
+
+  {
+    id: "mp3-to-wav",
+    kind: "audio",
+    from: "MP3",
+    to: "WAV",
+    accept: ".mp3,audio/mpeg",
+    sourceExts: ["mp3"],
+    sourceMimes: ["audio/mpeg"],
+    targetMime: "audio/wav",
+    targetExt: "wav",
+    related: ["wav-to-mp3", "m4a-to-mp3", "mp4-to-mp3"],
+    copy: {
+      en: {
+        title: "MP3 to WAV Converter — Free, Private, In Your Browser",
+        description:
+          "Convert MP3 to WAV for free. Decoding runs 100% in your browser with FFmpeg — your audio is never uploaded.",
+        h1: "MP3 to WAV converter",
+        intro:
+          "Turn MP3 audio into uncompressed WAV, entirely in your browser. Nothing is uploaded — the whole conversion happens on your device.",
+        card: "Convert MP3 audio to WAV",
+      },
+      es: {
+        title: "Convertir MP3 a WAV — Gratis, Privado y en tu Navegador",
+        description:
+          "Convierte MP3 a WAV gratis. La decodificación se ejecuta 100% en tu navegador con FFmpeg: tu audio nunca se sube.",
+        h1: "Convertir MP3 a WAV",
+        intro:
+          "Pasa tu audio MP3 a WAV sin comprimir, por completo en tu navegador. Nada se sube: toda la conversión ocurre en tu dispositivo.",
+        card: "Convierte audio MP3 a WAV",
+      },
+    },
+  },
+  {
+    id: "wav-to-mp3",
+    kind: "audio",
+    from: "WAV",
+    to: "MP3",
+    accept: ".wav,audio/wav,audio/x-wav",
+    sourceExts: ["wav"],
+    sourceMimes: ["audio/wav", "audio/x-wav"],
+    targetMime: "audio/mpeg",
+    targetExt: "mp3",
+    related: ["mp3-to-wav", "m4a-to-mp3", "flac-to-mp3"],
+    copy: {
+      en: {
+        title: "WAV to MP3 Converter — Free, Private, In Your Browser",
+        description:
+          "Convert WAV to MP3 for free and shrink your audio. Runs 100% in your browser with FFmpeg — nothing is uploaded.",
+        h1: "WAV to MP3 converter",
+        intro:
+          "Compress WAV audio to MP3 right here. Fast, free and private — the conversion runs on your device and nothing is uploaded.",
+        card: "Compress WAV audio to MP3",
+      },
+      es: {
+        title: "Convertir WAV a MP3 — Gratis, Privado y en tu Navegador",
+        description:
+          "Convierte WAV a MP3 gratis y reduce el peso de tu audio. Se ejecuta 100% en tu navegador con FFmpeg: nada se sube.",
+        h1: "Convertir WAV a MP3",
+        intro:
+          "Comprime tu audio WAV a MP3 aquí mismo. Rápido, gratis y privado: la conversión se ejecuta en tu dispositivo y nada se sube.",
+        card: "Comprime audio WAV a MP3",
+      },
+    },
+  },
+  {
+    id: "m4a-to-mp3",
+    kind: "audio",
+    from: "M4A",
+    to: "MP3",
+    accept: ".m4a,audio/mp4,audio/x-m4a",
+    sourceExts: ["m4a"],
+    sourceMimes: ["audio/mp4", "audio/x-m4a"],
+    targetMime: "audio/mpeg",
+    targetExt: "mp3",
+    related: ["wav-to-mp3", "m4a-to-wav", "ogg-to-mp3"],
+    copy: {
+      en: {
+        title: "M4A to MP3 Converter — Free, Private, In Your Browser",
+        description:
+          "Convert M4A to MP3 for free. Runs 100% in your browser with FFmpeg — your audio is never uploaded to a server.",
+        h1: "M4A to MP3 converter",
+        intro:
+          "Turn M4A (AAC) audio into universally-supported MP3, entirely in your browser. Nothing ever leaves your device.",
+        card: "Convert M4A audio to MP3",
+      },
+      es: {
+        title: "Convertir M4A a MP3 — Gratis, Privado y en tu Navegador",
+        description:
+          "Convierte M4A a MP3 gratis. Se ejecuta 100% en tu navegador con FFmpeg: tu audio nunca se sube a ningún servidor.",
+        h1: "Convertir M4A a MP3",
+        intro:
+          "Pasa tu audio M4A (AAC) a MP3, compatible con todo, por completo en tu navegador. Nada sale de tu dispositivo.",
+        card: "Convierte audio M4A a MP3",
+      },
+    },
+  },
+  {
+    id: "flac-to-mp3",
+    kind: "audio",
+    from: "FLAC",
+    to: "MP3",
+    accept: ".flac,audio/flac,audio/x-flac",
+    sourceExts: ["flac"],
+    sourceMimes: ["audio/flac", "audio/x-flac"],
+    targetMime: "audio/mpeg",
+    targetExt: "mp3",
+    related: ["wav-to-mp3", "m4a-to-mp3", "ogg-to-mp3"],
+    copy: {
+      en: {
+        title: "FLAC to MP3 Converter — Free, Private, In Your Browser",
+        description:
+          "Convert FLAC to MP3 for free. Runs 100% in your browser with FFmpeg — your lossless audio is never uploaded.",
+        h1: "FLAC to MP3 converter",
+        intro:
+          "Turn lossless FLAC into portable MP3, entirely in your browser. Fast, free and private — nothing is uploaded.",
+        card: "Convert FLAC audio to MP3",
+      },
+      es: {
+        title: "Convertir FLAC a MP3 — Gratis, Privado y en tu Navegador",
+        description:
+          "Convierte FLAC a MP3 gratis. Se ejecuta 100% en tu navegador con FFmpeg: tu audio sin pérdida nunca se sube.",
+        h1: "Convertir FLAC a MP3",
+        intro:
+          "Pasa tu FLAC sin pérdida a un MP3 portátil, por completo en tu navegador. Rápido, gratis y privado: nada se sube.",
+        card: "Convierte audio FLAC a MP3",
+      },
+    },
+  },
+  {
+    id: "ogg-to-mp3",
+    kind: "audio",
+    from: "OGG",
+    to: "MP3",
+    accept: ".ogg,audio/ogg",
+    sourceExts: ["ogg"],
+    sourceMimes: ["audio/ogg"],
+    targetMime: "audio/mpeg",
+    targetExt: "mp3",
+    related: ["m4a-to-mp3", "flac-to-mp3", "wav-to-mp3"],
+    copy: {
+      en: {
+        title: "OGG to MP3 Converter — Free, Private, In Your Browser",
+        description:
+          "Convert OGG to MP3 for free. Runs 100% in your browser with FFmpeg — your audio is never uploaded.",
+        h1: "OGG to MP3 converter",
+        intro:
+          "Turn OGG Vorbis audio into universally-supported MP3, entirely in your browser. Nothing ever leaves your device.",
+        card: "Convert OGG audio to MP3",
+      },
+      es: {
+        title: "Convertir OGG a MP3 — Gratis, Privado y en tu Navegador",
+        description:
+          "Convierte OGG a MP3 gratis. Se ejecuta 100% en tu navegador con FFmpeg: tu audio nunca se sube.",
+        h1: "Convertir OGG a MP3",
+        intro:
+          "Pasa tu audio OGG Vorbis a MP3, compatible con todo, por completo en tu navegador. Nada sale de tu dispositivo.",
+        card: "Convierte audio OGG a MP3",
+      },
+    },
+  },
+  {
+    id: "m4a-to-wav",
+    kind: "audio",
+    from: "M4A",
+    to: "WAV",
+    accept: ".m4a,audio/mp4,audio/x-m4a",
+    sourceExts: ["m4a"],
+    sourceMimes: ["audio/mp4", "audio/x-m4a"],
+    targetMime: "audio/wav",
+    targetExt: "wav",
+    related: ["m4a-to-mp3", "mp3-to-wav", "mp4-to-wav"],
+    copy: {
+      en: {
+        title: "M4A to WAV Converter — Free, Private, In Your Browser",
+        description:
+          "Convert M4A to WAV for free. Runs 100% in your browser with FFmpeg — your audio is never uploaded.",
+        h1: "M4A to WAV converter",
+        intro:
+          "Turn M4A (AAC) audio into uncompressed WAV, entirely in your browser. Nothing ever leaves your device.",
+        card: "Convert M4A audio to WAV",
+      },
+      es: {
+        title: "Convertir M4A a WAV — Gratis, Privado y en tu Navegador",
+        description:
+          "Convierte M4A a WAV gratis. Se ejecuta 100% en tu navegador con FFmpeg: tu audio nunca se sube.",
+        h1: "Convertir M4A a WAV",
+        intro:
+          "Pasa tu audio M4A (AAC) a WAV sin comprimir, por completo en tu navegador. Nada sale de tu dispositivo.",
+        card: "Convierte audio M4A a WAV",
+      },
+    },
+  },
+  {
+    id: "mp4-to-mp3",
+    kind: "audio",
+    from: "MP4",
+    to: "MP3",
+    accept: ".mp4,video/mp4",
+    sourceExts: ["mp4"],
+    sourceMimes: ["video/mp4"],
+    targetMime: "audio/mpeg",
+    targetExt: "mp3",
+    related: ["mp4-to-wav", "m4a-to-mp3", "mov-to-mp4"],
+    copy: {
+      en: {
+        title: "MP4 to MP3 Converter — Extract Audio Free, In Your Browser",
+        description:
+          "Extract MP3 audio from an MP4 video for free. Runs 100% in your browser with FFmpeg — nothing is uploaded.",
+        h1: "MP4 to MP3 converter",
+        intro:
+          "Pull the audio track out of an MP4 video as an MP3, entirely in your browser. Nothing is uploaded — it all runs on your device.",
+        card: "Extract MP3 audio from MP4 video",
+      },
+      es: {
+        title: "Convertir MP4 a MP3 — Extrae el Audio Gratis en tu Navegador",
+        description:
+          "Extrae el audio MP3 de un vídeo MP4 gratis. Se ejecuta 100% en tu navegador con FFmpeg: nada se sube.",
+        h1: "Convertir MP4 a MP3",
+        intro:
+          "Saca la pista de audio de un vídeo MP4 como MP3, por completo en tu navegador. Nada se sube: todo se ejecuta en tu dispositivo.",
+        card: "Extrae audio MP3 de un vídeo MP4",
+      },
+    },
+  },
+  {
+    id: "mp4-to-wav",
+    kind: "audio",
+    from: "MP4",
+    to: "WAV",
+    accept: ".mp4,video/mp4",
+    sourceExts: ["mp4"],
+    sourceMimes: ["video/mp4"],
+    targetMime: "audio/wav",
+    targetExt: "wav",
+    related: ["mp4-to-mp3", "m4a-to-wav", "mp3-to-wav"],
+    copy: {
+      en: {
+        title: "MP4 to WAV Converter — Extract Audio Free, In Your Browser",
+        description:
+          "Extract WAV audio from an MP4 video for free. Runs 100% in your browser with FFmpeg — nothing is uploaded.",
+        h1: "MP4 to WAV converter",
+        intro:
+          "Pull the audio track out of an MP4 video as an uncompressed WAV, entirely in your browser. Nothing ever leaves your device.",
+        card: "Extract WAV audio from MP4 video",
+      },
+      es: {
+        title: "Convertir MP4 a WAV — Extrae el Audio Gratis en tu Navegador",
+        description:
+          "Extrae el audio WAV de un vídeo MP4 gratis. Se ejecuta 100% en tu navegador con FFmpeg: nada se sube.",
+        h1: "Convertir MP4 a WAV",
+        intro:
+          "Saca la pista de audio de un vídeo MP4 como WAV sin comprimir, por completo en tu navegador. Nada sale de tu dispositivo.",
+        card: "Extrae audio WAV de un vídeo MP4",
+      },
+    },
+  },
+
+  // --- Video (FFmpeg.wasm; see ./media.ts) --------------------------------
+
+  {
+    id: "mov-to-mp4",
+    kind: "video",
+    from: "MOV",
+    to: "MP4",
+    accept: ".mov,video/quicktime",
+    sourceExts: ["mov"],
+    sourceMimes: ["video/quicktime"],
+    targetMime: "video/mp4",
+    targetExt: "mp4",
+    related: ["mp4-to-webm", "mp4-to-gif", "mp4-to-mp3"],
+    copy: {
+      en: {
+        title: "MOV to MP4 Converter — Free, Private, In Your Browser",
+        description:
+          "Convert MOV to MP4 for free. Runs 100% in your browser with FFmpeg — your video is never uploaded to a server.",
+        h1: "MOV to MP4 converter",
+        intro:
+          "Turn an Apple QuickTime MOV into a widely-supported MP4, entirely in your browser. Nothing is uploaded — it all runs on your device.",
+        card: "Convert QuickTime MOV to MP4",
+      },
+      es: {
+        title: "Convertir MOV a MP4 — Gratis, Privado y en tu Navegador",
+        description:
+          "Convierte MOV a MP4 gratis. Se ejecuta 100% en tu navegador con FFmpeg: tu vídeo nunca se sube a ningún servidor.",
+        h1: "Convertir MOV a MP4",
+        intro:
+          "Pasa un MOV de Apple QuickTime a un MP4 compatible con todo, por completo en tu navegador. Nada se sube: todo se ejecuta en tu dispositivo.",
+        card: "Convierte MOV de QuickTime a MP4",
+      },
+    },
+  },
+  {
+    id: "mp4-to-webm",
+    kind: "video",
+    from: "MP4",
+    to: "WebM",
+    accept: ".mp4,video/mp4",
+    sourceExts: ["mp4"],
+    sourceMimes: ["video/mp4"],
+    targetMime: "video/webm",
+    targetExt: "webm",
+    related: ["webm-to-mp4", "mov-to-mp4", "mp4-to-gif"],
+    copy: {
+      en: {
+        title: "MP4 to WebM Converter — Free, Private, In Your Browser",
+        description:
+          "Convert MP4 to WebM for free. Runs 100% in your browser with FFmpeg — your video is never uploaded.",
+        h1: "MP4 to WebM converter",
+        intro:
+          "Turn an MP4 into an open WebM video, entirely in your browser. Nothing is uploaded — it all runs on your device.",
+        card: "Convert MP4 video to WebM",
+      },
+      es: {
+        title: "Convertir MP4 a WebM — Gratis, Privado y en tu Navegador",
+        description:
+          "Convierte MP4 a WebM gratis. Se ejecuta 100% en tu navegador con FFmpeg: tu vídeo nunca se sube.",
+        h1: "Convertir MP4 a WebM",
+        intro:
+          "Pasa un MP4 a un vídeo WebM abierto, por completo en tu navegador. Nada se sube: todo se ejecuta en tu dispositivo.",
+        card: "Convierte vídeo MP4 a WebM",
+      },
+    },
+  },
+  {
+    id: "webm-to-mp4",
+    kind: "video",
+    from: "WebM",
+    to: "MP4",
+    accept: ".webm,video/webm",
+    sourceExts: ["webm"],
+    sourceMimes: ["video/webm"],
+    targetMime: "video/mp4",
+    targetExt: "mp4",
+    related: ["mp4-to-webm", "mov-to-mp4", "mp4-to-mp3"],
+    copy: {
+      en: {
+        title: "WebM to MP4 Converter — Free, Private, In Your Browser",
+        description:
+          "Convert WebM to MP4 for free. Runs 100% in your browser with FFmpeg — your video is never uploaded.",
+        h1: "WebM to MP4 converter",
+        intro:
+          "Turn a WebM into a universally-supported MP4, entirely in your browser. Nothing is uploaded — it all runs on your device.",
+        card: "Convert WebM video to MP4",
+      },
+      es: {
+        title: "Convertir WebM a MP4 — Gratis, Privado y en tu Navegador",
+        description:
+          "Convierte WebM a MP4 gratis. Se ejecuta 100% en tu navegador con FFmpeg: tu vídeo nunca se sube.",
+        h1: "Convertir WebM a MP4",
+        intro:
+          "Pasa un WebM a un MP4 compatible con todo, por completo en tu navegador. Nada se sube: todo se ejecuta en tu dispositivo.",
+        card: "Convierte vídeo WebM a MP4",
+      },
+    },
+  },
+  {
+    id: "mp4-to-gif",
+    kind: "video",
+    from: "MP4",
+    to: "GIF",
+    accept: ".mp4,video/mp4",
+    sourceExts: ["mp4"],
+    sourceMimes: ["video/mp4"],
+    targetMime: "image/gif",
+    targetExt: "gif",
+    related: ["mov-to-mp4", "mp4-to-webm", "mp4-to-mp3"],
+    copy: {
+      en: {
+        title: "MP4 to GIF Converter — Free, Private, In Your Browser",
+        description:
+          "Convert MP4 to an animated GIF for free. Runs 100% in your browser with FFmpeg — your video is never uploaded.",
+        h1: "MP4 to GIF converter",
+        intro:
+          "Turn an MP4 clip into an animated GIF, with adjustable frame rate and width, entirely in your browser. Nothing is uploaded.",
+        card: "Turn an MP4 clip into a GIF",
+      },
+      es: {
+        title: "Convertir MP4 a GIF — Gratis, Privado y en tu Navegador",
+        description:
+          "Convierte MP4 en un GIF animado gratis. Se ejecuta 100% en tu navegador con FFmpeg: tu vídeo nunca se sube.",
+        h1: "Convertir MP4 a GIF",
+        intro:
+          "Convierte un clip MP4 en un GIF animado, con fotogramas y ancho ajustables, por completo en tu navegador. Nada se sube.",
+        card: "Convierte un clip MP4 en un GIF",
       },
     },
   },

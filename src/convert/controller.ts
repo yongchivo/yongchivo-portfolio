@@ -37,6 +37,8 @@ export function initConverter(root: HTMLElement): void {
     initDataConverter(root, conversion, t);
   } else if (conversion.kind === "pdf" || conversion.kind === "operation") {
     initPdfConverter(root, conversion, t);
+  } else if (conversion.kind === "audio" || conversion.kind === "video") {
+    initMediaConverter(root, conversion, t);
   } else {
     initImageConverter(root, conversion, t);
   }
@@ -632,5 +634,192 @@ function initPdfConverter(
     renderFiles();
     clearResults();
     hideError();
+  });
+}
+
+// --- media widget (audio / video via FFmpeg.wasm) -------------------------
+//
+// Single file in, single file out. The FFmpeg core (32 MB) is loaded on first
+// run only, with a status line ("loading…" then "converting… NN%"). media.ts
+// is imported on demand so FFmpeg code-splits onto audio/video pages only.
+
+function initMediaConverter(
+  root: HTMLElement,
+  conversion: Conversion,
+  t: ConverterStrings
+): void {
+  const input = root.querySelector<HTMLInputElement>("[data-cv-input]");
+  const drop = root.querySelector<HTMLElement>("[data-cv-drop]");
+  const filesList = root.querySelector<HTMLElement>("[data-cv-files]");
+  const runBtn = root.querySelector<HTMLButtonElement>("[data-cv-run]");
+  const clearBtn = root.querySelector<HTMLButtonElement>("[data-cv-clear]");
+  const errorBox = root.querySelector<HTMLElement>("[data-cv-error]");
+  const results = root.querySelector<HTMLElement>("[data-cv-results]");
+  const status = root.querySelector<HTMLElement>("[data-cv-status]");
+  const fpsInput = root.querySelector<HTMLInputElement>("[data-cv-fps]");
+  const widthInput = root.querySelector<HTMLInputElement>("[data-cv-width]");
+  if (!input || !filesList || !runBtn || !results) return;
+
+  const isVideoInput = conversion.sourceMimes.some((m) => m.startsWith("video/"));
+  const maxMb = isVideoInput ? 150 : 300;
+
+  let file: File | null = null;
+  let url: string | undefined;
+
+  function hideError() {
+    errorBox?.classList.add("hidden");
+  }
+  function showError(message: string) {
+    if (errorBox) {
+      errorBox.textContent = message;
+      errorBox.classList.remove("hidden");
+    }
+  }
+  function setStatus(text: string) {
+    if (status) status.textContent = text;
+  }
+  function clearResult() {
+    if (url) URL.revokeObjectURL(url);
+    url = undefined;
+    if (results) results.innerHTML = "";
+  }
+
+  function renderFile() {
+    if (!filesList) return;
+    filesList.innerHTML = "";
+    if (!file) return;
+    const li = document.createElement("li");
+    li.className =
+      "flex items-center gap-2 rounded-lg bg-base-200 border border-base-300 px-3 py-2";
+    const meta = document.createElement("div");
+    meta.className = "min-w-0 grow";
+    const name = document.createElement("div");
+    name.className = "truncate text-sm font-medium";
+    name.textContent = file.name;
+    const sub = document.createElement("div");
+    sub.className = "text-xs opacity-70";
+    sub.textContent = humanSize(file.size);
+    meta.append(name, sub);
+    const rm = document.createElement("button");
+    rm.type = "button";
+    rm.className = "btn btn-ghost btn-xs shrink-0";
+    rm.textContent = "✕";
+    rm.title = t.remove;
+    rm.setAttribute("aria-label", t.remove);
+    rm.addEventListener("click", () => {
+      file = null;
+      renderFile();
+      clearResult();
+      hideError();
+      setStatus("");
+    });
+    li.append(meta, rm);
+    filesList.appendChild(li);
+  }
+
+  function setFile(f: File) {
+    if (!accepts(conversion, f)) {
+      showError(t.wrongType);
+      return;
+    }
+    hideError();
+    setStatus("");
+    clearResult();
+    file = f;
+    renderFile();
+  }
+
+  function renderResult(item: ConversionResult) {
+    clearResult();
+    if (!results) return;
+    url = URL.createObjectURL(item.blob);
+    const li = document.createElement("li");
+    li.className =
+      "flex items-center gap-3 rounded-lg bg-base-200 border border-base-300 px-3 py-2";
+    const meta = document.createElement("div");
+    meta.className = "min-w-0 grow";
+    const name = document.createElement("div");
+    name.className = "truncate text-sm font-medium";
+    name.textContent = item.filename;
+    const sub = document.createElement("div");
+    sub.className = "text-xs opacity-70";
+    sub.textContent = humanSize(item.blob.size);
+    meta.append(name, sub);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = item.filename;
+    a.className = "btn btn-sm btn-primary shrink-0";
+    a.textContent = t.download;
+    li.append(meta, a);
+    results.appendChild(li);
+  }
+
+  async function run() {
+    if (!file) {
+      showError(t.wrongType);
+      return;
+    }
+    if (file.size > maxMb * 1024 * 1024) {
+      showError(t.mediaTooLarge.replace("{mb}", String(maxMb)));
+      return;
+    }
+    hideError();
+    clearResult();
+    const label = runBtn!.textContent;
+    runBtn!.disabled = true;
+    runBtn!.textContent = t.working;
+    try {
+      const { convertMedia } = await import("./media");
+      const item = await convertMedia(file, conversion, {
+        fps: fpsInput ? Number(fpsInput.value) : undefined,
+        width: widthInput ? Number(widthInput.value) : undefined,
+        onStatus: (phase) =>
+          setStatus(phase === "loading" ? t.mediaLoading : t.mediaConverting),
+        onProgress: (ratio) =>
+          setStatus(`${t.mediaConverting} · ${Math.round(ratio * 100)}%`),
+      });
+      setStatus("");
+      renderResult(item);
+    } catch (err) {
+      setStatus("");
+      showError(err instanceof Error ? err.message : t.error);
+    } finally {
+      runBtn!.disabled = false;
+      runBtn!.textContent = label;
+    }
+  }
+
+  input.addEventListener("change", () => {
+    if (input.files && input.files.length) setFile(input.files[0]);
+    input.value = "";
+  });
+
+  if (drop) {
+    ["dragenter", "dragover"].forEach((ev) =>
+      drop.addEventListener(ev, (e) => {
+        e.preventDefault();
+        drop.classList.add("border-primary", "bg-base-200");
+      })
+    );
+    ["dragleave", "drop"].forEach((ev) =>
+      drop.addEventListener(ev, (e) => {
+        e.preventDefault();
+        if (ev === "dragleave" && drop.contains((e as DragEvent).relatedTarget as Node)) return;
+        drop.classList.remove("border-primary", "bg-base-200");
+      })
+    );
+    drop.addEventListener("drop", (e) => {
+      const dt = (e as DragEvent).dataTransfer;
+      if (dt?.files?.length) setFile(dt.files[0]);
+    });
+  }
+
+  runBtn.addEventListener("click", run);
+  clearBtn?.addEventListener("click", () => {
+    file = null;
+    renderFile();
+    clearResult();
+    hideError();
+    setStatus("");
   });
 }
