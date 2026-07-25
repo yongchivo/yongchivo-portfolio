@@ -308,7 +308,19 @@ const qualityDefault = mode === "compress" ? 60 : 92;
 
 <script>
   import { initConverter } from "../convert/controller";
-  document
-    .querySelectorAll<HTMLElement>("[data-converter]")
-    .forEach((el) => initConverter(el));
+
+  function initAll() {
+    document
+      .querySelectorAll<HTMLElement>("[data-converter]")
+      .forEach((el) => initConverter(el));
+  }
+
+  // This bundled module runs only once, but the site uses View Transitions, so
+  // the DOM is swapped on client-side navigation without re-running scripts.
+  // Init immediately for the page that first loads this module, AND on every
+  // astro:page-load (fires after each View Transition swap) so widgets reached
+  // via client-side navigation get their listeners too. initConverter is
+  // idempotent, so the overlap on the initial load is harmless.
+  initAll();
+  document.addEventListener("astro:page-load", initAll);
 </script>

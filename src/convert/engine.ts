@@ -61,6 +61,18 @@ async function decodeNative(file: Blob): Promise<DecodedSource> {
  * lightweight. The WASM binary is inlined into the bundle, so nothing is
  * fetched over the network: decoding stays fully offline and private.
  */
+// Shown when libheif can't turn the file into pixels (unsupported variant,
+// corruption, or an oversized image) — actionable rather than a bare "Failed".
+const HEIC_DECODE_FAILED =
+  "Couldn't decode this HEIC. It may use a variant this in-browser tool doesn't support, be corrupted, or be too large. If it's an iPhone photo, try sharing/exporting it as JPEG and converting that.";
+
+interface HeifImage {
+  get_width(): number;
+  get_height(): number;
+  display(data: ImageData, cb: (out: ImageData | null) => void): void;
+  free?(): void;
+}
+
 async function decodeHeic(file: Blob): Promise<DecodedSource> {
   const factory = (
     await import("libheif-js/libheif-wasm/libheif-bundle.mjs")
@@ -68,39 +80,61 @@ async function decodeHeic(file: Blob): Promise<DecodedSource> {
   const libheif = await factory();
 
   const bytes = new Uint8Array(await file.arrayBuffer());
-  const decoder = new libheif.HeifDecoder();
-  const images = decoder.decode(bytes);
+
+  // decode() itself can throw on malformed input — treat that as a decode fail.
+  let images: HeifImage[];
+  try {
+    images = new libheif.HeifDecoder().decode(bytes) as HeifImage[];
+  } catch {
+    throw new Error(HEIC_DECODE_FAILED);
+  }
   if (!images || images.length === 0) {
-    throw new Error("No image found in this HEIC file");
+    throw new Error("No image found in this HEIC file.");
   }
 
   const image = images[0];
-  const width = image.get_width();
-  const height = image.get_height();
+  // Free every libheif image (native memory) on all exit paths, so repeated
+  // attempts on a failing file don't leak.
+  const freeAll = () => images.forEach((img) => img.free?.());
 
-  // libheif paints RGBA into an ImageData; render it to an offscreen canvas
-  // that the shared encode step can then draw from.
-  const source = document.createElement("canvas");
-  source.width = width;
-  source.height = height;
-  const sctx = source.getContext("2d");
-  if (!sctx) throw new Error("Canvas 2D context unavailable");
-  const imageData = sctx.createImageData(width, height);
+  try {
+    const width = image.get_width();
+    const height = image.get_height();
+    // A failed/empty decode reports 0 dimensions; createImageData(0,0) would
+    // otherwise throw a cryptic IndexSizeError.
+    if (!Number.isFinite(width) || !Number.isFinite(height) || width < 1 || height < 1) {
+      throw new Error(HEIC_DECODE_FAILED);
+    }
 
-  await new Promise<void>((resolve, reject) => {
-    image.display(imageData, (out: ImageData | null) =>
-      out ? resolve() : reject(new Error("Could not decode this HEIC file"))
-    );
-  });
-  sctx.putImageData(imageData, 0, 0);
-  images.forEach((img: { free?: () => void }) => img.free?.());
+    // libheif paints RGBA into an ImageData; render it to an offscreen canvas
+    // that the shared encode step can then draw from.
+    const source = document.createElement("canvas");
+    source.width = width;
+    source.height = height;
+    const sctx = source.getContext("2d");
+    if (!sctx) throw new Error("Canvas 2D context unavailable");
+    const imageData = sctx.createImageData(width, height);
 
-  return {
-    width,
-    height,
-    drawTo: (ctx) => ctx.drawImage(source, 0, 0),
-    dispose: () => {},
-  };
+    await new Promise<void>((resolve, reject) => {
+      try {
+        image.display(imageData, (out) =>
+          out ? resolve() : reject(new Error(HEIC_DECODE_FAILED))
+        );
+      } catch {
+        reject(new Error(HEIC_DECODE_FAILED));
+      }
+    });
+    sctx.putImageData(imageData, 0, 0);
+
+    return {
+      width,
+      height,
+      drawTo: (ctx) => ctx.drawImage(source, 0, 0),
+      dispose: () => {},
+    };
+  } finally {
+    freeAll();
+  }
 }
 
 async function decodeSource(

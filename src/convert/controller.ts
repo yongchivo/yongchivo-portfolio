@@ -28,6 +28,12 @@ function humanSize(bytes: number): string {
 
 /** Entry point called by <ConverterApp> for every widget on the page. */
 export function initConverter(root: HTMLElement): void {
+  // Idempotency guard: initConverter may be invoked more than once for the same
+  // element (immediate call + the astro:page-load listener). Bind listeners only
+  // once so we never double-handle a selection.
+  if (root.dataset.cvReady === "1") return;
+  root.dataset.cvReady = "1";
+
   const conversion = getConversion(root.dataset.convId ?? "");
   const lang = (root.dataset.lang as "en" | "es") ?? "en";
   if (!conversion) return;
