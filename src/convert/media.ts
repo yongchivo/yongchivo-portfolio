@@ -6,19 +6,29 @@
 // Slower than the multi-threaded core, but it keeps the rest of yongchivo.com
 // and the CSP completely untouched — same trade as v4 pdf.js and libheif.
 //
-// The core (js + ~32 MB wasm) is SELF-HOSTED at /ffmpeg/ (copied from
-// @ffmpeg/core by scripts/copy-ffmpeg.mjs) so everything is same-origin — no
-// CDN, no blob: URLs. CSP audit result: core glue has no eval / no new Function
-// / no createObjectURL; it fetches its wasm same-origin (connect-src 'self') and
-// instantiates it with WebAssembly (covered by the existing 'wasm-unsafe-eval').
-// The class worker is a same-origin module worker (default-src 'self'). So: no
-// CSP change needed. Loaded on FIRST USE only, so it never touches other pages.
+// Asset hosting (Cloudflare Pages caps a single static file at 25 MiB, and the
+// wasm is ~32 MiB, so it can't be a Pages asset):
+//   - ffmpeg-core.js  (111 KB glue) stays SAME-ORIGIN as a committed Pages asset
+//     at /ffmpeg-core.js. The FFmpeg worker loads it with `import(coreURL)`,
+//     which is a SCRIPT load — keeping it same-origin means script-src 'self'
+//     covers it and no script-src change is needed.
+//   - ffmpeg-core.wasm (~32 MiB) is served from our own Cloudflare R2 bucket on
+//     assets.yongchivo.com. The core FETCHES it (connect-src), so the only CSP
+//     change is adding https://assets.yongchivo.com to connect-src.
+// We pass coreURL/wasmURL directly (NOT @ffmpeg/util toBlobURL, which would make
+// a blob: script and violate CSP). No CDN, no blob:. Core glue audited clean
+// (no eval / no new Function / no createObjectURL); wasm instantiation is
+// covered by the existing 'wasm-unsafe-eval'. Single-threaded core -> no
+// SharedArrayBuffer -> no COOP/COEP. Loaded on FIRST USE only.
+//
+// The committed /ffmpeg-core.js MUST stay the same @ffmpeg/core version as the
+// wasm on R2 (currently 0.12.10) — refresh both together if you ever bump it.
 
 import type { Conversion } from "./registry";
 import type { ConversionResult } from "./engine";
 
-const CORE_URL = "/ffmpeg/ffmpeg-core.js";
-const WASM_URL = "/ffmpeg/ffmpeg-core.wasm";
+const CORE_URL = "/ffmpeg-core.js";
+const WASM_URL = "https://assets.yongchivo.com/ffmpeg-core.wasm";
 
 type FFmpegInstance = import("@ffmpeg/ffmpeg").FFmpeg;
 

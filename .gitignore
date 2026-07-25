@@ -20,5 +20,3 @@ pnpm-debug.log*
 
 # Astro
 .astro/
-# Self-hosted FFmpeg core (copied from @ffmpeg/core by scripts/copy-ffmpeg.mjs)
-public/ffmpeg/
