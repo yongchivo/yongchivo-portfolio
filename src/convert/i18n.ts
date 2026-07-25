@@ -23,6 +23,16 @@ export interface ConverterStrings {
   landingIntro: string;
   landingNote: string;
   backToAll: string;
+  // Data-converter widget + landing categories.
+  catImage: string;
+  catData: string;
+  dataInputLabel: string;
+  dataOutputLabel: string;
+  dataDrop: string;
+  pastePlaceholder: string;
+  copy: string;
+  copied: string;
+  emptyOutput: string;
 }
 
 export const strings: Record<Lang, ConverterStrings> = {
@@ -47,6 +57,15 @@ export const strings: Record<Lang, ConverterStrings> = {
       "Free, private file conversion that runs entirely in your browser. Pick a conversion below — your files never leave your device.",
     landingNote: "Everything runs in your browser. No uploads, no sign-up, no limits.",
     backToAll: "All converters",
+    catImage: "Image",
+    catData: "Data",
+    dataInputLabel: "Input",
+    dataOutputLabel: "Output",
+    dataDrop: "Drop a file or click to choose",
+    pastePlaceholder: "…or paste your text here",
+    copy: "Copy",
+    copied: "Copied!",
+    emptyOutput: "Your converted result will appear here.",
   },
   es: {
     dropTitle: "Suelta los archivos aquí",
@@ -70,5 +89,14 @@ export const strings: Record<Lang, ConverterStrings> = {
     landingNote:
       "Todo se ejecuta en tu navegador. Sin subidas, sin registro, sin límites.",
     backToAll: "Todos los conversores",
+    catImage: "Imágenes",
+    catData: "Datos",
+    dataInputLabel: "Entrada",
+    dataOutputLabel: "Resultado",
+    dataDrop: "Suelta un archivo o haz clic para elegir",
+    pastePlaceholder: "…o pega tu texto aquí",
+    copy: "Copiar",
+    copied: "¡Copiado!",
+    emptyOutput: "Tu resultado convertido aparecerá aquí.",
   },
 };

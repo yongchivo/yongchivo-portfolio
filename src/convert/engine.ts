@@ -4,12 +4,13 @@
 // privacy promise is the whole point of the tool, so keep it that way: never
 // add a fetch/upload path to this module.
 //
-// Extensibility: `convertFile` dispatches on `conversion.kind`. Today the only
-// kind is "image" (canvas-based, with a WASM decode step for HEIC). To add
-// CSV/JSON, PDF or audio later, add a new kind in ./registry.ts and a matching
-// branch here — the UI, routing and SEO layers don't need to change.
+// Extensibility: `convertFile` dispatches on `conversion.kind`. Today there are
+// two kinds: "image" (canvas-based, with a WASM decode step for HEIC) and
+// "data" (pure-JS CSV/JSON/YAML/XML, see ./data.ts). To add PDF or audio later,
+// add a new kind in ./registry.ts and a matching branch here — routing and SEO
+// don't change; the widget only needs a new branch if its shape differs.
 
-import type { Conversion } from "./registry";
+import type { Conversion, DecodeStrategy } from "./registry";
 
 export interface ConversionResult {
   blob: Blob;
@@ -101,7 +102,7 @@ async function decodeHeic(file: Blob): Promise<DecodedSource> {
 
 async function decodeSource(
   file: Blob,
-  strategy: Conversion["decode"]
+  strategy: DecodeStrategy
 ): Promise<DecodedSource> {
   return strategy === "heic" ? decodeHeic(file) : decodeNative(file);
 }
@@ -111,7 +112,7 @@ async function convertImage(
   conversion: Conversion,
   quality: number
 ): Promise<ConversionResult> {
-  const source = await decodeSource(file, conversion.decode);
+  const source = await decodeSource(file, conversion.decode ?? "canvas");
 
   const canvas = document.createElement("canvas");
   canvas.width = source.width;
@@ -156,6 +157,11 @@ export async function convertFile(
   switch (conversion.kind) {
     case "image":
       return convertImage(file, conversion, quality);
+    case "data": {
+      // Pure-JS parsers, loaded on demand so image pages stay lean.
+      const { convertData } = await import("./data");
+      return convertData(file, conversion);
+    }
     default:
       // Exhaustiveness guard: a new kind must add its branch above.
       throw new Error(`Unsupported conversion kind: ${(conversion as Conversion).kind}`);

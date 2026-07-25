@@ -26,12 +26,25 @@ function humanSize(bytes: number): string {
   return `${(kb / 1024).toFixed(1)} MB`;
 }
 
+/** Entry point called by <ConverterApp> for every widget on the page. */
 export function initConverter(root: HTMLElement): void {
   const conversion = getConversion(root.dataset.convId ?? "");
   const lang = (root.dataset.lang as "en" | "es") ?? "en";
   if (!conversion) return;
   const t = strings[lang];
 
+  if (conversion.kind === "data") {
+    initDataConverter(root, conversion, t);
+  } else {
+    initImageConverter(root, conversion, t);
+  }
+}
+
+function initImageConverter(
+  root: HTMLElement,
+  conversion: Conversion,
+  t: ConverterStrings
+): void {
   const input = root.querySelector<HTMLInputElement>("[data-cv-input]");
   const drop = root.querySelector<HTMLElement>("[data-cv-drop]");
   const list = root.querySelector<HTMLElement>("[data-cv-list]");
@@ -219,4 +232,144 @@ export function initConverter(root: HTMLElement): void {
   });
 
   render();
+}
+
+// --- data widget ----------------------------------------------------------
+//
+// A different shape from images: paste-or-drop text in, converted text shown
+// inline (with copy + download) as you type. One document at a time.
+
+function initDataConverter(
+  root: HTMLElement,
+  conversion: Conversion,
+  t: ConverterStrings
+): void {
+  const input = root.querySelector<HTMLInputElement>("[data-cv-input]");
+  const drop = root.querySelector<HTMLElement>("[data-cv-drop]");
+  const textarea = root.querySelector<HTMLTextAreaElement>("[data-cv-text]");
+  const output = root.querySelector<HTMLElement>("[data-cv-output]");
+  const errorBox = root.querySelector<HTMLElement>("[data-cv-error]");
+  const copyBtn = root.querySelector<HTMLButtonElement>("[data-cv-copy]");
+  const downloadLink = root.querySelector<HTMLAnchorElement>("[data-cv-download]");
+  if (!textarea || !output) return;
+
+  let debounce: number | undefined;
+  let url: string | undefined;
+  let outputText = "";
+  // Remembers the last file's name so downloads keep it (e.g. data.csv -> data.json).
+  let sourceName = `data.${conversion.sourceExts[0]}`;
+
+  function revokeUrl() {
+    if (url) URL.revokeObjectURL(url);
+    url = undefined;
+  }
+
+  function setReady(ready: boolean) {
+    if (copyBtn) copyBtn.disabled = !ready;
+    if (downloadLink)
+      downloadLink.classList.toggle("pointer-events-none", !ready);
+    if (downloadLink) downloadLink.classList.toggle("opacity-40", !ready);
+  }
+
+  function showError(message: string) {
+    revokeUrl();
+    outputText = "";
+    output!.textContent = t.emptyOutput;
+    output!.classList.add("opacity-50");
+    setReady(false);
+    if (errorBox) {
+      errorBox.textContent = message;
+      errorBox.classList.remove("hidden");
+    }
+  }
+
+  function clearOutput() {
+    revokeUrl();
+    outputText = "";
+    output!.textContent = t.emptyOutput;
+    output!.classList.add("opacity-50");
+    setReady(false);
+    errorBox?.classList.add("hidden");
+  }
+
+  async function run() {
+    const text = textarea!.value;
+    if (!text.trim()) {
+      clearOutput();
+      return;
+    }
+    const file = new File([text], sourceName, {
+      type: conversion.sourceMimes[0] ?? "text/plain",
+    });
+    try {
+      const result = await convertFile(file, conversion);
+      outputText = await result.blob.text();
+      output!.textContent = outputText;
+      output!.classList.remove("opacity-50");
+      errorBox?.classList.add("hidden");
+      revokeUrl();
+      url = URL.createObjectURL(result.blob);
+      if (downloadLink) {
+        downloadLink.href = url;
+        downloadLink.download = result.filename;
+      }
+      setReady(true);
+    } catch (err) {
+      showError(err instanceof Error ? err.message : t.error);
+    }
+  }
+
+  function loadFile(file: File) {
+    sourceName = file.name;
+    file.text().then((text) => {
+      textarea!.value = text;
+      run();
+    });
+  }
+
+  // --- wiring -------------------------------------------------------------
+
+  textarea.addEventListener("input", () => {
+    window.clearTimeout(debounce);
+    debounce = window.setTimeout(run, 300);
+  });
+
+  input?.addEventListener("change", () => {
+    if (input.files && input.files.length) loadFile(input.files[0]);
+    input.value = "";
+  });
+
+  if (drop) {
+    ["dragenter", "dragover"].forEach((ev) =>
+      drop.addEventListener(ev, (e) => {
+        e.preventDefault();
+        drop.classList.add("border-primary", "bg-base-200");
+      })
+    );
+    ["dragleave", "drop"].forEach((ev) =>
+      drop.addEventListener(ev, (e) => {
+        e.preventDefault();
+        if (ev === "dragleave" && drop.contains((e as DragEvent).relatedTarget as Node)) return;
+        drop.classList.remove("border-primary", "bg-base-200");
+      })
+    );
+    drop.addEventListener("drop", (e) => {
+      const dt = (e as DragEvent).dataTransfer;
+      if (dt?.files?.length) loadFile(dt.files[0]);
+    });
+  }
+
+  copyBtn?.addEventListener("click", async () => {
+    if (!outputText) return;
+    try {
+      await navigator.clipboard.writeText(outputText);
+      const original = copyBtn.textContent;
+      copyBtn.textContent = t.copied;
+      window.setTimeout(() => (copyBtn.textContent = original), 1200);
+    } catch {
+      /* clipboard blocked — the download button still works */
+    }
+  });
+
+  clearOutput();
 }

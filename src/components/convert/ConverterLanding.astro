@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { conversions, type Lang } from "../../convert/registry";
+import { conversions, type ConversionKind, type Lang } from "../../convert/registry";
 import { strings } from "../../convert/i18n";
 
 interface Props {
@@ -18,13 +18,30 @@ const title =
     : "File Converter — Free & 100% In Your Browser | Yongchivo";
 const description = t.landingIntro;
 
-// Group the format badges by their accent colour for a little visual rhythm.
+// Categories, in display order. Only render a category that has conversions,
+// so future kinds appear automatically once they have entries.
+const categories: { key: ConversionKind; name: string }[] = [
+  { key: "image", name: t.catImage },
+  { key: "data", name: t.catData },
+];
+const groups = categories
+  .map((c) => ({ ...c, items: conversions.filter((x) => x.kind === c.key) }))
+  .filter((g) => g.items.length > 0);
+
+// A little colour rhythm for the format badges.
 const badgeClass = (to: string) =>
-  to === "WebP"
-    ? "badge-accent"
-    : to === "PNG"
-      ? "badge-secondary"
-      : "badge-primary";
+  ((
+    {
+      WebP: "badge-accent",
+      PNG: "badge-secondary",
+      JPG: "badge-primary",
+      HEIC: "badge-primary",
+      JSON: "badge-primary",
+      YAML: "badge-secondary",
+      XML: "badge-accent",
+      CSV: "badge-info",
+    } as Record<string, string>
+  )[to] ?? "badge-primary");
 ---
 
 <BaseLayout title={title} description={description} lang={lang}>
@@ -48,23 +65,28 @@ const badgeClass = (to: string) =>
     </div>
   </div>
 
-  <div class="grid gap-3 sm:grid-cols-2">
-    {
-      conversions.map((c) => (
-        <a
-          href={`${base}/${c.id}/`}
-          class="group rounded-xl border border-base-300 bg-base-200 p-4 transition hover:border-primary hover:scale-[101%]"
-        >
-          <div class="flex items-center gap-2 font-mono text-sm font-semibold">
-            <span class="badge badge-ghost">{c.from}</span>
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 opacity-60 group-hover:translate-x-0.5 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"></path>
-            </svg>
-            <span class={`badge ${badgeClass(c.to)}`}>{c.to}</span>
-          </div>
-          <div class="mt-2 text-sm opacity-80">{c.copy[lang].card}</div>
-        </a>
-      ))
-    }
-  </div>
+  {
+    groups.map((group) => (
+      <section class="mb-8">
+        <h2 class="text-xl font-bold mb-3">{group.name}</h2>
+        <div class="grid gap-3 sm:grid-cols-2">
+          {group.items.map((c) => (
+            <a
+              href={`${base}/${c.id}/`}
+              class="group rounded-xl border border-base-300 bg-base-200 p-4 transition hover:border-primary hover:scale-[101%]"
+            >
+              <div class="flex items-center gap-2 font-mono text-sm font-semibold">
+                <span class="badge badge-ghost">{c.from}</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 opacity-60 group-hover:translate-x-0.5 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                </svg>
+                <span class={`badge ${badgeClass(c.to)}`}>{c.to}</span>
+              </div>
+              <div class="mt-2 text-sm opacity-80">{c.copy[lang].card}</div>
+            </a>
+          ))}
+        </div>
+      </section>
+    ))
+  }
 </BaseLayout>
