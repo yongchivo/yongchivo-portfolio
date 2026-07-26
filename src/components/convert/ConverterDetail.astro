@@ -23,7 +23,7 @@ const related = conversion.related
   .filter((c): c is Conversion => Boolean(c));
 ---
 
-<BaseLayout title={copy.title} description={copy.description} lang={lang}>
+<BaseLayout title={copy.title} description={copy.description} lang={lang} sideBarActiveItemID="convert">
   <link slot="head" rel="alternate" hreflang="en" href={new URL(enPath, Astro.site)} />
   <link slot="head" rel="alternate" hreflang="es" href={new URL(esPath, Astro.site)} />
   <link slot="head" rel="alternate" hreflang="x-default" href={new URL(enPath, Astro.site)} />
