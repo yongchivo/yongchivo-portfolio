@@ -1,0 +1,468 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "How do I renew my Wolverhampton taxi licence?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "You'll need a Personal Reference Number, which the council sends by email in your renewal letter. If you haven't received it and you have less than four weeks left on your licence, contact the licensing team directly at driver.lic@wolverhampton.gov.uk.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How will I receive my Wolverhampton taxi licence?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "By email. Wolverhampton no longer issues paper licences. You won't receive a PDF copy of a renewed licence until every check on your application is fully complete.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "My operator wants to see a paper licence — what do I do?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "All private hire operators have been told that licences are now issued by email. If your licence appears on the council's public register, you're allowed to work. Point your operator to the online register if they ask for paper.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Where can I drive with a Wolverhampton private hire licence?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "You can accept pre-booked journeys anywhere in the country, as long as the journey is in a Wolverhampton-licensed private hire vehicle and booked through a private hire operator licensed by Wolverhampton. You cannot ply for hire or use taxi ranks — private hire is pre-booked only.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Why didn't I get a full licence term?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "For a driver licence, the council emails a letter explaining the reason — contact driver.lic@wolverhampton.gov.uk if you didn't receive it. For a vehicle licence, it's usually the age of the vehicle: a vehicle over 10 years old only receives a 6-month licence.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Can someone else drive my licensed vehicle?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes, provided they are insured and hold a relevant Wolverhampton-issued driver licence.",
+      },
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title="Wolverhampton PHV Licensing FAQs — Common Questions Answered"
+  description="Clear answers to the most common Wolverhampton private hire licensing questions — renewals, licences, DBS, vehicles and more."
+>
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
+  <main class="md:flex md:justify-center">
+    <article class="prose prose-lg max-w-[750px]">
+      <h1>Wolverhampton PHV Licensing FAQs</h1>
+
+      <p>
+        These are the questions Wolverhampton private hire drivers ask most
+        often — renewals, how your licence is issued, DBS, check codes,
+        reporting changes, replacements and vehicles — answered in plain
+        English. If you're not yet licensed, start with our guides on
+        <a href="/phv-prep-uk/guide/eligibility/"
+          >whether you're eligible for a Wolverhampton PHV licence</a
+        >
+        and
+        <a href="/phv-prep-uk/guide/how-to-apply/"
+          >how to apply for one</a
+        >.
+      </p>
+
+      <h2>Your driver licence</h2>
+
+      <h3>How do I renew my licence?</h3>
+
+      <p>
+        You'll need a <strong>Personal Reference Number</strong>, which the
+        council sends by email in your renewal letter. If you haven't
+        received it and you have less than four weeks left on your licence,
+        contact the licensing team directly at
+        <a href="mailto:driver.lic@wolverhampton.gov.uk"
+          >driver.lic@wolverhampton.gov.uk</a
+        >.
+      </p>
+
+      <h3>How will I receive my licence?</h3>
+
+      <p>
+        By email. Wolverhampton <strong>no longer issues paper
+        licences</strong>. You won't receive a PDF copy of a renewed licence
+        until every check on your application is fully complete.
+      </p>
+
+      <h3>My operator wants to see a paper licence — what do I do?</h3>
+
+      <p>
+        All private hire operators have been told that licences are now
+        issued by email. If your licence appears on the council's public
+        register, you're allowed to work. Point your operator to the online
+        register if they ask for paper.
+      </p>
+
+      <h3>How do I know if my licence is valid?</h3>
+
+      <p>
+        Check the council's online licence register — your status updates
+        there daily. If your current licence is still valid, the register
+        shows the original expiry date, even where a renewal has already
+        been granted.
+      </p>
+
+      <h3>Why didn't I get a full licence term?</h3>
+
+      <p>
+        For a <strong>driver licence</strong>, the council emails a letter
+        explaining the reason. If you didn't receive it, contact
+        <a href="mailto:driver.lic@wolverhampton.gov.uk"
+          >driver.lic@wolverhampton.gov.uk</a
+        >.
+      </p>
+
+      <p>
+        For a <strong>vehicle licence</strong>, it's usually the age of the
+        vehicle — a vehicle over 10 years old only receives a 6-month
+        licence.
+      </p>
+
+      <h3>My details aren't showing on the public register</h3>
+
+      <p>
+        If you're not on the register, your licence may have expired. If
+        you've applied to renew, make sure you've submitted all the mandatory
+        documents, or your application will be delayed:
+      </p>
+
+      <ul>
+        <li>HMRC Tax Check code</li>
+        <li>Medical certificate (including the D4 form)</li>
+        <li>Right to Work evidence</li>
+      </ul>
+
+      <h2>Where you can legally drive</h2>
+
+      <p>
+        This is one of the most misunderstood areas, so it's worth being
+        precise.
+      </p>
+
+      <h3>Private hire driver licence</h3>
+
+      <ul>
+        <li>
+          You can accept pre-booked journeys anywhere in the country, as long
+          as the journey is in a Wolverhampton-licensed private hire vehicle
+          and booked through a private hire operator licensed by
+          Wolverhampton.
+        </li>
+        <li>
+          You <strong>cannot</strong> ply for hire or use ranks — private
+          hire is pre-booked only.
+        </li>
+      </ul>
+
+      <h3>Hackney Carriage (dual) driver licence</h3>
+
+      <ul>
+        <li>
+          You can ply or stand for hire (use a taxi rank) in a
+          Wolverhampton-licensed Hackney Carriage anywhere within
+          Wolverhampton.
+        </li>
+        <li>
+          You can also accept pre-booked journeys anywhere in the country.
+        </li>
+      </ul>
+
+      <h2>DBS and the Update Service</h2>
+
+      <h3>I'm not on the DBS Update Service — what happens?</h3>
+
+      <p>
+        If you're not registered on the DBS Update Service, you'll only
+        receive a <strong>six-month licence</strong>, and you'll need to
+        apply for a new DBS certificate to get your next licence term.
+      </p>
+
+      <p>
+        If you were on the Update Service and then came off it, you'll need
+        to provide a new DBS certificate. The council will email you with
+        what is required. There's more detail on DBS and the other entry
+        requirements in our
+        <a href="/phv-prep-uk/guide/eligibility/">eligibility guide</a>.
+      </p>
+
+      <h2>Check codes and tax</h2>
+
+      <p>
+        Every licensed driver and operator must be registered to pay tax and
+        prove their right to work. That means two codes:
+      </p>
+
+      <ul>
+        <li>
+          <strong>HMRC Tax Check code</strong> — a 9-digit code you get from
+          gov.uk (search "complete a tax check for a taxi, private hire or
+          scrap metal licence"). Required.
+        </li>
+        <li>
+          <strong>Right to Work code</strong> — obtained from gov.uk ("prove
+          your right to work"). Required.
+        </li>
+      </ul>
+
+      <p>
+        Both codes are submitted through the council's "Provide a Check Code"
+        page.
+      </p>
+
+      <h2>Reporting changes and issues</h2>
+
+      <h3>How do I report a change of details?</h3>
+
+      <p>
+        Use the <strong>MyLicence Portal</strong> (register and log in at
+        iApply) to report a change of address, name, contact details, or
+        medical circumstances.
+      </p>
+
+      <p>
+        Hackney Carriage / dual or South Staffordshire licence holders should
+        contact the council at
+        <a href="mailto:ssdc@wolverhampton.gov.uk">ssdc@wolverhampton.gov.uk</a
+        > instead.
+      </p>
+
+      <h3>
+        What if I receive a penalty notice, caution, conviction, reprimand or
+        warning?
+      </h3>
+
+      <p>
+        You <strong>must</strong> report it through the MyLicence Portal.
+        Hackney Carriage/dual and South Staffordshire holders report via
+        <a href="mailto:ssdc@wolverhampton.gov.uk">ssdc@wolverhampton.gov.uk</a
+        >.
+      </p>
+
+      <h3>I can't access the MyLicence Portal</h3>
+
+      <p>Work through these first:</p>
+
+      <ul>
+        <li>Confirm you've actually registered.</li>
+        <li>
+          Check whether you received and accepted your verification code.
+        </li>
+        <li>Make sure you only signed up once.</li>
+        <li>Use the email address on your council record.</li>
+        <li>Try clearing your browser cache and cookies.</li>
+      </ul>
+
+      <p>
+        If it still won't work, try resetting your password and confirm the
+        reset email arrives. Passwords must be at least 8 characters with at
+        least one uppercase letter, one lowercase letter, one number, and one
+        special character from ! @ # $ % ^ &amp; *.
+      </p>
+
+      <h2>Replacements and fees</h2>
+
+      <p>
+        You'll need proof of ID — either your DVLA driving licence or your
+        driver badge.
+      </p>
+
+      <ul>
+        <li>
+          <strong>Replacement badges and lanyards</strong> — contact Driver
+          Licensing
+          (<a href="mailto:driver.lic@wolverhampton.gov.uk"
+            >driver.lic@wolverhampton.gov.uk</a
+          >)
+        </li>
+        <li>
+          <strong>Replacement pouches and fixing brackets</strong> — contact
+          Vehicle Licensing
+          (<a href="mailto:vehicle.lic@wolverhampton.gov.uk"
+            >vehicle.lic@wolverhampton.gov.uk</a
+          >)
+        </li>
+      </ul>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Cost</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Driver badge replacement (x2)</td>
+            <td>£5</td>
+          </tr>
+          <tr>
+            <td>Lanyard and badge holder</td>
+            <td>£1 (£4 if delivered)</td>
+          </tr>
+          <tr>
+            <td>Pouch for driver badge</td>
+            <td>£1</td>
+          </tr>
+          <tr>
+            <td>Fixing bracket</td>
+            <td>£14</td>
+          </tr>
+          <tr>
+            <td>Damaged vehicle plate replacement</td>
+            <td>£12</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Training</h2>
+
+      <h3>Why have I been asked to redo the training?</h3>
+
+      <p>
+        Any driver who completed Worcestershire County Council's Driver
+        Training Programme <strong>before 19 September 2019</strong> is being
+        asked to re-attend. The updated course adds new conditions of licence
+        and County Lines content.
+      </p>
+
+      <p>
+        Arrange it directly with Worcestershire County Council
+        (<a href="mailto:taxidrivertraining@worcestershire.gov.uk"
+          >taxidrivertraining@worcestershire.gov.uk</a
+        >). Do it as soon as possible to avoid renewal delays. You'll need to
+        provide your name, National Insurance number, driving licence number,
+        email, phone number, and licence number.
+      </p>
+
+      <h2>Medical certificates</h2>
+
+      <h3>The doctor refused to complete my medical certificate</h3>
+
+      <p>
+        You can visit any other GMC-registered medical practitioner to have
+        it completed. <strong>Note:</strong> if you are not medically fit to
+        drive to Group 2 standard, a driver licence application will be
+        refused.
+      </p>
+
+      <h2>Payments</h2>
+
+      <h3>My online payment won't go through</h3>
+
+      <p>
+        Try a desktop or laptop rather than a mobile device, and use Google
+        Chrome rather than your usual browser.
+      </p>
+
+      <h2>Applications through third parties</h2>
+
+      <h3>I applied through an operator or third party and can't get an update</h3>
+
+      <p>
+        The council has <strong>no approved agents or third parties</strong>.
+        Any service a third party provides isn't regulated or controlled by
+        the council.
+      </p>
+
+      <p>
+        The council can only give you information if you have an application
+        reference number beginning with <strong>WTP</strong>. If you paid a
+        third party to submit your application, you'll need to chase them.
+        The council can only assist if you have an email from iApply
+        confirming your application was submitted.
+      </p>
+
+      <h3>I applied via iApply but got no acknowledgement email</h3>
+
+      <p>
+        Check your junk and spam folders. If it's still not there, you
+        probably entered an incorrect email address when applying.
+      </p>
+
+      <h2>Vehicle questions</h2>
+
+      <p>
+        Full vehicle eligibility is covered in our
+        <a href="/phv-prep-uk/guide/eligibility/">eligibility guide</a>, but
+        here are the quick answers that come up most often:
+      </p>
+
+      <ul>
+        <li>
+          <strong>Recording walkaround checks without a smartphone</strong> —
+          print and complete the government's driver vehicle condition
+          checklist.
+        </li>
+        <li>
+          <strong>Can someone else drive my licensed vehicle?</strong> Yes,
+          provided they're insured and hold a relevant Wolverhampton-issued
+          driver licence.
+        </li>
+        <li>
+          <strong>Does a brand-new vehicle need an MOT?</strong> Not if it's
+          brand new with only delivery mileage (maximum 500 miles).
+        </li>
+        <li>
+          <strong>Personalised number plates</strong> — allowed; see the
+          council's "Apply for private registration" page.
+        </li>
+        <li>
+          <strong>Surrendering a vehicle licence</strong> — send the licence,
+          plate, any stickers and a completed surrender form to City of
+          Wolverhampton Council, Chapel Street, Bilston, Wolverhampton WV14
+          0PH.
+        </li>
+      </ul>
+
+      <h2>Still have a question?</h2>
+
+      <p>
+        For anything not covered here, contact Taxi Licensing and Compliance
+        through the council's licensing contact page. This guide summarises
+        the council's published FAQs in plain English — always check the
+        official council page for the definitive position.
+      </p>
+
+      <p>
+        Preparing for the knowledge test as well? See our guides on
+        <a href="/phv-prep-uk/guide/how-to-pass/"
+          >how to pass the Wolverhampton PHV test</a
+        >
+        and
+        <a href="/phv-prep-uk/guide/8-key-questions/">the 8 key questions</a>,
+        or practise anywhere with the
+        <a
+          href="https://apps.apple.com/gb/app/phv-prep-uk-taxi-badge-test/id6776364932"
+          target="_blank"
+          rel="noopener">PHV Prep UK app</a
+        >.
+      </p>
+
+      <p>
+        <strong>PHV Prep UK is an independent study aid.</strong> It is not
+        affiliated with, authorised by, or endorsed by City of Wolverhampton
+        Council or any licensing authority. Always refer to the council's
+        official website for the definitive licensing position.
+      </p>
+    </article>
+  </main>
+</BaseLayout>
