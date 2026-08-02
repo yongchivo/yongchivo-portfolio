@@ -1,0 +1,440 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "Am I eligible for a Wolverhampton private hire licence?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "You must be at least 18 years old, have held a full UK driving licence for at least 12 months, have the right to work in the UK, pass a Group 2 medical examination, and pass an enhanced DBS (criminal record) check.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What is a Certificate of Good Conduct?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "A Certificate of Good Conduct (also accepted as a Police Character/Conduct Certificate) is required if you have lived or worked outside the UK for 3 or more continuous months since the age of 18, including British citizens. It covers the period you spent abroad, because a UK DBS check cannot, and it must be provided in English.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Do I need to join the DBS Update Service?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "It is not compulsory, but it affects your licence. If you are not registered on the DBS Update Service you will only receive a six-month licence, and you will need to apply for a new DBS certificate to get your next licence term.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What check codes do I need for a Wolverhampton taxi licence?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Two: a 9-digit HMRC Tax Check code, obtained from gov.uk, and a Right to Work code, also obtained from gov.uk. Both are submitted through the council's Provide a Check Code page. Every licensed driver and operator must be registered to pay tax and prove their right to work.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What happens if my doctor refuses to complete my medical certificate?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "You can visit any other GMC-registered medical practitioner to have it completed. Note that if you are not medically fit to drive to Group 2 standard, a driver licence application will be refused.",
+      },
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title="Am I Eligible for a Wolverhampton PHV Licence? Full Requirements"
+  description="Everything you need to qualify for a Wolverhampton private hire licence — age, Certificate of Good Conduct, DBS, and vehicle requirements."
+>
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
+  <main class="md:flex md:justify-center">
+    <article class="prose prose-lg max-w-[750px]">
+      <h1>
+        Am I Eligible for a Wolverhampton PHV Licence? Full Requirements
+      </h1>
+
+      <p>
+        Before you spend any money, it's worth checking whether you're
+        <strong>eligible for a Wolverhampton private hire licence</strong>.
+        This page sets out the requirements in plain English — your age and
+        driving licence, the medical, the DBS check, the check codes you'll
+        need, the Certificate of Good Conduct for time spent abroad, and
+        the basics on vehicles. When you're ready to start, our guide on
+        <a href="/phv-prep-uk/guide/how-to-apply/"
+          >how to apply for a Wolverhampton private hire licence</a
+        >
+        walks through the process step by step.
+      </p>
+
+      <h2>Driver requirements at a glance</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Requirement</th>
+            <th>What you need</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Age</td>
+            <td>At least 18 years old</td>
+          </tr>
+          <tr>
+            <td>Driving licence</td>
+            <td>A full UK driving licence held for at least 12 months</td>
+          </tr>
+          <tr>
+            <td>Right to work</td>
+            <td>Evidence of your right to work in the UK, plus a check code</td>
+          </tr>
+          <tr>
+            <td>Medical</td>
+            <td>A Group 2 medical, completed on the D4 form</td>
+          </tr>
+          <tr>
+            <td>Criminal record check</td>
+            <td>An enhanced DBS check</td>
+          </tr>
+          <tr>
+            <td>Tax</td>
+            <td>A 9-digit HMRC Tax Check code</td>
+          </tr>
+          <tr>
+            <td>Time spent abroad</td>
+            <td>
+              A Certificate of Good Conduct, if you've lived or worked
+              outside the UK for 3 or more continuous months since age 18
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        If any of these might be an issue — for example points on your
+        licence or a past conviction — check the council's official guidance
+        before you apply, as decisions on individual cases rest with the
+        council.
+      </p>
+
+      <h2>What is the Certificate of Good Conduct?</h2>
+
+      <p>
+        A UK DBS check can only cover time you've spent in the UK. So if
+        you've lived or worked abroad, you'll also need a
+        <strong>Certificate of Good Conduct</strong> — the council also
+        accepts a "Police Character/Conduct Certificate", and the same
+        document is sometimes called a Certificate of Good Character —
+        covering that period abroad. If you've spent time outside the UK,
+        this is usually the most confusing part of the application, so here's
+        exactly what's required.
+      </p>
+
+      <h3>When do I need one?</h3>
+
+      <p>
+        You need one if you've <strong>lived or worked outside the UK for
+        three or more continuous months since the age of 18</strong>.
+      </p>
+
+      <p>
+        This applies <strong>even to British citizens</strong>. If you're a
+        British citizen who went abroad — for example on an extended holiday
+        — for more than three months, you still need the certificate,
+        provided you were over 18 when you returned to the UK.
+      </p>
+
+      <h3>Does it have to be in English?</h3>
+
+      <p>
+        Yes. It must be provided in English. It's usually pre-translated, but
+        if it isn't, you'll need to obtain a <strong>notarised
+        translation</strong> at your own expense before the council can
+        verify it and issue your licence.
+      </p>
+
+      <h3>What if my home country writes my name in a different order?</h3>
+
+      <p>
+        You'll need to show proof that you legally changed your name, or the
+        certificate must be in your current name.
+      </p>
+
+      <h3>I provided one last year — do I need a new one?</h3>
+
+      <p>
+        No — provided you submitted it when you applied last year and you
+        haven't spent more than three consecutive months abroad since.
+      </p>
+
+      <h3>It's taking a long time, it's expensive, or the country won't issue it</h3>
+
+      <p>
+        The council can't take responsibility for delays or costs caused by
+        third parties — these need to be raised with the relevant embassy or
+        diplomatic service. Where a country won't issue a certificate because
+        you're not a citizen, the council will need to be satisfied you've
+        exhausted all possible avenues before it can proceed.
+      </p>
+
+      <p>
+        Because of those delays, work it out early: add up any single stretch
+        abroad of three months or more, at any point since your 18th
+        birthday, and start the process before you submit your application
+        rather than after.
+      </p>
+
+      <h3>Can I use my British passport as proof I was granted asylum?</h3>
+
+      <p>
+        No. A British passport is not accepted as proof of a successful
+        asylum claim.
+      </p>
+
+      <h2>Do I need to be on the DBS Update Service?</h2>
+
+      <p>
+        You don't have to be — but it directly affects the length of your
+        licence:
+      </p>
+
+      <ul>
+        <li>
+          <strong>Not registered on the Update Service?</strong> You'll only
+          receive a <strong>six-month licence</strong>, and you'll need to
+          apply for a new DBS certificate to get your next licence term.
+        </li>
+        <li>
+          <strong>Registered and then came off it?</strong> You'll need to
+          provide a new DBS certificate. The council will email you with what
+          is required.
+        </li>
+      </ul>
+
+      <p>
+        For renewals, your DBS certificate must be no older than 12 months
+        from the date your former licence expired. Basic, standard and
+        enhanced certificates are all accepted at renewal, as is current
+        registration on the DBS Update Service.
+      </p>
+
+      <h2>What check codes do I need?</h2>
+
+      <p>
+        Every licensed driver and operator must be registered to pay tax and
+        able to prove their right to work. That means two codes:
+      </p>
+
+      <ul>
+        <li>
+          <strong>HMRC Tax Check code</strong> — a 9-digit code from gov.uk
+          (search for "complete a tax check for a taxi, private hire or scrap
+          metal licence").
+        </li>
+        <li>
+          <strong>Right to Work code</strong> — also from gov.uk (search for
+          "prove your right to work").
+        </li>
+      </ul>
+
+      <p>
+        Both are submitted through the council's "Provide a Check Code" page.
+        Missing codes are one of the most common reasons an application or
+        renewal stalls.
+      </p>
+
+      <h2>What are the medical requirements?</h2>
+
+      <p>
+        You must meet the <strong>Group 2 medical standard</strong> — the
+        higher standard that applies to professional drivers such as bus and
+        lorry drivers — with the certificate completed on the
+        <strong>D4 form</strong>. If you are not medically fit to drive to
+        Group 2 standard, a driver licence application will be refused.
+      </p>
+
+      <p>
+        If your own doctor declines to complete the form, you can visit
+        <strong>any other GMC-registered medical practitioner</strong> to
+        have it done. Once licensed, medicals are repeated
+        <strong>every 5 years for drivers aged 45 and over</strong>, and
+        <strong>every year for drivers aged 65 and over</strong>.
+      </p>
+
+      <h2>Is driver training required?</h2>
+
+      <p>
+        Yes — the knowledge test is taken alongside a training course. There
+        is also a re-training requirement for existing drivers: anyone who
+        completed Worcestershire County Council's Driver Training Programme
+        <strong>before 19 September 2019</strong> is being asked to
+        re-attend, because the updated course adds new conditions of licence
+        and County Lines content.
+      </p>
+
+      <p>
+        Arrange it directly with Worcestershire County Council
+        (<a href="mailto:taxidrivertraining@worcestershire.gov.uk"
+          >taxidrivertraining@worcestershire.gov.uk</a
+        >) as soon as possible, to avoid renewal delays. You'll need to give
+        your name, National Insurance number, driving licence number, email,
+        phone number and licence number.
+      </p>
+
+      <p>
+        For the test itself, see our guides on
+        <a href="/phv-prep-uk/guide/how-to-pass/"
+          >how to pass the Wolverhampton PHV test</a
+        >
+        and
+        <a href="/phv-prep-uk/guide/8-key-questions/">the 8 key questions</a>.
+        You can also drill the topics until they're automatic in the
+        <a
+          href="https://apps.apple.com/gb/app/phv-prep-uk-taxi-badge-test/id6776364932"
+          target="_blank"
+          rel="noopener">PHV Prep UK app</a
+        >.
+      </p>
+
+      <h2>Which licence do I need, and where can I work?</h2>
+
+      <p>
+        This is one of the most misunderstood areas, so it's worth being
+        precise:
+      </p>
+
+      <ul>
+        <li>
+          <strong>Private hire driver licence</strong> — you can accept
+          pre-booked journeys anywhere in the country, as long as the journey
+          is in a Wolverhampton-licensed private hire vehicle and booked
+          through a private hire operator licensed by Wolverhampton. You
+          <strong>cannot</strong> ply for hire or use ranks: private hire is
+          pre-booked only.
+        </li>
+        <li>
+          <strong>Hackney Carriage (dual) driver licence</strong> — you can
+          ply or stand for hire (use a taxi rank) in a
+          Wolverhampton-licensed Hackney Carriage anywhere within
+          Wolverhampton, and you can also accept pre-booked journeys anywhere
+          in the country.
+        </li>
+      </ul>
+
+      <h2>What are the vehicle requirements?</h2>
+
+      <p>
+        If you're licensing a vehicle as well, it must meet
+        <strong>all</strong> of the following:
+      </p>
+
+      <ul>
+        <li>
+          <strong>It cannot already be licensed by another authority</strong>
+          — you must surrender any licence held elsewhere first.
+        </li>
+        <li>
+          <strong>No more than 9 seats including the driver</strong>, with
+          passenger doors that open on both sides.
+        </li>
+        <li>
+          <strong>There is no minimum or maximum engine size.</strong>
+        </li>
+        <li><strong>It can be any colour.</strong></li>
+        <li>
+          <strong>Insurance write-off categories.</strong> Category S
+          (formerly Cat C) or N (formerly Cat D) is acceptable only if the
+          vehicle has been repaired and passed an MOT. Categories A and B are
+          prohibited.
+        </li>
+        <li>
+          <strong>Only manufacturer, factory-fitted privacy glass</strong> is
+          allowed — no after-market tints.
+        </li>
+        <li>
+          <strong>LPG vehicles</strong> need an LPG certificate, and the
+          logbook must state that the vehicle is LPG.
+        </li>
+      </ul>
+
+      <h3>Vehicle age and licence length</h3>
+
+      <p>
+        A vehicle <strong>over 10 years old</strong> will only receive a
+        <strong>6-month licence</strong> rather than a full term.
+      </p>
+
+      <p>
+        For vehicles <strong>over 12 years old with emissions under 75g
+        CO₂</strong>, there's a separate application route: send all pages of
+        your logbook to Vehicle Licensing, and if it meets the requirements
+        you'll be sent an application form.
+      </p>
+
+      <h3>Does a new vehicle need an MOT?</h3>
+
+      <p>
+        If the vehicle is brand new with only delivery mileage (a maximum of
+        500 miles), no MOT certificate is required.
+      </p>
+
+      <h3>Other common vehicle questions</h3>
+
+      <ul>
+        <li>
+          <strong>Someone else can drive your licensed vehicle</strong>,
+          provided they are insured and hold a relevant Wolverhampton-issued
+          driver licence.
+        </li>
+        <li>
+          <strong>Personalised number plates are allowed</strong> — see the
+          council's "Apply for private registration" page.
+        </li>
+        <li>
+          <strong>No smartphone for walkaround checks?</strong> Print and
+          complete the government's driver vehicle condition checklist
+          instead.
+        </li>
+        <li>
+          <strong>To surrender a vehicle licence</strong>, send the licence,
+          plate, any stickers and a completed surrender form to City of
+          Wolverhampton Council, Chapel Street, Bilston, Wolverhampton WV14
+          0PH.
+        </li>
+      </ul>
+
+      <h2>Where to go next</h2>
+
+      <p>
+        Once you know you're eligible, read
+        <a href="/phv-prep-uk/guide/how-to-apply/"
+          >how to apply for a Wolverhampton private hire licence</a
+        >
+        for the step-by-step process, and our
+        <a href="/phv-prep-uk/guide/licensing-faqs/"
+          >Wolverhampton PHV licensing FAQs</a
+        >
+        for the practical day-to-day questions — renewals, badges, the
+        MyLicence Portal and more. You can also learn more about the app on
+        the <a href="/phv-prep-uk">PHV Prep UK page</a>, get help via
+        <a href="/phv-prep-uk/support">support</a>, or read our
+        <a href="/phv-prep-uk/privacy">privacy policy</a>.
+      </p>
+
+      <p>
+        <strong>PHV Prep UK is an independent study aid.</strong> It is not
+        affiliated with, authorised by, or endorsed by City of Wolverhampton
+        Council or any licensing authority. Always check the council's
+        official guidance for the latest eligibility requirements and fees.
+      </p>
+    </article>
+  </main>
+</BaseLayout>
