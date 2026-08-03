@@ -61,6 +61,15 @@ import HorizontalCard from "../components/HorizontalCard.astro";
 
   {/* Newest first — keep in sync with the listing in blog/[...page].astro */}
   <HorizontalCard
+    title="PHV Prep UK Android Is Ready — And We Need 12 Testers"
+    img="/images/android-beta-testers.png"
+    desc="The Android version of PHV Prep UK is finished. We need 12 testers to unlock the Play Store launch — join the beta and get free full access."
+    url="/phv-prep-uk/blog/android-ready/"
+    target="_self"
+    badge="ANDROID BETA"
+  />
+  <div class="divider my-0"></div>
+  <HorizontalCard
     title="Building a file converter that never uploads your files"
     img="/post-file-converter.webp"
     desc="I built a file converter at yongchivo.com/convert that runs 100% in the browser — images, data formats, PDF, audio and video, all converted on-device with WebAssembly. Nothing is ever uploaded. Here's the architecture, the trade-offs, and what I learned."
@@ -76,15 +85,6 @@ import HorizontalCard from "../components/HorizontalCard.astro";
     url="/blog/yongchivo-tools-launch"
     target="_self"
     badge="SECURITY"
-  />
-  <div class="divider my-0"></div>
-  <HorizontalCard
-    title="Join the PHV Prep UK Android Beta — Test It Now"
-    img="/images/join-android-beta.png"
-    desc="PHV Prep UK is in closed beta on Android. Join the tester group, opt in, and install it from the Play Store."
-    url="/phv-prep-uk/blog/join-android-beta/"
-    target="_self"
-    badge="ANDROID BETA"
   />
   <div class="divider my-0"></div>
 </BaseLayout>

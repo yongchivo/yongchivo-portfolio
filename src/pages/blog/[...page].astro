@@ -10,6 +10,14 @@ export async function getStaticPaths({ paginate }) {
   // newest first. Must stay inside getStaticPaths: Astro hoists it into its own scope.
   const standalonePosts = [
     {
+      title: "PHV Prep UK Android Is Ready — And We Need 12 Testers",
+      img: "/images/android-beta-testers.png",
+      desc: "The Android version of PHV Prep UK is finished. We need 12 testers to unlock the Play Store launch — join the beta and get free full access.",
+      url: "/phv-prep-uk/blog/android-ready/",
+      badge: "ANDROID BETA",
+      pubDate: new Date("2026-07-31"),
+    },
+    {
       title: "Join the PHV Prep UK Android Beta — Test It Now",
       img: "/images/join-android-beta.png",
       desc: "PHV Prep UK is in closed beta on Android. Join the tester group, opt in, and install it from the Play Store.",
