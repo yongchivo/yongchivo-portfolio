@@ -285,12 +285,12 @@ async function build() {
   });
   y -= 8;
 
-  heading("Education", entryHeight(education[0]));
-  education.forEach(entry);
-  y -= 1;
-
   heading("Projects", entryHeight(projects[0]));
   projects.forEach(entry);
+  y -= 1;
+
+  heading("Education", entryHeight(education[0]));
+  education.forEach(entry);
   y -= 1;
 
   heading("Academic Projects", entryHeight(academicProjects[0]));

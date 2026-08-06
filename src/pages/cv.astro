@@ -45,12 +45,12 @@ import {
   </div>
 
   <div class="mb-5">
-    <div class="text-3xl w-full font-bold">Education</div>
+    <div class="text-3xl w-full font-bold">Projects</div>
   </div>
 
-  <div class="time-line-container grid gap-4 mb-10">
+  <div class="time-line-container mb-10">
     {
-      education.map((item) => (
+      projects.map((item) => (
         <TimeLineElement title={item.title} subtitle={item.subtitle}>
           {item.body}
         </TimeLineElement>
@@ -59,12 +59,12 @@ import {
   </div>
 
   <div class="mb-5">
-    <div class="text-3xl w-full font-bold">Projects</div>
+    <div class="text-3xl w-full font-bold">Education</div>
   </div>
 
-  <div class="time-line-container mb-10">
+  <div class="time-line-container grid gap-4 mb-10">
     {
-      projects.map((item) => (
+      education.map((item) => (
         <TimeLineElement title={item.title} subtitle={item.subtitle}>
           {item.body}
         </TimeLineElement>
