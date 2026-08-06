@@ -17,6 +17,7 @@ import { dirname, resolve } from "node:path";
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 
 import {
+  lastUpdated,
   contact,
   profile,
   education,
@@ -86,6 +87,14 @@ async function build() {
   pdf.setSubject(contact.headline);
   pdf.setCreator("yongchivo.com");
   pdf.setProducer("pdf-lib");
+
+  // pdf-lib defaults these to the current time, which makes every run emit a
+  // different binary and leaves the committed PDF permanently "modified" in
+  // git. Pinning them to the content's own date keeps output reproducible: a
+  // diff then means the CV actually changed.
+  const stamp = new Date(`${lastUpdated}T00:00:00Z`);
+  pdf.setCreationDate(stamp);
+  pdf.setModificationDate(stamp);
 
   const pages = [];
   let page;

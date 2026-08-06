@@ -19,6 +19,14 @@ export interface CvSkillGroup {
   items: string[];
 }
 
+/**
+ * Date stamped into the generated PDF's metadata. Fixed rather than "now" so
+ * regenerating unchanged content produces a byte-identical file — otherwise the
+ * committed PDF shows up as modified in git after every run. Bump it when the
+ * CV content below actually changes.
+ */
+export const lastUpdated = "2026-08-06";
+
 /** Header details for the PDF. The web page gets these from the sidebar instead. */
 export const contact = {
   name: "John Akhis Moreno",
