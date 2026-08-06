@@ -20,7 +20,7 @@ export const standalonePosts: StandalonePost[] = [
   {
     title:
       "The PHV Prep UK Android Test Is Underway — Launch Expected 18 August",
-    img: "/images/android-beta-testers.png",
+    img: "/images/closed-testing-underway.png",
     desc: "PHV Prep UK has started its 14-day Google Play closed test. If all goes well, the Android version launches on 18 August 2026.",
     url: "/phv-prep-uk/blog/closed-testing-underway/",
     badge: "ANDROID BETA",
