@@ -18,6 +18,15 @@ export interface StandalonePost {
 
 export const standalonePosts: StandalonePost[] = [
   {
+    title:
+      "The PHV Prep UK Android Test Is Underway — Launch Expected 18 August",
+    img: "/images/android-beta-testers.png",
+    desc: "PHV Prep UK has started its 14-day Google Play closed test. If all goes well, the Android version launches on 18 August 2026.",
+    url: "/phv-prep-uk/blog/closed-testing-underway/",
+    badge: "ANDROID BETA",
+    pubDate: new Date("2026-08-06"),
+  },
+  {
     title: "PHV Prep UK Android Is Ready — And We Need 12 Testers",
     img: "/images/android-beta-testers.png",
     desc: "The Android version of PHV Prep UK is finished. We need 12 testers to unlock the Play Store launch — join the beta and get free full access.",
