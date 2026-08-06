@@ -1,15 +1,47 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import TimeLineElement from "../components/cv/TimeLine.astro";
+import {
+  profile,
+  education,
+  projects,
+  academicProjects,
+  experience,
+  certifications,
+  skills,
+} from "../data/cv";
 ---
 
 <BaseLayout title="CV" sideBarActiveItemID="cv">
-  <div class="mb-5">
-    <div class="text-3xl w-full font-bold">Profile</div>
+  <div
+    class="mb-5 flex flex-wrap items-center justify-between gap-4"
+  >
+    <div class="text-3xl font-bold">Profile</div>
+    <a
+      href="/cv/john-cv.pdf"
+      download
+      class="btn btn-primary gap-2"
+      aria-label="Download this CV as a PDF"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        aria-hidden="true"
+      >
+        <path
+          d="M12 16 7 11l1.41-1.41L11 12.17V4h2v8.17l2.59-2.58L17 11l-5 5Z"
+        ></path>
+        <path d="M5 18h14v2H5z"></path>
+      </svg>
+      Download PDF
+    </a>
   </div>
 
   <div class="mb-10 text-justify">
-    Year 2 BSc (Hons) Cyber Security student at the University of Worcester (graduating 2027), with hands-on project experience across digital forensics, mobile applications, custom Linux environments and web development. Bilingual in Spanish and English. Holder of an SIA Door Supervisor licence, Emergency First Aid at Work certification and a full UK driving licence. Four years of customer-facing hospitality experience have built strong communication skills, reliability and the ability to stay calm under pressure, both independently and in fast-moving teams.
+    {profile}
   </div>
 
   <div class="mb-5">
@@ -17,18 +49,13 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
   </div>
 
   <div class="time-line-container grid gap-4 mb-10">
-    <TimeLineElement
-      title="BSc (Hons) Cyber Security (Single Honours)"
-      subtitle="Sept 2024 – Jun 2027 (expected) at University of Worcester, Worcester, UK"
-    >
-      Year 2, B-grade average. Modules include Digital Forensics, Mobile Application Development, Web Technologies, networking and security fundamentals. Coursework focuses on practical investigation techniques, secure design and modern application development.
-    </TimeLineElement>
-    <TimeLineElement
-      title="BTEC Level 3 National Extended Diploma in Information Technology"
-      subtitle="2022 – 2024 at Sandwell College, Central Campus, Birmingham, UK"
-    >
-      Overall grade: MMP. Merit grades in IT Systems, Creating Systems to Manage Information, Mobile Apps Development, Software Testing, Programming, Using Social Media in Business and IT Project Management. Pass grades in Cyber Security and Incident Management, IT Service Delivery, Website Development, IT Technical Support, Computer Games Development and Digital Animation.
-    </TimeLineElement>
+    {
+      education.map((item) => (
+        <TimeLineElement title={item.title} subtitle={item.subtitle}>
+          {item.body}
+        </TimeLineElement>
+      ))
+    }
   </div>
 
   <div class="mb-5">
@@ -36,30 +63,27 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
   </div>
 
   <div class="time-line-container mb-10">
-    <TimeLineElement
-      title="BlackDogHunter — 2D Game"
-      subtitle="Unity / C# - Academic project, University of Worcester"
-    >
-      Designed and built a complete 2D game in Unity using C#, covering game mechanics, sprite animation, scene management and level design.
-    </TimeLineElement>
-    <TimeLineElement
-      title="University Kiosk Operating System"
-      subtitle="Linux / Ubuntu - Academic project, University of Worcester"
-    >
-      Built a locked-down kiosk OS based on Ubuntu, configuring auto-login, a restricted user environment and start-up scripts to deliver a reliable single-purpose public terminal.
-    </TimeLineElement>
-    <TimeLineElement
-      title="MyLocation — Mobile Application"
-      subtitle="Android / Java / Kotlin / Firebase - Academic project, University of Worcester"
-    >
-      Developed a location-aware mobile app backed by Google Firebase, including user authentication and real-time data storage to sync locations and events.
-    </TimeLineElement>
-    <TimeLineElement
-      title="E-Commerce Web Pages"
-      subtitle="HTML / CSS / JavaScript"
-    >
-      Designed and built responsive e-commerce front-end pages, including product layouts, navigation and interactive elements.
-    </TimeLineElement>
+    {
+      projects.map((item) => (
+        <TimeLineElement title={item.title} subtitle={item.subtitle}>
+          {item.body}
+        </TimeLineElement>
+      ))
+    }
+  </div>
+
+  <div class="mb-5">
+    <div class="text-3xl w-full font-bold">Academic Projects</div>
+  </div>
+
+  <div class="time-line-container mb-10">
+    {
+      academicProjects.map((item) => (
+        <TimeLineElement title={item.title} subtitle={item.subtitle}>
+          {item.body}
+        </TimeLineElement>
+      ))
+    }
   </div>
 
   <div class="mb-5">
@@ -67,18 +91,13 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
   </div>
 
   <div class="time-line-container mb-10">
-    <TimeLineElement
-      title="Bartender at Sabai Sabai"
-      subtitle="Apr 2024 – Mar 2026 in Birmingham, UK"
-    >
-      Prepared and served cocktails, coffees, spirits and beer to a high standard in a busy Thai-restaurant bar. Handled cash and card payments accurately, reconciled tills at end of shift, and carried out weekly beer-line cleaning, daily bar hygiene and stock checks to brewery and food-safety standards. Verified customer ID under Challenge 25 and applied responsible-service procedures.
-    </TimeLineElement>
-    <TimeLineElement
-      title="Bartender & Kitchen Porter at Tapas Revolution"
-      subtitle="2021 – 2023 in Birmingham, UK"
-    >
-      Bartender (~24 months) and Kitchen Porter (4 months). Served cocktails, wine, beer and spirits in a high-volume Spanish restaurant, switching between English and Spanish to support customers and team members. Took customer payments and operated the till during peak services. As Kitchen Porter, supported chefs with food preparation, dishwashing and kitchen hygiene.
-    </TimeLineElement>
+    {
+      experience.map((item) => (
+        <TimeLineElement title={item.title} subtitle={item.subtitle}>
+          {item.body}
+        </TimeLineElement>
+      ))
+    }
   </div>
 
   <div class="mb-5">
@@ -86,69 +105,23 @@ import TimeLineElement from "../components/cv/TimeLine.astro";
   </div>
 
   <ul class="list-disc mx-6 mb-10 grid gap-2">
-    <li>SIA Door Supervisor Licence — Valid to 30 September 2028</li>
-    <li>Highfield Level 2 Award for Door Supervisors in the Private Security Industry (RQF) — June 2025</li>
-    <li>Highfield Level 3 Award in Emergency First Aid at Work (RQF) — May 2025 (valid 3 years)</li>
-    <li>ACT Awareness e-Learning — Counter Terrorism Policing / NaCTSO, June 2025</li>
-    <li>ACT Security e-Learning — Counter Terrorism Policing / SIA, June 2025</li>
-    <li>Full UK Driving Licence</li>
+    {certifications.map((item) => <li>{item}</li>)}
   </ul>
 
   <div class="mb-5">
     <div class="text-3xl w-full font-bold">Skills</div>
   </div>
 
-  <div class="mb-5">
-    <div class="text-xl font-bold mb-2">Security & Forensics</div>
-    <ul class="list-disc md:columns-3 columns-2 mx-6">
-      <li>Digital Forensics</li>
-      <li>Incident Response</li>
-      <li>Security Operations</li>
-      <li>ACT Counter-Terrorism</li>
-    </ul>
-  </div>
-
-  <div class="mb-5">
-    <div class="text-xl font-bold mb-2">Development</div>
-    <ul class="list-disc md:columns-3 columns-2 mx-6">
-      <li>C# (Unity)</li>
-      <li>Java / Kotlin (Android)</li>
-      <li>HTML</li>
-      <li>CSS</li>
-      <li>JavaScript</li>
-      <li>Python (basics)</li>
-    </ul>
-  </div>
-
-  <div class="mb-5">
-    <div class="text-xl font-bold mb-2">Operating Systems & Tools</div>
-    <ul class="list-disc md:columns-3 columns-2 mx-6">
-      <li>Linux (Ubuntu)</li>
-      <li>Windows</li>
-      <li>Git & GitHub</li>
-      <li>Firebase</li>
-      <li>Unity</li>
-      <li>Microsoft Office</li>
-    </ul>
-  </div>
-
-  <div class="mb-5">
-    <div class="text-xl font-bold mb-2">Languages</div>
-    <ul class="list-disc md:columns-3 columns-2 mx-6">
-      <li>Spanish — Native</li>
-      <li>English — Fluent</li>
-    </ul>
-  </div>
-
-  <div class="mb-5">
-    <div class="text-xl font-bold mb-2">Soft Skills</div>
-    <ul class="list-disc md:columns-3 columns-2 mx-6">
-      <li>Customer service</li>
-      <li>Cash handling</li>
-      <li>Conflict de-escalation</li>
-      <li>Teamwork</li>
-      <li>Time management</li>
-      <li>Bilingual communication</li>
-    </ul>
-  </div>
+  {
+    skills.map((group) => (
+      <div class="mb-5">
+        <div class="text-xl font-bold mb-2">{group.name}</div>
+        <ul class="list-disc md:columns-3 columns-2 mx-6">
+          {group.items.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ul>
+      </div>
+    ))
+  }
 </BaseLayout>
