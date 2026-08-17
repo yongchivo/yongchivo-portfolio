@@ -54,7 +54,7 @@ const badgeClass = (to: string) =>
   )[to] ?? "badge-primary");
 ---
 
-<BaseLayout title={title} description={description} lang={lang} sideBarActiveItemID="convert">
+<BaseLayout title={title} description={description} lang={lang} sideBarActiveItemID="tools">
   <link slot="head" rel="alternate" hreflang={lang} href={new URL(`${base}/`, Astro.site)} />
   <link slot="head" rel="alternate" hreflang={lang === "es" ? "en" : "es"} href={new URL(other, Astro.site)} />
   <link slot="head" rel="alternate" hreflang="x-default" href={new URL("/convert/", Astro.site)} />

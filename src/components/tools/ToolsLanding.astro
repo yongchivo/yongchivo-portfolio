@@ -1,0 +1,277 @@
+---
+// The /tools/ hub: one page that gathers everything I've shipped, grouped by
+// what it is rather than where it's hosted. The cybersecurity tools live on
+// tools.yongchivo.com (external), the converter lives on this site, and the
+// analytics dashboard isn't built yet. Nothing moves — this is just the door.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { conversions, getConversion, type Conversion, type Lang } from "../../convert/registry";
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const isEs = lang === "es";
+
+const other = isEs ? "/tools/" : "/es/tools/";
+const convertBase = isEs ? "/es/convert" : "/convert";
+// tools.yongchivo.com mirrors this site's EN/ES split under /es/.
+const toolsBase = isEs ? "https://tools.yongchivo.com/es" : "https://tools.yongchivo.com";
+
+const title = isEs
+  ? "Herramientas — Ciberseguridad, Conversor de Archivos y más | Yongchivo"
+  : "Tools — Cybersecurity, File Converter & More | Yongchivo";
+const description = isEs
+  ? "Todas mis herramientas gratuitas en un solo sitio: micro-herramientas de ciberseguridad, un conversor de archivos que funciona 100% en tu navegador y más por venir."
+  : "Every free tool I've built, in one place: privacy-first cybersecurity utilities, a file converter that runs 100% in your browser, and more on the way.";
+
+const t = isEs
+  ? {
+      h1: "Herramientas",
+      intro:
+        "Todo lo que he construido, en un solo sitio. Herramientas pequeñas y enfocadas, gratis y sin registro.",
+      secCyber: "Ciberseguridad",
+      secCyberIntro:
+        "Micro-herramientas privadas alojadas en tools.yongchivo.com. Las herramientas de cliente nunca envían tus datos a ningún sitio.",
+      secConvert: "Conversor de archivos",
+      secConvertIntro:
+        "Conversión de archivos gratis y privada que se ejecuta por completo en tu navegador.",
+      secAnalytics: "Analítica",
+      convertCardTitle: "Ver todas las conversiones",
+      convertCardDesc: (n: number) =>
+        `${n} conversiones disponibles — imágenes, datos, PDF, audio y vídeo. Nada se sube a un servidor.`,
+      featured: "Más usadas",
+      analyticsName: "Panel de analítica",
+      analyticsDesc:
+        "Un panel para ver el tráfico y el uso de mis proyectos de un vistazo, sin cookies de seguimiento.",
+      comingSoon: "Próximamente",
+      live: "Disponible",
+    }
+  : {
+      h1: "Tools",
+      intro:
+        "Everything I've built, in one place. Small, focused tools — free, and no sign-up.",
+      secCyber: "Cybersecurity",
+      secCyberIntro:
+        "Privacy-first micro-tools hosted at tools.yongchivo.com. The client-side ones never send your data anywhere.",
+      secConvert: "File Converter",
+      secConvertIntro:
+        "Free, private file conversion that runs entirely in your browser.",
+      secAnalytics: "Analytics",
+      convertCardTitle: "Browse every conversion",
+      convertCardDesc: (n: number) =>
+        `${n} conversions available — images, data, PDF, audio and video. Nothing is ever uploaded.`,
+      featured: "Most popular",
+      analyticsName: "Analytics Dashboard",
+      analyticsDesc:
+        "One place to see traffic and usage across my projects at a glance, with no tracking cookies.",
+      comingSoon: "Coming soon",
+      live: "Live",
+    };
+
+// The cybersecurity tools, in the same order as the hub at tools.yongchivo.com.
+// Names and blurbs are that site's own copy so the two hubs read as one product.
+const cyberTools: { slug: string; name: string; desc: string }[] = isEs
+  ? [
+      {
+        slug: "password-generator",
+        name: "Generador de contraseñas",
+        desc: "Crea contraseñas fuertes y aleatorias íntegramente en tu navegador.",
+      },
+      {
+        slug: "password-strength",
+        name: "Analizador de fortaleza de contraseñas",
+        desc: "Comprueba cuánto resiste una contraseña frente a ataques — nada sale de tu dispositivo.",
+      },
+      {
+        slug: "subnet-calculator",
+        name: "Calculadora de subredes",
+        desc: "Calcula rangos de red, máscaras y hosts a partir de cualquier bloque CIDR.",
+      },
+      {
+        slug: "security-headers",
+        name: "Verificador de cabeceras de seguridad",
+        desc: "Pega una URL y audita sus cabeceras de seguridad HTTP en segundos.",
+      },
+      {
+        slug: "breach-check",
+        name: "Comprobador de filtraciones",
+        desc: "Descubre si una cuenta aparece en filtraciones de datos conocidas.",
+      },
+      {
+        slug: "which-cyber-role",
+        name: "¿Qué rol cyber eres?",
+        desc: "Un test rápido para encontrar tu perfil: pentester, analista SOC, forense y más.",
+      },
+      {
+        slug: "exif-viewer",
+        name: "Visor EXIF",
+        desc: "Mira los metadatos ocultos de una foto — cámara, fecha y hasta la ubicación GPS. 100% en tu navegador.",
+      },
+      {
+        slug: "pdf-metadata",
+        name: "Editor de metadatos PDF",
+        desc: "Inspecciona y elimina los metadatos ocultos de un PDF — autor, software y fechas.",
+      },
+    ]
+  : [
+      {
+        slug: "password-generator",
+        name: "Password Generator",
+        desc: "Create strong, random passwords entirely in your browser.",
+      },
+      {
+        slug: "password-strength",
+        name: "Password Strength Analyzer",
+        desc: "Check how resistant a password is to cracking — nothing leaves your device.",
+      },
+      {
+        slug: "subnet-calculator",
+        name: "Subnet Calculator",
+        desc: "Work out network ranges, masks and hosts from any CIDR block.",
+      },
+      {
+        slug: "security-headers",
+        name: "Security Headers Checker",
+        desc: "Paste a URL and audit its HTTP security headers in seconds.",
+      },
+      {
+        slug: "breach-check",
+        name: "Breach Checker",
+        desc: "Find out if an account appears in known data breaches.",
+      },
+      {
+        slug: "which-cyber-role",
+        name: "Which Cyber Role Are You?",
+        desc: "A quick quiz to find your fit: pentester, SOC analyst, forensics and more.",
+      },
+      {
+        slug: "exif-viewer",
+        name: "EXIF Viewer",
+        desc: "See the hidden metadata in a photo — camera, timestamp, even GPS location. 100% in your browser.",
+      },
+      {
+        slug: "pdf-metadata",
+        name: "PDF Metadata Editor",
+        desc: "Inspect and strip the hidden metadata in a PDF — author, software and timestamps.",
+      },
+    ];
+
+// Counted from the registry so the number can never drift from what's shipped.
+const conversionCount = conversions.length;
+
+// A handful of the most-searched conversions, straight from the registry so the
+// cards match the ones on the /convert/ landing.
+const featured = ["heic-to-jpg", "png-to-jpg", "mp4-to-mp3", "merge-pdf", "csv-to-json"]
+  .map((id) => getConversion(id))
+  .filter((c): c is Conversion => Boolean(c));
+
+const cardClass =
+  "group rounded-xl border border-base-300 bg-base-200 p-4 transition hover:border-primary hover:scale-[101%]";
+---
+
+<BaseLayout title={title} description={description} lang={lang} sideBarActiveItemID="tools">
+  <link slot="head" rel="alternate" hreflang="en" href={new URL("/tools/", Astro.site)} />
+  <link slot="head" rel="alternate" hreflang="es" href={new URL("/es/tools/", Astro.site)} />
+  <link slot="head" rel="alternate" hreflang="x-default" href={new URL("/tools/", Astro.site)} />
+
+  <div class="mb-8">
+    <div class="flex items-center gap-3 flex-wrap">
+      <h1 class="text-3xl md:text-4xl font-bold bg-gradient-to-r from-brand-magenta via-brand-purple to-brand-cyan bg-clip-text text-transparent w-fit">
+        {t.h1}
+      </h1>
+      <a href={other} class="badge badge-outline">{isEs ? "EN" : "ES"}</a>
+    </div>
+    <p class="mt-3 opacity-80 max-w-2xl">{t.intro}</p>
+  </div>
+
+  <section class="mb-10">
+    <h2 class="text-xl font-bold mb-1">{t.secCyber}</h2>
+    <p class="text-sm opacity-70 mb-3 max-w-2xl">{t.secCyberIntro}</p>
+    <div class="grid gap-3 sm:grid-cols-2">
+      {
+        cyberTools.map((tool) => (
+          <a href={`${toolsBase}/${tool.slug}/`} target="_blank" rel="noopener" class={cardClass}>
+            <div class="flex items-start justify-between gap-3">
+              <span class="font-semibold">{tool.name}</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-4 h-4 shrink-0 mt-1 opacity-50 group-hover:opacity-100 transition"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                aria-hidden="true"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H18v4.5m0-4.5-7.5 7.5M16.5 13.5v4.5a1.5 1.5 0 0 1-1.5 1.5H6a1.5 1.5 0 0 1-1.5-1.5V9A1.5 1.5 0 0 1 6 7.5h4.5" />
+              </svg>
+            </div>
+            <div class="mt-2 text-sm opacity-80">{tool.desc}</div>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="mb-10">
+    <h2 class="text-xl font-bold mb-1">{t.secConvert}</h2>
+    <p class="text-sm opacity-70 mb-3 max-w-2xl">{t.secConvertIntro}</p>
+
+    <a href={`${convertBase}/`} class={`${cardClass} block mb-4`}>
+      <div class="flex items-center gap-2 font-semibold">
+        <span>{t.convertCardTitle}</span>
+        <span class="badge badge-primary">{conversionCount}</span>
+      </div>
+      <div class="mt-2 text-sm opacity-80">{t.convertCardDesc(conversionCount)}</div>
+    </a>
+
+    <h3 class="text-sm font-semibold uppercase tracking-wide opacity-60 mb-2">{t.featured}</h3>
+    <div class="grid gap-3 sm:grid-cols-2">
+      {
+        featured.map((c) => (
+          <a href={`${convertBase}/${c.id}/`} class={cardClass}>
+            <div class="flex items-center gap-2 font-mono text-sm font-semibold">
+              {c.from && c.to ? (
+                <>
+                  <span class="badge badge-ghost">{c.from}</span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-4 h-4 opacity-60 group-hover:translate-x-0.5 transition"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    aria-hidden="true"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                  </svg>
+                  <span class="badge badge-primary">{c.to}</span>
+                </>
+              ) : (
+                <span class="badge badge-warning">{c.copy[lang].h1}</span>
+              )}
+            </div>
+            <div class="mt-2 text-sm opacity-80">{c.copy[lang].card}</div>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="mb-4">
+    <h2 class="text-xl font-bold mb-3">{t.secAnalytics}</h2>
+    <div class="grid gap-3 sm:grid-cols-2">
+      {/* Placeholder card — stays a non-link until the dashboard exists, the
+          same way tools.yongchivo.com holds a slot for a tool it hasn't shipped. */}
+      <div class="rounded-xl border border-base-300 bg-base-200 p-4">
+        <div class="flex items-start justify-between gap-3">
+          <span class="font-semibold">{t.analyticsName}</span>
+          <span class="shrink-0 rounded-full border border-brand-cyan/40 bg-brand-cyan/10 px-2.5 py-0.5 text-xs font-medium text-brand-cyan">
+            {t.comingSoon}
+          </span>
+        </div>
+        <div class="mt-2 text-sm opacity-80">{t.analyticsDesc}</div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
