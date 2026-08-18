@@ -5,6 +5,7 @@
 // live on this site. Nothing moves — this is just the door.
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { conversions, getConversion, type Conversion, type Lang } from "../../convert/registry";
+import { livePresets } from "../../analytics/presets";
 
 interface Props {
   lang: Lang;
@@ -38,13 +39,16 @@ const t = isEs
       secConvertIntro:
         "Conversión de archivos gratis y privada que se ejecuta por completo en tu navegador.",
       secAnalytics: "Analítica",
+      secAnalyticsIntro:
+        "Sube la exportación de una plataforma y léela como debería leerse — todo en tu navegador, sin subir nada.",
+      analyticsCardTitle: "Abrir el panel",
       convertCardTitle: "Ver todas las conversiones",
       convertCardDesc: (n: number) =>
         `${n} conversiones disponibles — imágenes, datos, PDF, audio y vídeo. Nada se sube a un servidor.`,
       featured: "Más usadas",
       analyticsName: "Panel de analítica",
       analyticsDesc:
-        "Sube las exportaciones de tus plataformas y mira lo que los paneles nativos no te enseñan. Empezando por Google Search Console — 100% en tu navegador.",
+        "Google Search Console y App Store Connect: totales, tendencias, embudos y comparación entre periodos — 100% en tu navegador.",
     }
   : {
       h1: "Tools",
@@ -57,13 +61,16 @@ const t = isEs
       secConvertIntro:
         "Free, private file conversion that runs entirely in your browser.",
       secAnalytics: "Analytics",
+      secAnalyticsIntro:
+        "Upload a platform export and read it the way it should have been shown to you — all in your browser, nothing uploaded.",
+      analyticsCardTitle: "Open the dashboard",
       convertCardTitle: "Browse every conversion",
       convertCardDesc: (n: number) =>
         `${n} conversions available — images, data, PDF, audio and video. Nothing is ever uploaded.`,
       featured: "Most popular",
       analyticsName: "Analytics Dashboard",
       analyticsDesc:
-        "Upload your platform exports and see what the native dashboards don't show you. Starting with Google Search Console — 100% in your browser.",
+        "Google Search Console and App Store Connect: totals, trends, funnels and period comparison — 100% in your browser.",
     };
 
 // The cybersecurity tools, in the same order as the hub at tools.yongchivo.com.
@@ -154,8 +161,9 @@ const cyberTools: { slug: string; name: string; desc: string }[] = isEs
       },
     ];
 
-// Counted from the registry so the number can never drift from what's shipped.
+// Counted from the registries so the numbers can never drift from what's shipped.
 const conversionCount = conversions.length;
+const dashboards = livePresets();
 
 // A handful of the most-searched conversions, straight from the registry so the
 // cards match the ones on the /convert/ landing.
@@ -256,25 +264,41 @@ const cardClass =
   </section>
 
   <section class="mb-4">
-    <h2 class="text-xl font-bold mb-3">{t.secAnalytics}</h2>
+    <h2 class="text-xl font-bold mb-1">{t.secAnalytics}</h2>
+    <p class="text-sm opacity-70 mb-3 max-w-2xl">{t.secAnalyticsIntro}</p>
+
+    <a href={`${analyticsBase}/`} class={`${cardClass} block mb-4`}>
+      <div class="flex items-center gap-2 font-semibold">
+        <span>{t.analyticsCardTitle}</span>
+        <span class="badge badge-primary">{dashboards.length}</span>
+      </div>
+      <div class="mt-2 text-sm opacity-80">{t.analyticsDesc}</div>
+    </a>
+
+    {/* One card per live preset, straight from the registry, so promoting a
+        preset shows up here without this file being touched. */}
     <div class="grid gap-3 sm:grid-cols-2">
-      <a href={`${analyticsBase}/`} class={cardClass}>
-        <div class="flex items-start justify-between gap-3">
-          <span class="font-semibold">{t.analyticsName}</span>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="w-4 h-4 shrink-0 mt-1 opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 transition"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            aria-hidden="true"
-          >
-            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-          </svg>
-        </div>
-        <div class="mt-2 text-sm opacity-80">{t.analyticsDesc}</div>
-      </a>
+      {
+        dashboards.map((preset) => (
+          <a href={`${analyticsBase}/${preset.id}/`} class={cardClass}>
+            <div class="flex items-start justify-between gap-3">
+              <span class="font-semibold">{preset.copy[lang].cardTitle}</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-4 h-4 shrink-0 mt-1 opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 transition"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                aria-hidden="true"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+              </svg>
+            </div>
+            <div class="mt-2 text-sm opacity-80">{preset.copy[lang].cardDesc}</div>
+          </a>
+        ))
+      }
     </div>
   </section>
 </BaseLayout>

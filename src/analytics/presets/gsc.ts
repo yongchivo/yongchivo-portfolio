@@ -16,17 +16,11 @@ import Papa from "papaparse";
 
 import { parseCount, parseCtr, parseDecimal } from "../numbers";
 import { ParseError, type Dataset, type Preset, type Row } from "../types";
-
-/** Lower-case, unaccented, whitespace-collapsed — the form aliases are held in. */
-function normaliseHeader(h: string): string {
-  return h
-    .replace(/^\uFEFF/, "")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036F]/g, "")
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, " ");
-}
+import { findColumn } from "./headers";
+import { summaryView } from "../views/summary";
+import { tableView } from "../views/table";
+import { scatterView } from "../views/scatter";
+import { distributionView } from "../views/distribution";
 
 // The dimension column identifies the export. Longest-lived aliases first; the
 // bare forms cover exports that came from the API or a spreadsheet round-trip.
@@ -52,14 +46,6 @@ const METRIC_ALIASES = {
 } as const;
 
 type MetricName = keyof typeof METRIC_ALIASES;
-
-function findColumn(headers: string[], aliases: readonly string[]): string | null {
-  for (const alias of aliases) {
-    const hit = headers.find((h) => normaliseHeader(h) === alias);
-    if (hit) return hit;
-  }
-  return null;
-}
 
 /** Which export is this? `null` when the header row matches neither shape. */
 function detectShape(headers: string[]): string | null {
@@ -89,12 +75,53 @@ export const gsc: Preset = {
     },
   ],
 
+  metrics: [
+    { id: "clicks", label: { en: "Clicks", es: "Clics" }, kind: "count", agg: "sum" },
+    {
+      id: "impressions",
+      label: { en: "Impressions", es: "Impresiones" },
+      kind: "count",
+      agg: "sum",
+    },
+    {
+      id: "ctr",
+      label: { en: "CTR", es: "CTR" },
+      kind: "ratio",
+      // Derived from the totals: a mean of per-row CTRs is a different number,
+      // and the wrong one.
+      agg: "derived",
+      needs: ["clicks", "impressions"],
+      derive: (t) => (t.impressions > 0 ? t.clicks / t.impressions : 0),
+    },
+    {
+      id: "position",
+      label: { en: "Position", es: "Posición" },
+      kind: "position",
+      agg: "weightedMean",
+      weightBy: "impressions",
+      lowerIsBetter: true,
+    },
+  ],
+
+  summaryMetrics: ["clicks", "impressions", "ctr", "position"],
+
   columns: [
-    { field: "key", label: { en: "Query / Page", es: "Consulta / Página" }, type: "text" },
-    { field: "clicks", label: { en: "Clicks", es: "Clics" }, type: "int" },
-    { field: "impressions", label: { en: "Impressions", es: "Impresiones" }, type: "int" },
-    { field: "ctr", label: { en: "CTR", es: "CTR" }, type: "percent" },
-    { field: "position", label: { en: "Position", es: "Posición" }, type: "position" },
+    { field: "key", label: { en: "Query / Page", es: "Consulta / Página" } },
+    { field: "clicks" },
+    { field: "impressions" },
+    { field: "ctr" },
+    { field: "position" },
+  ],
+
+  views: [
+    summaryView({ note: (t) => t.weightedNote }),
+    tableView({ deltaMetric: "clicks", sortBy: "clicks" }),
+    scatterView({
+      xMetric: "position",
+      yMetric: "ctr",
+      tooltipMetrics: ["clicks", "impressions"],
+    }),
+    distributionView({ metric: "position", countLabel: "rows" }),
   ],
 
   copy: {
@@ -171,11 +198,14 @@ export const gsc: Preset = {
           ? clicks / impressions
           : 0;
       const position = metricColumns.position ? parseDecimal(record[metricColumns.position]) : 0;
-      rows.push({ key, clicks, impressions, ctr, position });
+      rows.push({ key, metrics: { clicks, impressions, ctr, position } });
     }
 
     if (rows.length === 0) throw new ParseError("empty");
 
-    return { presetId: "gsc", shapeId, filename, rows };
+    const available = ["clicks", "impressions", "ctr"];
+    if (metricColumns.position) available.push("position");
+
+    return { presetId: "gsc", shapeId, filename, rows, available, facets: [] };
   },
 };
