@@ -3,7 +3,7 @@
 // dashboard, "coming soon" ones hold their slot the same way the /tools/ hub
 // held a slot for this dashboard before it existed.
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { comingSoon, presets } from "../../analytics/presets";
+import { livePresets, soonPresets } from "../../analytics/presets";
 import { strings } from "../../analytics/i18n";
 import type { Lang } from "../../analytics/types";
 
@@ -16,7 +16,8 @@ const t = strings[lang];
 const base = lang === "es" ? "/es/analytics" : "/analytics";
 const other = lang === "es" ? "/analytics/" : "/es/analytics/";
 
-const live = presets.filter((p) => p.status === "live");
+const live = livePresets();
+const soon = soonPresets();
 ---
 
 <BaseLayout
@@ -71,7 +72,7 @@ const live = presets.filter((p) => p.status === "live");
       ))
     }
     {
-      comingSoon.map((preset) => (
+      soon.map((preset) => (
         <div class="rounded-xl border border-base-300 bg-base-200 p-4">
           <div class="flex items-start justify-between gap-3">
             <span class="font-semibold">{preset.copy[lang].cardTitle}</span>
