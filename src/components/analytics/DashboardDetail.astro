@@ -1,0 +1,44 @@
+---
+// One dashboard page — the shell around <DashboardApp>. Mirrors
+// <ConverterDetail>: breadcrumb, gradient H1, the widget, hreflang.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import DashboardApp from "./DashboardApp.astro";
+import { strings } from "../../analytics/i18n";
+import type { Lang, Preset } from "../../analytics/types";
+
+interface Props {
+  preset: Preset;
+  lang: Lang;
+}
+
+const { preset, lang } = Astro.props;
+const t = strings[lang];
+const copy = preset.copy[lang];
+
+const base = lang === "es" ? "/es/analytics" : "/analytics";
+const enPath = `/analytics/${preset.id}/`;
+const esPath = `/es/analytics/${preset.id}/`;
+const otherLangPath = lang === "es" ? enPath : esPath;
+---
+
+<BaseLayout title={copy.title} description={copy.description} lang={lang} sideBarActiveItemID="tools">
+  <link slot="head" rel="alternate" hreflang="en" href={new URL(enPath, Astro.site)} />
+  <link slot="head" rel="alternate" hreflang="es" href={new URL(esPath, Astro.site)} />
+  <link slot="head" rel="alternate" hreflang="x-default" href={new URL(enPath, Astro.site)} />
+
+  <nav class="text-sm opacity-70 mb-4 flex items-center gap-2 flex-wrap">
+    <a href={`${base}/`} class="link link-hover">{t.backToAll}</a>
+    <span>/</span>
+    <span class="font-medium opacity-100">{copy.cardTitle}</span>
+    <a href={otherLangPath} class="badge badge-outline ml-auto">{lang === "es" ? "EN" : "ES"}</a>
+  </nav>
+
+  <header class="mb-6">
+    <h1 class="text-3xl md:text-4xl font-bold bg-gradient-to-r from-brand-magenta via-brand-purple to-brand-cyan bg-clip-text text-transparent w-fit">
+      {copy.h1}
+    </h1>
+    <p class="mt-3 opacity-80 max-w-2xl">{copy.intro}</p>
+  </header>
+
+  <DashboardApp preset={preset} lang={lang} />
+</BaseLayout>

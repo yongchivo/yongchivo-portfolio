@@ -1,0 +1,87 @@
+---
+// The /analytics/ landing: one card per preset. Live presets link to their
+// dashboard, "coming soon" ones hold their slot the same way the /tools/ hub
+// held a slot for this dashboard before it existed.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { comingSoon, presets } from "../../analytics/presets";
+import { strings } from "../../analytics/i18n";
+import type { Lang } from "../../analytics/types";
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = strings[lang];
+const base = lang === "es" ? "/es/analytics" : "/analytics";
+const other = lang === "es" ? "/analytics/" : "/es/analytics/";
+
+const live = presets.filter((p) => p.status === "live");
+---
+
+<BaseLayout
+  title={t.landingTitle}
+  description={t.landingDescription}
+  lang={lang}
+  sideBarActiveItemID="tools"
+>
+  <link slot="head" rel="alternate" hreflang="en" href={new URL("/analytics/", Astro.site)} />
+  <link slot="head" rel="alternate" hreflang="es" href={new URL("/es/analytics/", Astro.site)} />
+  <link slot="head" rel="alternate" hreflang="x-default" href={new URL("/analytics/", Astro.site)} />
+
+  <div class="mb-8">
+    <div class="flex items-center gap-3 flex-wrap">
+      <h1 class="text-3xl md:text-4xl font-bold bg-gradient-to-r from-brand-magenta via-brand-purple to-brand-cyan bg-clip-text text-transparent w-fit">
+        {t.landingH1}
+      </h1>
+      <a href={other} class="badge badge-outline">{lang === "es" ? "EN" : "ES"}</a>
+    </div>
+    <p class="mt-3 opacity-80 max-w-2xl">{t.landingIntro}</p>
+    <div class="mt-4 inline-flex items-center gap-2 rounded-lg border border-base-300 bg-base-200 px-3 py-2 text-sm">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 0h10.5a1.5 1.5 0 0 1 1.5 1.5v6a1.5 1.5 0 0 1-1.5 1.5H6.75a1.5 1.5 0 0 1-1.5-1.5v-6a1.5 1.5 0 0 1 1.5-1.5Z"></path>
+      </svg>
+      <span>{t.landingNote}</span>
+    </div>
+  </div>
+
+  <div class="grid gap-3 sm:grid-cols-2">
+    {
+      live.map((preset) => (
+        <a
+          href={`${base}/${preset.id}/`}
+          class="group rounded-xl border border-base-300 bg-base-200 p-4 transition hover:border-primary hover:scale-[101%]"
+        >
+          <div class="flex items-start justify-between gap-3">
+            <span class="font-semibold">{preset.copy[lang].cardTitle}</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-4 h-4 shrink-0 mt-1 opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 transition"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              aria-hidden="true"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+            </svg>
+          </div>
+          <div class="mt-2 text-sm opacity-80">{preset.copy[lang].cardDesc}</div>
+        </a>
+      ))
+    }
+    {
+      comingSoon.map((preset) => (
+        <div class="rounded-xl border border-base-300 bg-base-200 p-4">
+          <div class="flex items-start justify-between gap-3">
+            <span class="font-semibold">{preset.copy[lang].cardTitle}</span>
+            <span class="shrink-0 rounded-full border border-brand-cyan/40 bg-brand-cyan/10 px-2.5 py-0.5 text-xs font-medium text-brand-cyan">
+              {t.comingSoon}
+            </span>
+          </div>
+          <div class="mt-2 text-sm opacity-80">{preset.copy[lang].cardDesc}</div>
+        </div>
+      ))
+    }
+  </div>
+</BaseLayout>
