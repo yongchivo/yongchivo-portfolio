@@ -1,0 +1,15 @@
+---
+import DashboardDetail from "../../../components/analytics/DashboardDetail.astro";
+import { livePresets } from "../../../analytics/presets";
+
+export function getStaticPaths() {
+  return livePresets().map((preset) => ({
+    params: { preset: preset.id },
+    props: { preset },
+  }));
+}
+
+const { preset } = Astro.props;
+---
+
+<DashboardDetail preset={preset} lang="es" />

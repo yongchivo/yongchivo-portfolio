@@ -1,8 +1,8 @@
 ---
 // The /tools/ hub: one page that gathers everything I've shipped, grouped by
 // what it is rather than where it's hosted. The cybersecurity tools live on
-// tools.yongchivo.com (external), the converter lives on this site, and the
-// analytics dashboard isn't built yet. Nothing moves — this is just the door.
+// tools.yongchivo.com (external); the converter and the analytics dashboard
+// live on this site. Nothing moves — this is just the door.
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { conversions, getConversion, type Conversion, type Lang } from "../../convert/registry";
 
@@ -15,6 +15,7 @@ const isEs = lang === "es";
 
 const other = isEs ? "/tools/" : "/es/tools/";
 const convertBase = isEs ? "/es/convert" : "/convert";
+const analyticsBase = isEs ? "/es/analytics" : "/analytics";
 // tools.yongchivo.com mirrors this site's EN/ES split under /es/.
 const toolsBase = isEs ? "https://tools.yongchivo.com/es" : "https://tools.yongchivo.com";
 
@@ -22,8 +23,8 @@ const title = isEs
   ? "Herramientas — Ciberseguridad, Conversor de Archivos y más | Yongchivo"
   : "Tools — Cybersecurity, File Converter & More | Yongchivo";
 const description = isEs
-  ? "Todas mis herramientas gratuitas en un solo sitio: micro-herramientas de ciberseguridad, un conversor de archivos que funciona 100% en tu navegador y más por venir."
-  : "Every free tool I've built, in one place: privacy-first cybersecurity utilities, a file converter that runs 100% in your browser, and more on the way.";
+  ? "Todas mis herramientas gratuitas en un solo sitio: micro-herramientas de ciberseguridad, un conversor de archivos y un panel de analítica que funcionan 100% en tu navegador."
+  : "Every free tool I've built, in one place: privacy-first cybersecurity utilities, a file converter and an analytics dashboard that run 100% in your browser.";
 
 const t = isEs
   ? {
@@ -43,9 +44,7 @@ const t = isEs
       featured: "Más usadas",
       analyticsName: "Panel de analítica",
       analyticsDesc:
-        "Un panel para ver el tráfico y el uso de mis proyectos de un vistazo, sin cookies de seguimiento.",
-      comingSoon: "Próximamente",
-      live: "Disponible",
+        "Sube las exportaciones de tus plataformas y mira lo que los paneles nativos no te enseñan. Empezando por Google Search Console — 100% en tu navegador.",
     }
   : {
       h1: "Tools",
@@ -64,9 +63,7 @@ const t = isEs
       featured: "Most popular",
       analyticsName: "Analytics Dashboard",
       analyticsDesc:
-        "One place to see traffic and usage across my projects at a glance, with no tracking cookies.",
-      comingSoon: "Coming soon",
-      live: "Live",
+        "Upload your platform exports and see what the native dashboards don't show you. Starting with Google Search Console — 100% in your browser.",
     };
 
 // The cybersecurity tools, in the same order as the hub at tools.yongchivo.com.
@@ -261,17 +258,23 @@ const cardClass =
   <section class="mb-4">
     <h2 class="text-xl font-bold mb-3">{t.secAnalytics}</h2>
     <div class="grid gap-3 sm:grid-cols-2">
-      {/* Placeholder card — stays a non-link until the dashboard exists, the
-          same way tools.yongchivo.com holds a slot for a tool it hasn't shipped. */}
-      <div class="rounded-xl border border-base-300 bg-base-200 p-4">
+      <a href={`${analyticsBase}/`} class={cardClass}>
         <div class="flex items-start justify-between gap-3">
           <span class="font-semibold">{t.analyticsName}</span>
-          <span class="shrink-0 rounded-full border border-brand-cyan/40 bg-brand-cyan/10 px-2.5 py-0.5 text-xs font-medium text-brand-cyan">
-            {t.comingSoon}
-          </span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-4 h-4 shrink-0 mt-1 opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 transition"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+          </svg>
         </div>
         <div class="mt-2 text-sm opacity-80">{t.analyticsDesc}</div>
-      </div>
+      </a>
     </div>
   </section>
 </BaseLayout>
