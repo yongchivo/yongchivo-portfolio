@@ -93,20 +93,29 @@ class Dashboard {
   private async addFiles(files: File[]): Promise<void> {
     this.clearError();
     for (const file of files) {
-      if (this.datasets.length >= 2) {
-        this.showError(this.t.errTooMany);
-        break;
-      }
       try {
         const text = await file.text();
         const dataset = this.preset.parse(text, file.name, this.lang);
+
+        // Both guards below re-read this.datasets rather than a value captured
+        // before the await: `file.text()` yields, so another selection can land
+        // while it is pending, and a stale snapshot would let that one through.
+        if (this.datasets.length >= 2) {
+          this.showError(this.t.errTooMany);
+          break;
+        }
+
         // Two different export shapes share no metrics and often no dimension,
         // so refuse the pairing rather than render a meaningless comparison.
-        const existing = this.datasets[0];
-        if (existing && existing.shapeId !== dataset.shapeId) {
+        // Compared against EVERY loaded dataset, which makes the rule symmetric
+        // by construction — whichever shape was dropped first, a later one that
+        // disagrees is refused — instead of relying on the two-file cap to make
+        // "the first dataset" happen to mean "the other one".
+        if (this.datasets.some((loaded) => loaded.shapeId !== dataset.shapeId)) {
           this.showError(this.t.errMismatch);
           continue;
         }
+
         this.datasets.push(dataset);
       } catch (err) {
         this.showError(this.messageFor(err));
