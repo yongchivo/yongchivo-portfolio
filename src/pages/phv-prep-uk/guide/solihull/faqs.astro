@@ -1,0 +1,264 @@
+---
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "How many questions are on the Solihull taxi badge test?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "48 questions — 8 on each of the six subjects covered by the training course. You need 36 correct (75%) to pass, and the test is allowed 60 minutes.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Does the Solihull test have key questions like Wolverhampton?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "No. Solihull marks the paper on your overall score alone — 36 out of 48. There is no set of key questions where a single wrong answer fails the whole paper, which is how Wolverhampton works.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Are the practice questions specific to Solihull?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. Every question in the app's Solihull mode is built from official Solihull Council source material — council policy documents, licensing handbooks and relevant UK legislation. This isn't generic PHV content.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Will mock exams just repeat the same questions?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "No. Each mock exam pulls 48 questions — 8 from each of the six categories — from the full 300+ question bank, so you get a different paper every time. All questions are distinct: no padding or rephrased duplicates.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Is the app useful if I have already failed the Solihull test?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Especially then. The pass mark is 36 out of 48 (75%) and you need a solid spread across all six categories. The app tracks your score by category so you can see exactly where you're dropping marks and focus your revision there.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Do you have Solihull pass rate statistics?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "No, and we won't invent one. We can't verify what happens after someone leaves the app and sits the real test. Anyone quoting you a percentage for something like this is guessing.",
+      },
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title="Solihull PHV Test — Frequently Asked Questions"
+  description="Solihull PHV test FAQs: how many questions, the pass mark, key questions, DBS and medical requirements, retakes, and how to prepare for the taxi badge test."
+>
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
+  <main class="md:flex md:justify-center">
+    <article class="prose prose-lg max-w-[750px]">
+      <h1>Solihull PHV Test — Frequently Asked Questions</h1>
+
+      <p>
+        Quick answers to the questions drivers ask most about the
+        <strong>Solihull PHV test</strong> and the licensing process behind
+        it. For the full picture, see our guides on
+        <a href="/phv-prep-uk/guide/solihull/how-to-pass/"
+          >passing the Solihull PHV test</a
+        >
+        and
+        <a href="/phv-prep-uk/guide/solihull/how-to-apply/"
+          >applying for a Solihull PHV licence</a
+        >.
+      </p>
+
+      <h2>About the test</h2>
+
+      <h3>How many questions are on the Solihull taxi badge test?</h3>
+
+      <p>
+        <strong>48 questions</strong> — 8 on each of the six subjects covered
+        by the training course. You need <strong>36 correct (75%)</strong> to
+        pass, and the test is allowed <strong>60 minutes</strong>.
+      </p>
+
+      <h3>Does the Solihull test have key questions like Wolverhampton?</h3>
+
+      <p>
+        No. Solihull marks the paper on your <strong>overall score
+        alone</strong>. There is no set of key questions where a single wrong
+        answer fails the whole paper — that rule belongs to
+        <a href="/phv-prep-uk/guide/8-key-questions/"
+          >Wolverhampton's test</a
+        >, which is a different paper under different rules.
+      </p>
+
+      <h3>What format are the questions?</h3>
+
+      <p>
+        A <strong>combination of spoken, written and multiple-choice</strong>.
+        Because part of it is spoken, being able to explain your reasoning
+        matters — not just recognising the right option.
+      </p>
+
+      <h3>When do I get my result?</h3>
+
+      <p>
+        <strong>Within 5 working days.</strong> Your certificate needs to be
+        less than 12 months old when you apply for your licence.
+      </p>
+
+      <h3>What happens if I fail?</h3>
+
+      <p>
+        Solihull states you may retake <strong>the whole course or just the
+        test</strong>, and that a fee will be payable. The council doesn't
+        publish that fee on its driver licence guide, so check the current
+        amount with the licensing team.
+      </p>
+
+      <h2>About applying</h2>
+
+      <h3>What DBS check do I need?</h3>
+
+      <p>
+        An <strong>enhanced</strong> disclosure — basic and standard are not
+        accepted. It must be for the occupation of taxi/private hire driver
+        under <strong>"other workforce"</strong> and include a check of both
+        the adults' and children's barred lists. Solihull uses
+        <strong>TaxiPlus</strong>, and you must subscribe to the DBS update
+        service <strong>within 30 days</strong> of the certificate being
+        issued.
+      </p>
+
+      <h3>What medical do I need?</h3>
+
+      <p>
+        You must meet <strong>DVLA Group 2 medical standards</strong>,
+        assessed by a GMC registered medical practitioner on the council's own
+        form. The certificate should be dated <strong>within 1 month</strong>
+        of your application.
+      </p>
+
+      <h3>What is the Blue Lamp Trust assessment?</h3>
+
+      <p>
+        A <strong>practical driving assessment</strong> that Solihull requires
+        before you apply, delivered by Blue Lamp Trust. The certificate needs
+        to be <strong>less than 12 months old</strong> when you apply.
+      </p>
+
+      <h3>Do I need an HMRC tax check?</h3>
+
+      <p>
+        Only if you currently hold a private hire or hackney carriage licence,
+        or held one within the last 12 months — those codes expire after
+        <strong>120 days</strong>. If you've never held one, you sign a
+        declaration confirming that instead.
+      </p>
+
+      <h3>How do I book my appointment?</h3>
+
+      <p>
+        Email
+        <a href="mailto:licensing@solihull.gov.uk">licensing@solihull.gov.uk</a>
+        with your full name, date of birth, mobile number and the reason for
+        the appointment. <strong>Walk-ins are not accepted.</strong>
+      </p>
+
+      <h2>About the app</h2>
+
+      <h3>Are the practice questions specific to Solihull?</h3>
+
+      <p>
+        Yes. Every question in the app's Solihull mode is built from official
+        Solihull Council source material — council policy documents, licensing
+        handbooks and relevant UK legislation. This isn't generic PHV content.
+      </p>
+
+      <h3>Are the questions regularly updated?</h3>
+
+      <p>
+        Yes. Questions are updated as Solihull Council publishes new material,
+        and Premium includes all future updates for life — no extra charge.
+      </p>
+
+      <h3>Will mock exams just repeat the same questions?</h3>
+
+      <p>
+        No. Each mock exam pulls 48 questions — 8 from each of the six
+        categories — from the full 300+ question bank, so you get a different
+        paper every time. All questions are distinct: no padding or rephrased
+        duplicates.
+      </p>
+
+      <h3>Is this useful if I've already failed the test?</h3>
+
+      <p>
+        Especially then. The pass mark is 36 out of 48 (75%), and you need a
+        solid spread across all six categories. The app tracks your score by
+        category so you can see exactly where you're dropping marks and focus
+        your revision there.
+      </p>
+
+      <h3>Do you have pass rate statistics?</h3>
+
+      <p>
+        No, and we won't invent one. We can't verify what happens after
+        someone leaves the app and sits the real test. Anyone quoting you a
+        percentage for something like this is guessing.
+      </p>
+
+      <p>
+        PHV Prep UK is on
+        <a
+          href="https://apps.apple.com/gb/app/phv-prep-uk-taxi-badge-test/id6776364932"
+          target="_blank"
+          rel="noopener">the App Store</a
+        >
+        and
+        <a
+          href="https://play.google.com/store/apps/details?id=com.phvprepuk.app&pcampaignid=web_share"
+          target="_blank"
+          rel="noopener">Google Play</a
+        >.
+      </p>
+
+      <h2>Official sources</h2>
+
+      <ul>
+        <li>
+          <a
+            href="https://www.solihull.gov.uk/business/licences/taxi-licensing"
+            target="_blank"
+            rel="noopener">Solihull Council — Taxi licensing</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://www.solihull.gov.uk/business/licences/taxi-licensing/private-hire-and-hackney-carriage-driver-licence-guide"
+            target="_blank"
+            rel="noopener"
+            >Solihull Council — Private hire and hackney carriage driver
+            licence guide</a
+          >
+        </li>
+      </ul>
+
+      <p>
+        <strong>PHV Prep UK is an independent study aid.</strong> It is not
+        affiliated with, authorised by, or endorsed by Solihull Metropolitan
+        Borough Council or any licensing authority. Always check the council's
+        official guidance for the latest test requirements and fees.
+      </p>
+    </article>
+  </main>
+</BaseLayout>

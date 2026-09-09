@@ -1,0 +1,313 @@
+---
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "How many questions are on the Solihull taxi knowledge test?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "There are 48 questions on the Solihull knowledge test — 8 on each of the six subjects covered by the training course. You need 36 correct (75%) to pass.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What is the pass mark for the Solihull PHV test?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "You must answer 36 of the 48 questions correctly, which is 75%. Solihull marks the paper on your overall score — there is no separate set of key questions that fails the paper on its own.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How long does the Solihull knowledge test take?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "The test is allowed 60 minutes and is sat straight after the training course, which runs for approximately 4 hours with breaks.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Is the Solihull test the same as the Wolverhampton one?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "No. Solihull sets 48 questions in 60 minutes with a 36/48 pass mark and no key questions. Wolverhampton sets 28 questions in 45 minutes, needs 21 out of 28, and adds 8 key questions where a single wrong answer fails the whole paper. Passing one does not qualify you for the other.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What happens if I fail the Solihull knowledge test?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Solihull states that you may retake the whole course or just the test, and that a fee will be payable. Results are issued within 5 working days.",
+      },
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title="How to Pass the Solihull PHV Test: 2026 Guide"
+  description="How to pass the Solihull PHV test: 48 questions in 60 minutes, a 36/48 pass mark, the six subjects covered, and how Solihull differs from Wolverhampton."
+>
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
+  <main class="md:flex md:justify-center">
+    <article class="prose prose-lg max-w-[750px]">
+      <h1>How to Pass the Solihull PHV Test: 2026 Guide</h1>
+
+      <p>
+        This guide explains <strong>how to pass the Solihull PHV test</strong>
+        — the knowledge test you sit to get a private hire or hackney carriage
+        driver licence from Solihull Metropolitan Borough Council. It covers
+        the format, the six subjects, the pass mark, how Solihull differs from
+        Wolverhampton, and how to prepare. Everything here is drawn from the
+        council's own published guidance, linked at the bottom of the page.
+      </p>
+
+      <h2>What is the Solihull knowledge test?</h2>
+
+      <p>
+        In Solihull the knowledge test is not a standalone exam you book on its
+        own — it comes at the end of a mandatory training course. The course
+        runs for approximately <strong>4 hours</strong> (with breaks), and the
+        test follows it with an extra <strong>60 minutes</strong> allowed.
+      </p>
+
+      <p>
+        The questions are a <strong>combination of spoken, written and
+        multiple-choice</strong>, so it is worth being able to explain an
+        answer, not just recognise it. Results are issued
+        <strong>within 5 working days</strong>, and your certificate needs to
+        be less than 12 months old when you apply for your licence.
+      </p>
+
+      <h2>The Solihull test format</h2>
+
+      <p>
+        The paper is evenly balanced — there are
+        <strong>48 questions, 8 on each of the six subjects</strong>, and you
+        need <strong>36 correct (75%)</strong> to pass.
+      </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Element</th>
+            <th>Solihull</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Questions</td>
+            <td>48 (8 per subject)</td>
+          </tr>
+          <tr>
+            <td>Time allowed</td>
+            <td>60 minutes</td>
+          </tr>
+          <tr>
+            <td>Pass mark</td>
+            <td>36 out of 48 (75%)</td>
+          </tr>
+          <tr>
+            <td>Key questions</td>
+            <td>None — the paper is marked on overall score</td>
+          </tr>
+          <tr>
+            <td>Format</td>
+            <td>Spoken, written and multiple-choice</td>
+          </tr>
+          <tr>
+            <td>Results</td>
+            <td>Within 5 working days</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>What the six subjects cover</h2>
+
+      <p>
+        The course and the test are built on the same six subjects, and each
+        one carries exactly 8 questions. That even split matters for revision:
+        no single topic can be safely skipped, because each is worth the same
+        as any other.
+      </p>
+
+      <ul>
+        <li>
+          <strong>Safeguarding</strong> — including understanding Child Sexual
+          Abuse and Exploitation (CSAE) risks and county lines exploitation.
+        </li>
+        <li>
+          <strong>Disability awareness</strong> and the Equality Act 2010.
+        </li>
+        <li>
+          <strong>Customer service</strong> and communication and language
+          skills.
+        </li>
+        <li><strong>The Highway Code</strong> and road safety.</li>
+        <li><strong>Vehicle maintenance.</strong></li>
+        <li>
+          <strong>Compliance</strong> with legislation, conditions and policy
+          requirements.
+        </li>
+      </ul>
+
+      <h2>How Solihull differs from Wolverhampton</h2>
+
+      <p>
+        Drivers often assume the two are interchangeable. They are not — the
+        papers are different sizes, different lengths, and marked under
+        different rules. A pass with one council does not qualify you with the
+        other.
+      </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>Solihull</th>
+            <th>Wolverhampton</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Questions</td>
+            <td>48</td>
+            <td>28</td>
+          </tr>
+          <tr>
+            <td>Time</td>
+            <td>60 minutes</td>
+            <td>45 minutes</td>
+          </tr>
+          <tr>
+            <td>Pass mark</td>
+            <td>36 out of 48 (75%)</td>
+            <td>21 out of 28 (75%)</td>
+          </tr>
+          <tr>
+            <td>Key questions</td>
+            <td>None</td>
+            <td>8 — one wrong answer fails the paper</td>
+          </tr>
+          <tr>
+            <td>Subjects</td>
+            <td>6, evenly weighted</td>
+            <td>7</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        The single biggest practical difference is the absence of key
+        questions. In Wolverhampton, one wrong answer in the wrong category
+        fails an otherwise strong paper — see our guide on
+        <a href="/phv-prep-uk/guide/how-to-pass/"
+          >passing the Wolverhampton PHV test</a
+        >
+        if that is the council you are applying to. In Solihull, every
+        question carries the same weight, so what matters is a consistent
+        spread across all six subjects rather than one perfect category.
+      </p>
+
+      <h2>How to prepare</h2>
+
+      <ol>
+        <li>
+          <strong>Spread your revision evenly.</strong> With 8 questions per
+          subject, being strong in four areas and weak in two is exactly how
+          people land just under 36.
+        </li>
+        <li>
+          <strong>Practise under timed conditions.</strong> 48 questions in 60
+          minutes is a comfortable pace if you know the material — the risk is
+          rushing and misreading, not the clock itself.
+        </li>
+        <li>
+          <strong>Be able to explain your answers.</strong> Part of the test is
+          spoken, so understanding why an answer is right matters more than
+          memorising the option letter.
+        </li>
+        <li>
+          <strong>Review every mistake.</strong> Track which of the six
+          subjects you drop marks in, and revise that subject specifically.
+        </li>
+      </ol>
+
+      <p>
+        The <strong>PHV Prep UK</strong> app has a dedicated Solihull mode: it
+        builds mock papers the way Solihull does — 48 questions, 8 from each of
+        the six subjects, marked at 36/48 — and tracks your score by subject so
+        you can see exactly where the marks are going. Download it on
+        <a
+          href="https://apps.apple.com/gb/app/phv-prep-uk-taxi-badge-test/id6776364932"
+          target="_blank"
+          rel="noopener">the App Store</a
+        >
+        or
+        <a
+          href="https://play.google.com/store/apps/details?id=com.phvprepuk.app&pcampaignid=web_share"
+          target="_blank"
+          rel="noopener">Google Play</a
+        >.
+      </p>
+
+      <h2>What if I fail?</h2>
+
+      <p>
+        Solihull states that if you do not pass, you may retake the whole
+        course or just the test, and that a fee will be payable. The council
+        does not publish that fee on its driver licence guide, so check the
+        current amount with the licensing team before you rebook.
+      </p>
+
+      <h2>Where to go next</h2>
+
+      <p>
+        Ready to start the process? Read
+        <a href="/phv-prep-uk/guide/solihull/how-to-apply/"
+          >how to apply for a Solihull PHV licence</a
+        >
+        for the full step-by-step, or see the
+        <a href="/phv-prep-uk/guide/solihull/faqs/"
+          >Solihull PHV test FAQs</a
+        >
+        for quick answers. You can also learn more about the app on the
+        <a href="/phv-prep-uk">PHV Prep UK page</a>.
+      </p>
+
+      <h2>Official sources</h2>
+
+      <ul>
+        <li>
+          <a
+            href="https://www.solihull.gov.uk/business/licences/taxi-licensing"
+            target="_blank"
+            rel="noopener">Solihull Council — Taxi licensing</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://www.solihull.gov.uk/business/licences/taxi-licensing/private-hire-and-hackney-carriage-driver-licence-guide"
+            target="_blank"
+            rel="noopener"
+            >Solihull Council — Private hire and hackney carriage driver
+            licence guide</a
+          >
+        </li>
+      </ul>
+
+      <p>
+        <strong>PHV Prep UK is an independent study aid.</strong> It is not
+        affiliated with, authorised by, or endorsed by Solihull Metropolitan
+        Borough Council or any licensing authority. Always check the council's
+        official guidance for the latest test requirements and fees.
+      </p>
+    </article>
+  </main>
+</BaseLayout>

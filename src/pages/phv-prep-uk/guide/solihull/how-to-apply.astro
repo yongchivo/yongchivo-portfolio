@@ -1,0 +1,279 @@
+---
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "How do I apply for a Solihull private hire licence?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Solihull is appointment-only. You must complete the pre-application steps first — Blue Lamp Trust driving assessment, enhanced DBS, Group 2 medical, and the training course and knowledge test — then email licensing@solihull.gov.uk with your full name, date of birth, mobile number and the reason for the appointment. Walk-ins are not accepted.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What DBS check do I need for a Solihull taxi licence?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "An enhanced DBS disclosure — basic and standard are not accepted. It must be for the occupation of taxi/private hire driver under 'other workforce' and include a check of both the adults' and children's barred lists. Solihull uses TaxiPlus, and you must subscribe to the DBS update service within 30 days of the certificate being issued.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What medical do I need for a Solihull PHV licence?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "You must meet DVLA Group 2 medical standards, assessed by a GMC registered medical practitioner on the council's own medical assessment form. The certificate should be dated within 1 month of when you make your application.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What is the Blue Lamp Trust assessment?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "It is the practical driving assessment Solihull requires before you apply, delivered by Blue Lamp Trust. Your certificate needs to be less than 12 months old when you apply for your licence.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Do I need an HMRC tax check to apply in Solihull?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Only if you currently hold a private hire or hackney carriage licence, or have held one within the last 12 months. Tax check codes expire after 120 days. If you have never held one, you sign a declaration confirming that instead.",
+      },
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title="How to Apply for a Solihull PHV Licence"
+  description="How to apply for a Solihull private hire licence: the Blue Lamp Trust assessment, enhanced DBS, Group 2 medical, training course, knowledge test and booking."
+>
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
+  <main class="md:flex md:justify-center">
+    <article class="prose prose-lg max-w-[750px]">
+      <h1>How to Apply for a Solihull PHV Licence</h1>
+
+      <p>
+        This guide explains <strong>how to apply for a Solihull private hire
+        licence</strong> (or hackney carriage driver licence) with Solihull
+        Metropolitan Borough Council, step by step and in the order you'll
+        actually do it. Solihull front-loads the process: almost everything
+        has to be finished <em>before</em> you book your appointment.
+      </p>
+
+      <p>
+        Every requirement below comes from the council's published driver
+        licence guide, linked at the bottom of this page.
+      </p>
+
+      <h2>Before you book: the pre-application steps</h2>
+
+      <h3>1. Practical driving assessment (Blue Lamp Trust)</h3>
+
+      <p>
+        You need a practical driving assessment delivered by
+        <strong>Blue Lamp Trust</strong>. Your certificate needs to be
+        <strong>less than 12 months old</strong> when you apply for your
+        licence, so don't take it too far in advance of the rest.
+      </p>
+
+      <h3>2. Enhanced DBS disclosure</h3>
+
+      <p>Your criminal record check must be:</p>
+
+      <ul>
+        <li>
+          <strong>Enhanced</strong> — the council will not accept basic or
+          standard.
+        </li>
+        <li>
+          For the occupation of <strong>taxi/private hire driver under "other
+          workforce"</strong>.
+        </li>
+        <li>
+          Inclusive of a check of <strong>both the adults' and children's
+          barred lists</strong>.
+        </li>
+      </ul>
+
+      <p>
+        Solihull uses <strong>TaxiPlus</strong> for these checks, and you must
+        <strong>subscribe to the DBS update service within 30 days</strong> of
+        the certificate being issued.
+      </p>
+
+      <h3>3. Medical assessment</h3>
+
+      <p>
+        You must meet <strong>DVLA Group 2 medical standards</strong> — the
+        higher standard that applies to professional drivers. The assessment
+        must be completed by a <strong>GMC registered medical
+        practitioner</strong> on the council's own medical assessment form,
+        and the certificate should be <strong>dated within 1 month</strong> of
+        when you make your application.
+      </p>
+
+      <h3>4. Training course and knowledge test</h3>
+
+      <p>
+        The course runs for approximately <strong>4 hours</strong> (breaks
+        provided), plus an extra <strong>60 minutes</strong> for the test, and
+        is booked through the council's online booking portal. It covers
+        safeguarding and CSAE risks including county lines, disability
+        awareness and the Equality Act 2010, customer service and
+        communication, the Highway Code and road safety, vehicle maintenance,
+        and compliance with legislation, conditions and policy.
+      </p>
+
+      <p>
+        The test itself is <strong>48 questions — 8 on each subject</strong> —
+        and you need <strong>36 right (75%)</strong> to pass. Results come
+        <strong>within 5 working days</strong>, and the certificate needs to be
+        less than 12 months old when you apply. Our
+        <a href="/phv-prep-uk/guide/solihull/how-to-pass/"
+          >guide to passing the Solihull PHV test</a
+        >
+        covers the format and revision in detail.
+      </p>
+
+      <p>
+        You can practise for it in the <strong>PHV Prep UK</strong> app, which
+        builds mock papers to the Solihull shape — 48 questions, 8 per subject,
+        marked at 36/48. It's on
+        <a
+          href="https://apps.apple.com/gb/app/phv-prep-uk-taxi-badge-test/id6776364932"
+          target="_blank"
+          rel="noopener">the App Store</a
+        >
+        and
+        <a
+          href="https://play.google.com/store/apps/details?id=com.phvprepuk.app&pcampaignid=web_share"
+          target="_blank"
+          rel="noopener">Google Play</a
+        >.
+      </p>
+
+      <h3>5. DVLA licence check code</h3>
+
+      <p>
+        You need a <strong>check code from the DVLA</strong> so the council can
+        view your driving licence record. These codes are
+        <strong>only valid for 21 days</strong>, so generate yours close to
+        your appointment rather than early.
+      </p>
+
+      <h3>6. HMRC tax check (where applicable)</h3>
+
+      <p>
+        If you currently hold a private hire or hackney carriage licence, or
+        have held one <strong>within the last 12 months</strong>, you need an
+        HMRC tax check code. These <strong>expire after 120 days</strong>.
+      </p>
+
+      <p>
+        If you do not hold one and have not held one in the last 12 months, you
+        instead sign a declaration confirming that.
+      </p>
+
+      <h2>What documents do I need?</h2>
+
+      <ul>
+        <li>
+          Your <strong>DVLA photocard</strong> (both sides), or both sides of
+          the old-style paper licence.
+        </li>
+        <li>
+          A clear, current <strong>passport-style photograph</strong> of your
+          head and shoulders.
+        </li>
+        <li>A <strong>completed application form</strong>.</li>
+        <li>
+          <strong>Proof of your right to work in the UK.</strong> If you have a
+          UK passport — current or expired — you must provide it.
+        </li>
+      </ul>
+
+      <p>
+        Bring your Blue Lamp Trust certificate, DBS, medical certificate and
+        knowledge test certificate as well, and check the dating rules above:
+        several of them expire.
+      </p>
+
+      <h2>How do I book my appointment?</h2>
+
+      <p>
+        Solihull is <strong>appointment-only — walk-ins are not
+        accepted</strong>. Email
+        <a href="mailto:licensing@solihull.gov.uk">licensing@solihull.gov.uk</a>
+        to book, including:
+      </p>
+
+      <ul>
+        <li>Your full name</li>
+        <li>Your date of birth</li>
+        <li>Your mobile number</li>
+        <li>The reason for the appointment</li>
+      </ul>
+
+      <h2>How much does it cost?</h2>
+
+      <p>
+        Solihull does not publish its licence, course or retake fees on the
+        taxi licensing pages linked below, so we won't quote a figure. Ask the
+        licensing team for the current fees before you budget — and remember
+        the DBS, medical and driving assessment are separate costs paid to
+        their providers, not to the council.
+      </p>
+
+      <h2>Where to go next</h2>
+
+      <p>
+        The paperwork is the easy part — the test is the hurdle. See
+        <a href="/phv-prep-uk/guide/solihull/how-to-pass/"
+          >how to pass the Solihull PHV test</a
+        >
+        and the
+        <a href="/phv-prep-uk/guide/solihull/faqs/"
+          >Solihull PHV test FAQs</a
+        >. Applying in Wolverhampton instead? We have a
+        <a href="/phv-prep-uk/guide/how-to-apply/"
+          >separate guide for the Wolverhampton process</a
+        >.
+      </p>
+
+      <h2>Official sources</h2>
+
+      <ul>
+        <li>
+          <a
+            href="https://www.solihull.gov.uk/business/licences/taxi-licensing"
+            target="_blank"
+            rel="noopener">Solihull Council — Taxi licensing</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://www.solihull.gov.uk/business/licences/taxi-licensing/private-hire-and-hackney-carriage-driver-licence-guide"
+            target="_blank"
+            rel="noopener"
+            >Solihull Council — Private hire and hackney carriage driver
+            licence guide</a
+          >
+        </li>
+      </ul>
+
+      <p>
+        <strong>PHV Prep UK is an independent study aid.</strong> It is not
+        affiliated with, authorised by, or endorsed by Solihull Metropolitan
+        Borough Council or any licensing authority. Always check the council's
+        official guidance for the latest application requirements and fees.
+      </p>
+    </article>
+  </main>
+</BaseLayout>
