@@ -1,0 +1,282 @@
+---
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "How many questions are on the Birmingham taxi badge test?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "18 questions, in three sections of 6: Legal, Licence Conditions and Plying for Hire. You get 45 minutes.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What are the auto-fail rules on the Birmingham PHV test?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Every Plying for Hire question must be answered correctly — one wrong answer there fails the paper on its own, whatever you scored elsewhere. Separately, you may drop no more than two in Legal, no more than two in Licence Conditions, and no more than four across those two sections combined.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Is there a pass mark for the Birmingham test?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "No. Birmingham does not use an overall pass mark at all. The paper is judged section by section, which is why a high total score is no guarantee of a pass.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Are the practice questions specific to Birmingham?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. Every question in the app's Birmingham mode is built from official Birmingham City Council source material — council policy documents, licensing conditions and relevant UK legislation. This isn't generic PHV content.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Will Birmingham mock exams repeat the same questions?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "No. Each mock exam pulls 18 questions — 6 from each of the three sections — from the full 150+ question bank, so you get a different paper every time. All questions are distinct: no padding or rephrased duplicates.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Is the app useful if I have already failed the Birmingham test?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Especially then. The most common way to fail is Plying for Hire: every question in that section must be correct, so one wrong answer fails the paper even with everything else right, and there is no overall pass mark to make up for it. The app shows your score section by section, so you can see whether you are losing the paper there or drifting over the two-wrong limit elsewhere.",
+      },
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title="Birmingham PHV Test — Frequently Asked Questions"
+  description="Birmingham PHV test FAQs: how many questions, the auto-fail rules, why there is no pass mark, the DBS, medical and driving test, and how to prepare."
+>
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
+  <main class="md:flex md:justify-center">
+    <article class="prose prose-lg max-w-[750px]">
+      <h1>Birmingham PHV Test — Frequently Asked Questions</h1>
+
+      <p>
+        Quick answers to the questions drivers ask most about the
+        <strong>Birmingham PHV test</strong> and the licensing process behind
+        it. For the full picture, see our guides on
+        <a href="/phv-prep-uk/guide/birmingham/how-to-pass/"
+          >passing the Birmingham PHV test</a
+        >
+        and
+        <a href="/phv-prep-uk/guide/birmingham/how-to-apply/"
+          >applying for a Birmingham PHV licence</a
+        >.
+      </p>
+
+      <h2>About the test</h2>
+
+      <h3>How many questions are on the Birmingham taxi badge test?</h3>
+
+      <p>
+        <strong>18 questions</strong>, in three sections of 6 — Legal, Licence
+        Conditions and Plying for Hire — with <strong>45 minutes</strong>
+        allowed.
+      </p>
+
+      <h3>What are the auto-fail rules?</h3>
+
+      <p>
+        <strong>Every Plying for Hire question must be correct.</strong> One
+        wrong answer in that section fails the paper on its own, whatever you
+        scored elsewhere.
+      </p>
+
+      <p>
+        On top of that, you may drop <strong>no more than two in Legal</strong>,
+        <strong>no more than two in Licence Conditions</strong>, and
+        <strong>no more than four across those two sections combined</strong>.
+      </p>
+
+      <h3>Is there a pass mark?</h3>
+
+      <p>
+        No — and this is the part most people get wrong. Birmingham does not
+        use an overall pass mark at all. The paper is judged section by
+        section, so a high total is no guarantee of a pass.
+      </p>
+
+      <h3>Can I really fail with 17 out of 18?</h3>
+
+      <p>
+        Yes, if the question you dropped was a Plying for Hire one. That is the
+        whole point of an auto-fail section: nothing else on the paper can
+        compensate for it.
+      </p>
+
+      <h3>Who runs the test?</h3>
+
+      <p>
+        <strong>TTC Group</strong>, not the council. Birmingham City Council
+        states that private hire knowledge tests are organised and conducted by
+        TTC, who also offer an optional preparation course and a short video on
+        how to prepare. You book by contacting TTC directly by email.
+      </p>
+
+      <h3>Is it the same test as Wolverhampton or Solihull?</h3>
+
+      <p>
+        No. Birmingham is 18 questions with section rules and no pass mark;
+        <a href="/phv-prep-uk/guide/how-to-pass/">Wolverhampton</a> is 28 with
+        8 key questions and a 21/28 mark;
+        <a href="/phv-prep-uk/guide/solihull/how-to-pass/">Solihull</a> is 48
+        with a 36/48 mark and no auto-fail. A pass with one council does not
+        qualify you with another.
+      </p>
+
+      <h2>About applying</h2>
+
+      <h3>Is Birmingham accepting new driver applications?</h3>
+
+      <p>
+        The council's applications page carries a notice saying new driver
+        applications are not being accepted unless you have already completed a
+        medical and obtained a DBS certificate through its occupational health
+        service. Newer guidance pages describe the full route, so the two do
+        not read consistently — confirm the current position with
+        <a href="mailto:licensing@birmingham.gov.uk">licensing@birmingham.gov.uk</a>
+        before spending money.
+      </p>
+
+      <h3>What checks do I need?</h3>
+
+      <p>
+        A <strong>medical</strong>, booked and paid for through the council's
+        online form; a <strong>conviction disclosures check (DBS)</strong>, or
+        proof of previous good character by other means as set out in the
+        driver guidance; and a <strong>driving test</strong> — new applicants
+        are required to take one with the Birmingham City Council Driving
+        School.
+      </p>
+
+      <h3>How do I book the driving test?</h3>
+
+      <p>
+        Phone <strong>0121 303 3311</strong> between 9:00am and 12:00pm or
+        1:00pm and 3:00pm. You may reach an answerphone, as assessors are often
+        out on jobs.
+      </p>
+
+      <h3>When do I fill in the application form?</h3>
+
+      <p>
+        <strong>After you have passed the knowledge test.</strong> You then
+        download and complete the form and make an appointment to bring it in
+        with the documents listed in the council's Guide to Driver Licences.
+      </p>
+
+      <h2>About the app</h2>
+
+      <h3>Are the practice questions specific to Birmingham?</h3>
+
+      <p>
+        Yes. Every question in the app's Birmingham mode is built from official
+        Birmingham City Council source material — council policy documents,
+        licensing conditions and relevant UK legislation. This isn't generic
+        PHV content.
+      </p>
+
+      <h3>Will mock exams just repeat the same questions?</h3>
+
+      <p>
+        No. Each mock exam pulls 18 questions — 6 from each of the three
+        sections — from the full <strong>150+</strong> question bank, so you
+        get a different paper every time. All questions are distinct: no
+        padding or rephrased duplicates.
+      </p>
+
+      <h3>Does the app mark papers the way Birmingham does?</h3>
+
+      <p>
+        Yes. It applies the section rules rather than a score, so a mock that
+        would have failed on Plying for Hire is reported as a fail — not as
+        "17 out of 18".
+      </p>
+
+      <h3>Is this useful if I've already failed the test?</h3>
+
+      <p>
+        Especially then. The most common way to fail is Plying for Hire: every
+        question in that section must be correct, so one wrong answer fails the
+        paper even with everything else right, and there is no overall pass
+        mark to make up for it. The app shows your score section by section, so
+        you can see whether you are losing the paper there or drifting over the
+        two-wrong limit elsewhere.
+      </p>
+
+      <h3>Do you have pass rate statistics?</h3>
+
+      <p>
+        No, and we won't invent one. We can't verify what happens after someone
+        leaves the app and sits the real test. Anyone quoting you a percentage
+        for something like this is guessing.
+      </p>
+
+      <p>
+        PHV Prep UK is on
+        <a
+          href="https://apps.apple.com/gb/app/phv-prep-uk-taxi-badge-test/id6776364932"
+          target="_blank"
+          rel="noopener">the App Store</a
+        >
+        and
+        <a
+          href="https://play.google.com/store/apps/details?id=com.phvprepuk.app&pcampaignid=web_share"
+          target="_blank"
+          rel="noopener">Google Play</a
+        >.
+      </p>
+
+      <h2>Official sources</h2>
+
+      <ul>
+        <li>
+          <a
+            href="https://www.birmingham.gov.uk/info/20107/taxi_and_private_hire"
+            target="_blank"
+            rel="noopener">Birmingham City Council — Taxi and private hire</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://www.birmingham.gov.uk/info/20107/taxi_and_private_hire/294/information_for_taxi_drivers_private_hire_drivers_and_operators"
+            target="_blank"
+            rel="noopener"
+            >Birmingham City Council — Apply for a hackney carriage (taxi) or
+            private hire licence</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://www.birmingham.gov.uk/downloads/file/4217/guide_to_driver_licences"
+            target="_blank"
+            rel="noopener">Birmingham City Council — Guide to Driver Licences</a
+          >
+        </li>
+      </ul>
+
+      <p>
+        <strong>PHV Prep UK is an independent study aid.</strong> It is not
+        affiliated with, authorised by, or endorsed by Birmingham City Council
+        or any licensing authority. Always check the council's official
+        guidance for the latest test requirements and fees.
+      </p>
+    </article>
+  </main>
+</BaseLayout>
