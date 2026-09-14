@@ -1,0 +1,336 @@
+---
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "How many questions are on the Birmingham PHV knowledge test?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "18 questions, split into three sections of 6: Legal, Licence Conditions and Plying for Hire. You are allowed 45 minutes.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What is the pass mark for the Birmingham PHV test?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "There isn't one. Birmingham is marked by section rules rather than an overall score: every Plying for Hire question must be correct, and you may drop no more than two in Legal, no more than two in Licence Conditions, and no more than four across those two sections combined.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Can you fail the Birmingham test with 17 out of 18?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. If the single question you get wrong is a Plying for Hire question, the paper fails automatically — there is no overall score high enough to make up for it.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Does Birmingham use the same test as Wolverhampton or Solihull?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "No. Birmingham sets 18 questions in three sections of 6 with section rules and no overall pass mark. Wolverhampton sets 28 questions with 8 key questions and a 21/28 mark. Solihull sets 48 questions with a 36/48 mark and no key questions. A pass with one council does not qualify you with another.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Who runs the Birmingham knowledge test?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Birmingham City Council states that private hire knowledge tests are organised and conducted by TTC Group, who also offer an optional preparation course. You book the test by contacting TTC directly by email.",
+      },
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title="How to Pass the Birmingham PHV Test: 2026 Guide"
+  description="How to pass the Birmingham PHV test: 18 questions in three sections, 45 minutes, the Plying for Hire auto-fail rule, and how Birmingham differs from other councils."
+>
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
+  <main class="md:flex md:justify-center">
+    <article class="prose prose-lg max-w-[750px]">
+      <h1>How to Pass the Birmingham PHV Test: 2026 Guide</h1>
+
+      <p>
+        This guide explains <strong>how to pass the Birmingham PHV test</strong>
+        — the knowledge test you sit for a private hire driver licence with
+        Birmingham City Council. Birmingham is the most unusual of the West
+        Midlands papers: there is <strong>no overall pass mark</strong>, and
+        one section can fail you on its own. Everything below is set out in
+        plain English, with the council's own pages linked at the bottom.
+      </p>
+
+      <h2>What is the Birmingham knowledge test?</h2>
+
+      <p>
+        Birmingham City Council states that private hire knowledge tests are
+        <strong>organised and conducted by TTC Group</strong>, not by the
+        council itself. TTC also offer an optional training course for
+        candidates who want help preparing, and have published a short video
+        on how to prepare. You book the test — or the course — by contacting
+        TTC directly by email.
+      </p>
+
+      <p>
+        Before you book, the council asks you to read its
+        <strong>Guide to Driver Licences</strong> in full. The test comes
+        before the application form: you download and complete the form
+        <em>once you have passed</em>.
+      </p>
+
+      <h2>The Birmingham test format</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Element</th>
+            <th>Birmingham</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Questions</td>
+            <td>18 — three sections of 6</td>
+          </tr>
+          <tr>
+            <td>Sections</td>
+            <td>Legal · Licence Conditions · Plying for Hire</td>
+          </tr>
+          <tr>
+            <td>Time allowed</td>
+            <td>45 minutes</td>
+          </tr>
+          <tr>
+            <td>Overall pass mark</td>
+            <td>None — the paper is judged section by section</td>
+          </tr>
+          <tr>
+            <td>Plying for Hire</td>
+            <td>All 6 must be correct — any wrong answer fails the paper</td>
+          </tr>
+          <tr>
+            <td>Legal / Licence Conditions</td>
+            <td>
+              Maximum 2 wrong in each, and no more than 4 wrong across the two
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>The Plying for Hire trap</h2>
+
+      <p>
+        This is the part that catches people out, so it is worth stating
+        bluntly: <strong>you can score 17 out of 18 and still fail</strong>.
+      </p>
+
+      <p>
+        If the one question you drop is a Plying for Hire question, the paper
+        fails automatically. There is no overall score high enough to
+        compensate, because there is no overall score being judged. Six
+        questions out of eighteen carry a rule that the other twelve cannot
+        soften.
+      </p>
+
+      <p>
+        Plying for Hire is the legal line between a private hire vehicle and a
+        hackney carriage: a PHV must be pre-booked through a licensed
+        operator, and cannot be hailed in the street or wait on a rank. The
+        council treats it as non-negotiable because getting it wrong in real
+        life is not a technicality — it can invalidate your insurance and put
+        your licence at risk.
+      </p>
+
+      <h2>The section rules in full</h2>
+
+      <p>To pass, you must satisfy <strong>all three</strong> of these:</p>
+
+      <ol>
+        <li>
+          <strong>Plying for Hire — 6 out of 6.</strong> Any wrong answer here
+          fails the paper regardless of everything else.
+        </li>
+        <li>
+          <strong>Legal — no more than 2 wrong.</strong> Three or more in this
+          section fails.
+        </li>
+        <li>
+          <strong>Licence Conditions — no more than 2 wrong</strong>, and
+          <strong>no more than 4 wrong across Legal and Licence Conditions
+          combined</strong>.
+        </li>
+      </ol>
+
+      <p>
+        Notice what this means for revision. A strong average is worth nothing
+        on its own — what matters is that no single section slips. A candidate
+        who is excellent at Legal and shaky on Plying for Hire is in a far
+        worse position than one who is merely solid everywhere.
+      </p>
+
+      <h2>How Birmingham differs from Wolverhampton and Solihull</h2>
+
+      <p>
+        Drivers often assume a badge is a badge. The three West Midlands
+        papers are marked under genuinely different systems, and a pass with
+        one council does not qualify you with another.
+      </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>Birmingham</th>
+            <th>Wolverhampton</th>
+            <th>Solihull</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Questions</td>
+            <td>18</td>
+            <td>28</td>
+            <td>48</td>
+          </tr>
+          <tr>
+            <td>Time</td>
+            <td>45 minutes</td>
+            <td>45 minutes</td>
+            <td>60 minutes</td>
+          </tr>
+          <tr>
+            <td>Pass mark</td>
+            <td>None — section rules</td>
+            <td>21 out of 28 (75%)</td>
+            <td>36 out of 48 (75%)</td>
+          </tr>
+          <tr>
+            <td>Automatic fail</td>
+            <td>Any Plying for Hire question</td>
+            <td>Any of the 8 key questions</td>
+            <td>None</td>
+          </tr>
+          <tr>
+            <td>Structure</td>
+            <td>3 sections of 6</td>
+            <td>7 categories</td>
+            <td>6 subjects, 8 each</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        Birmingham and Wolverhampton share the idea that some questions cannot
+        be dropped — see
+        <a href="/phv-prep-uk/guide/8-key-questions/"
+          >the 8 key questions rule</a
+        >
+        if you are looking at Wolverhampton, or our guide to
+        <a href="/phv-prep-uk/guide/solihull/how-to-pass/"
+          >the Solihull test</a
+        >, which has no auto-fail at all.
+      </p>
+
+      <h2>How to prepare</h2>
+
+      <ol>
+        <li>
+          <strong>Treat Plying for Hire as pass-or-fail, because it is.</strong>
+          Drill it until you are not guessing on any of it. This is the single
+          highest-return thing you can revise.
+        </li>
+        <li>
+          <strong>Do not chase a total score.</strong> Track your results
+          section by section — an overall percentage hides exactly the problem
+          that fails Birmingham papers.
+        </li>
+        <li>
+          <strong>Keep both other sections comfortable.</strong> With a
+          two-wrong limit in each, there is very little room: aim to be
+          dropping none, so that a surprise on the day still leaves you
+          inside the rule.
+        </li>
+        <li>
+          <strong>Practise to time.</strong> 18 questions in 45 minutes is
+          generous — the risk is misreading, not the clock.
+        </li>
+      </ol>
+
+      <p>
+        The <strong>PHV Prep UK</strong> app has a Birmingham mode that builds
+        papers the way Birmingham does — 18 questions, 6 from each section —
+        and marks them against the real section rules rather than a score, so
+        a mock that would have failed on Plying for Hire tells you so. Get it
+        on
+        <a
+          href="https://apps.apple.com/gb/app/phv-prep-uk-taxi-badge-test/id6776364932"
+          target="_blank"
+          rel="noopener">the App Store</a
+        >
+        or
+        <a
+          href="https://play.google.com/store/apps/details?id=com.phvprepuk.app&pcampaignid=web_share"
+          target="_blank"
+          rel="noopener">Google Play</a
+        >.
+      </p>
+
+      <h2>Where to go next</h2>
+
+      <p>
+        Ready to start? Read
+        <a href="/phv-prep-uk/guide/birmingham/how-to-apply/"
+          >how to apply for a Birmingham PHV licence</a
+        >, or see the
+        <a href="/phv-prep-uk/guide/birmingham/faqs/"
+          >Birmingham PHV test FAQs</a
+        >
+        for quick answers. You can also learn more about the app on the
+        <a href="/phv-prep-uk">PHV Prep UK page</a>.
+      </p>
+
+      <h2>Official sources</h2>
+
+      <ul>
+        <li>
+          <a
+            href="https://www.birmingham.gov.uk/info/20107/taxi_and_private_hire"
+            target="_blank"
+            rel="noopener">Birmingham City Council — Taxi and private hire</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://www.birmingham.gov.uk/info/20107/taxi_and_private_hire/294/information_for_taxi_drivers_private_hire_drivers_and_operators"
+            target="_blank"
+            rel="noopener"
+            >Birmingham City Council — Apply for a hackney carriage (taxi) or
+            private hire licence</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://www.birmingham.gov.uk/downloads/file/4217/guide_to_driver_licences"
+            target="_blank"
+            rel="noopener">Birmingham City Council — Guide to Driver Licences</a
+          >
+        </li>
+      </ul>
+
+      <p>
+        <strong>PHV Prep UK is an independent study aid.</strong> It is not
+        affiliated with, authorised by, or endorsed by Birmingham City Council
+        or any licensing authority. Always check the council's official
+        guidance for the latest test requirements and fees.
+      </p>
+    </article>
+  </main>
+</BaseLayout>

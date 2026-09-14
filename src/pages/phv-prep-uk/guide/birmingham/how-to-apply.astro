@@ -1,0 +1,263 @@
+---
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "How do I apply for a Birmingham private hire licence?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Birmingham asks you to read its Guide to Driver Licences first, then complete the medical, DBS and driving test, and pass the knowledge test run by TTC Group. Only once you have passed do you download and complete the application form and make an appointment to bring it in with your documents.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Who carries out the Birmingham knowledge test?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "TTC Group. Birmingham City Council states that private hire knowledge tests are organised and conducted by TTC Group, who also offer an optional preparation course. You book by contacting TTC directly by email.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Do I need a driving test for a Birmingham taxi licence?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. Birmingham City Council states that new applicants are required to take a driving test with the Birmingham City Council Driving School. You book it by phoning 0121 303 3311 between 9:00am and 12:00pm or 1:00pm and 3:00pm.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How do I book a taxi medical in Birmingham?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "You book and pay for the medical appointment through the council's online form. For a wheelchair or dog exemption booking, you email taximedicalanddbs@birmingham.gov.uk and the team will arrange the appointment and take payment.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Is Birmingham accepting new private hire driver applications?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "The council's applications page carries a notice stating that new driver applications are not being accepted unless the applicant has already completed a medical and obtained a DBS certificate through its occupational health service. That notice has been on the page for some time, so confirm the current position with licensing before you spend money.",
+      },
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title="How to Apply for a Birmingham PHV Licence"
+  description="How to apply for a Birmingham private hire licence: the DBS, medical, council driving test, the TTC Group knowledge test, and the application appointment."
+>
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
+  <main class="md:flex md:justify-center">
+    <article class="prose prose-lg max-w-[750px]">
+      <h1>How to Apply for a Birmingham PHV Licence</h1>
+
+      <p>
+        This guide explains <strong>how to apply for a Birmingham private hire
+        licence</strong> with Birmingham City Council, in the order the council
+        sets out. The important thing to understand up front is the sequence:
+        the checks and the knowledge test come <em>first</em>, and the
+        application form comes last.
+      </p>
+
+      <p>
+        Everything below is drawn from the council's published pages, linked at
+        the bottom.
+      </p>
+
+      <h2>Check first: are new applications open?</h2>
+
+      <p>
+        Birmingham's applications page carries a notice stating that the
+        council is <strong>not currently accepting new driver
+        applications</strong> unless applicants have already completed a
+        medical and obtained a DBS certificate through its occupational health
+        service.
+      </p>
+
+      <p>
+        That notice has sat on the page for some time while the newer guidance
+        pages describe the full new-applicant route, so the two do not read
+        consistently. Before you spend anything, email
+        <a href="mailto:licensing@birmingham.gov.uk">licensing@birmingham.gov.uk</a>
+        and confirm the current position for new applicants.
+      </p>
+
+      <h2>Step 1 — Read the Guide to Driver Licences</h2>
+
+      <p>
+        The council's own <strong>Guide to Driver Licences</strong> is the
+        authoritative document, and it asks you to read all of it before
+        contacting the office to arrange a knowledge test. It is also where the
+        full document checklist lives.
+      </p>
+
+      <h2>Step 2 — Medical assessment</h2>
+
+      <p>
+        You <strong>book and pay for your medical appointment through the
+        council's online form</strong>. If you need a wheelchair or dog
+        exemption booking instead, email
+        <a href="mailto:taximedicalanddbs@birmingham.gov.uk"
+          >taximedicalanddbs@birmingham.gov.uk</a
+        >
+        and the team will contact you to book the appointment and take
+        payment. The same address handles medical and DBS enquiries.
+      </p>
+
+      <h2>Step 3 — DBS check</h2>
+
+      <p>
+        You must complete a <strong>conviction disclosures check (DBS)</strong>
+        and/or prove previous good character by other means, as set out in the
+        driver guidance. The council provides its own apply-and-pay route for
+        the DBS rather than leaving you to arrange it independently.
+      </p>
+
+      <h2>Step 4 — Driving test</h2>
+
+      <p>
+        <strong>New applicants are required to take a driving test with the
+        Birmingham City Council Driving School.</strong> To book, or for
+        enquiries, phone <strong>0121 303 3311</strong> between 9:00am and
+        12:00pm or 1:00pm and 3:00pm. You may reach an answerphone, as
+        assessors are often out on jobs.
+      </p>
+
+      <h2>Step 5 — Knowledge test</h2>
+
+      <p>
+        Private hire knowledge tests are <strong>organised and conducted by TTC
+        Group</strong>. TTC also offer an optional training course for
+        candidates who want help preparing, and have produced a short video on
+        how to prepare. You book the test, or the course, by contacting TTC
+        directly by email.
+      </p>
+
+      <p>
+        The paper is <strong>18 questions in three sections of 6</strong> —
+        Legal, Licence Conditions and Plying for Hire — in 45 minutes, and it
+        is marked by section rules rather than an overall score. Every Plying
+        for Hire question must be correct. Our
+        <a href="/phv-prep-uk/guide/birmingham/how-to-pass/"
+          >guide to passing the Birmingham PHV test</a
+        >
+        explains the rules in full.
+      </p>
+
+      <p>
+        You can practise for it in the <strong>PHV Prep UK</strong> app, which
+        builds Birmingham papers to the same shape and marks them against the
+        real section rules. It's on
+        <a
+          href="https://apps.apple.com/gb/app/phv-prep-uk-taxi-badge-test/id6776364932"
+          target="_blank"
+          rel="noopener">the App Store</a
+        >
+        and
+        <a
+          href="https://play.google.com/store/apps/details?id=com.phvprepuk.app&pcampaignid=web_share"
+          target="_blank"
+          rel="noopener">Google Play</a
+        >.
+      </p>
+
+      <h2>Step 6 — Application form and appointment</h2>
+
+      <p>
+        <strong>Once you have passed the knowledge test</strong>, download and
+        complete the application form, then make an appointment to bring the
+        form in along with the other documents listed in the driver guidance.
+        General enquiries go to
+        <a href="mailto:licensing@birmingham.gov.uk">licensing@birmingham.gov.uk</a>.
+      </p>
+
+      <h2>What about the vehicle?</h2>
+
+      <p>
+        If you are licensing a vehicle as well, note Birmingham's age rule:
+        <strong>new and replacement private hire vehicles must be younger than
+        8 years</strong> from the date of first registration when the
+        application is submitted. A vehicle older than eight years will not be
+        licensed, and imported vehicles are assessed from their first
+        registration in the country of origin where that is earlier.
+      </p>
+
+      <h2>How much does it cost?</h2>
+
+      <p>
+        Birmingham publishes a separate licensing schedule of fees and charges,
+        and the medical, DBS, driving test and knowledge test are each paid
+        for individually. Fees change, so we won't quote figures here — check
+        the council's current schedule and confirm the TTC test fee with TTC
+        before you budget.
+      </p>
+
+      <h2>Where to go next</h2>
+
+      <p>
+        The paperwork is the easy part — the test is the hurdle. See
+        <a href="/phv-prep-uk/guide/birmingham/how-to-pass/"
+          >how to pass the Birmingham PHV test</a
+        >
+        and the
+        <a href="/phv-prep-uk/guide/birmingham/faqs/"
+          >Birmingham PHV test FAQs</a
+        >. Applying elsewhere in the West Midlands? We have guides for
+        <a href="/phv-prep-uk/guide/solihull/how-to-apply/">Solihull</a> and
+        <a href="/phv-prep-uk/guide/how-to-apply/">Wolverhampton</a> too.
+      </p>
+
+      <h2>Official sources</h2>
+
+      <ul>
+        <li>
+          <a
+            href="https://www.birmingham.gov.uk/info/20107/taxi_and_private_hire"
+            target="_blank"
+            rel="noopener">Birmingham City Council — Taxi and private hire</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://www.birmingham.gov.uk/info/20107/taxi_and_private_hire/294/information_for_taxi_drivers_private_hire_drivers_and_operators"
+            target="_blank"
+            rel="noopener"
+            >Birmingham City Council — Apply for a hackney carriage (taxi) or
+            private hire licence</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://www.birmingham.gov.uk/info/20107/taxi_and_private_hire/2066/private_hire_and_hackney_carriage_applications"
+            target="_blank"
+            rel="noopener"
+            >Birmingham City Council — Private hire and hackney carriage
+            applications</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://www.birmingham.gov.uk/downloads/file/4217/guide_to_driver_licences"
+            target="_blank"
+            rel="noopener">Birmingham City Council — Guide to Driver Licences</a
+          >
+        </li>
+      </ul>
+
+      <p>
+        <strong>PHV Prep UK is an independent study aid.</strong> It is not
+        affiliated with, authorised by, or endorsed by Birmingham City Council
+        or any licensing authority. Always check the council's official
+        guidance for the latest application requirements and fees.
+      </p>
+    </article>
+  </main>
+</BaseLayout>
