@@ -60,7 +60,7 @@ export const projects: CvEntry[] = [
     title: "PHV Prep UK — iOS Exam Preparation App",
     subtitle:
       "Flutter / Dart / Firebase / Anthropic API - Solo project, live on the App Store",
-    body: "Designed, built and released a paid exam-preparation app for the Wolverhampton private hire vehicle (taxi badge) licensing test, covering 300+ practice questions, timed mock exams that mirror the real exam's pass logic, and an AI tutor for UK taxi law. Built solo with Flutter and Firebase (Auth, Firestore, Cloud Functions, europe-west2). Security-focused throughout: server-side StoreKit 2 purchase verification, the Anthropic API key held in Secret Manager and never shipped in the client, Firestore rules locking premium status to the backend, and content-safety controls on the AI feature. The Android build is in Google Play closed testing, with launch expected 18 August 2026.",
+    body: "Designed, built and released a paid exam-preparation app for West Midlands private hire vehicle (taxi badge) licensing tests (Wolverhampton, Birmingham, Solihull, Coventry, Tamworth, Sandwell and Dudley), covering 300+ practice questions, timed mock exams that mirror the real exam's pass logic, and an AI tutor for UK taxi law. Built solo with Flutter and Firebase (Auth, Firestore, Cloud Functions, europe-west2). Security-focused throughout: server-side StoreKit 2 purchase verification, the Anthropic API key held in Secret Manager and never shipped in the client, Firestore rules locking premium status to the backend, and content-safety controls on the AI feature. The Android build is in Google Play closed testing, with launch expected 18 August 2026.",
   },
   {
     title: "Yongchivo Tools — Cyber Security Micro-Tools",

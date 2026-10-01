@@ -10,7 +10,7 @@ const faqSchema = {
       name: "Am I eligible for a Wolverhampton private hire licence?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "You must be at least 21 years old, have held a full UK driving licence for at least 12 months, have the right to work in the UK, pass a Group 2 medical examination, and pass an enhanced DBS (criminal record) check.",
+        text: "There is no minimum age requirement, but you must have held a Category B driving entitlement for at least 12 months. You must also have the right to work in the UK, pass a Group 2 medical examination, and pass an enhanced DBS (criminal record) check.",
       },
     },
     {
@@ -51,7 +51,7 @@ const faqSchema = {
 
 <BaseLayout
   title="Am I Eligible for a Wolverhampton PHV Licence? Full Requirements"
-  description="Everything you need to qualify for a Wolverhampton private hire licence — age, Certificate of Good Conduct, DBS, and vehicle requirements."
+  description="Everything you need to qualify for a Wolverhampton private hire licence — driving licence period, Certificate of Good Conduct, DBS, and vehicle requirements."
 >
   <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
 
@@ -86,11 +86,13 @@ const faqSchema = {
         <tbody>
           <tr>
             <td>Age</td>
-            <td>At least 21 years old</td>
+            <td>There is no minimum age requirement</td>
           </tr>
           <tr>
             <td>Driving licence</td>
-            <td>A full UK driving licence held for at least 12 months</td>
+            <td>
+              A Category B driving entitlement held for at least 12 months
+            </td>
           </tr>
           <tr>
             <td>Right to work</td>
