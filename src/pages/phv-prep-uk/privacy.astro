@@ -104,8 +104,8 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
       <ul>
         <li>
           <strong>Google Firebase</strong> (Authentication, Cloud Firestore,
-          Analytics, Cloud Functions, and Hosting) — provides our backend,
-          database, and analytics infrastructure.
+          Analytics, App Check, Cloud Functions, and Hosting) — provides our
+          backend, database, analytics, and app verification infrastructure.
         </li>
         <li>
           <strong>Anthropic</strong> — processes the messages you send to the AI
@@ -164,7 +164,9 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
       <p>
         We take reasonable technical and organisational measures to protect your
         data, including encryption of data in transit, server-side verification of
-        purchases, and access controls on our backend. No method of transmission
+        purchases, and access controls on our backend. We also use Firebase App
+        Check, which verifies that requests to our backend come from the genuine
+        app. No method of transmission
         or storage is completely secure, but we work to protect your data and
         keep our systems up to date.
       </p>
