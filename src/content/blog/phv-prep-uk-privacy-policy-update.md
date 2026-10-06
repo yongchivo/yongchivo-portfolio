@@ -20,7 +20,7 @@ the people reading it are deciding whether to trust the app with their data.
 
 **A consent mechanism that didn't exist.** The policy listed consent as a legal
 basis "for certain analytics" and said you could withdraw it at any time. The
-app has no consent banner, no settings screen and no switch for analytics. There
+app had no consent banner, no settings screen and no switch for analytics. There
 was nothing to withdraw.
 
 **Crash data the app never collected.** The policy said Firebase Analytics
@@ -48,9 +48,9 @@ From version 1.7.3, this is the full picture of analytics in PHV Prep UK:
 ## What changed on the page
 
 The consent line is now a plain description of analytics: what is collected,
-why, that there is no setting in the app to turn it off, and that you can email
-[support@yongchivo.com](mailto:support@yongchivo.com) to ask about this data or
-object to its use. The "diagnostic or crash data" claim is gone, replaced with a
+why, the legal basis it relies on, and how to ask about this data or object to
+its use. The full details are in the
+[privacy policy](https://yongchivo.com/phv-prep-uk/privacy/). The "diagnostic or crash data" claim is gone, replaced with a
 clear statement that no crash reports or performance data are collected. The
 "Last updated" date now reads 6 October 2026.
 
