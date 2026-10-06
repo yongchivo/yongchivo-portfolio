@@ -165,8 +165,9 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
         We take reasonable technical and organisational measures to protect your
         data, including encryption of data in transit, server-side verification of
         purchases, and access controls on our backend. We also use Firebase App
-        Check, which verifies that requests to our backend come from the genuine
-        app. No method of transmission
+        Check, which uses Google Play Integrity on Android and Apple App Attest
+        and DeviceCheck on iOS to verify that requests to our backend come from
+        the genuine app. No method of transmission
         or storage is completely secure, but we work to protect your data and
         keep our systems up to date.
       </p>
