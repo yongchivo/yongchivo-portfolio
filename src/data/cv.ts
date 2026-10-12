@@ -38,7 +38,7 @@ export const contact = {
 };
 
 export const profile =
-  "Year 2 BSc (Hons) Cyber Security student at the University of Worcester (graduating 2027) who ships production software. Designed, built and released PHV Prep UK, a paid iOS exam-preparation app built solo in Flutter and Firebase with server-side purchase verification and API keys kept off the client, alongside a hub of six browser-based cyber security tools running on Cloudflare Workers. Practical experience across digital forensics, secure application design, mobile and web development, and custom Linux environments. Bilingual in Spanish and English. Holder of an SIA Door Supervisor licence, Emergency First Aid at Work certification and a full UK driving licence. Four years of customer-facing hospitality experience have built strong communication skills, reliability and the ability to stay calm under pressure, both independently and in fast-moving teams.";
+  "Year 2 BSc (Hons) Cyber Security student at the University of Worcester (graduating 2027) who ships production software. Designed, built and released PHV Prep UK, a paid iOS and Android exam-preparation app built solo in Flutter and Firebase with server-side purchase verification and API keys kept off the client, alongside a hub of six browser-based cyber security tools running on Cloudflare Workers. Practical experience across digital forensics, secure application design, mobile and web development, and custom Linux environments. Bilingual in Spanish and English. Holder of an SIA Door Supervisor licence, Emergency First Aid at Work certification and a full UK driving licence. Four years of customer-facing hospitality experience have built strong communication skills, reliability and the ability to stay calm under pressure, both independently and in fast-moving teams.";
 
 export const education: CvEntry[] = [
   {
@@ -57,10 +57,10 @@ export const education: CvEntry[] = [
 /** Shipped, self-directed work. Listed before the academic projects. */
 export const projects: CvEntry[] = [
   {
-    title: "PHV Prep UK — iOS Exam Preparation App",
+    title: "PHV Prep UK — Taxi Badge Exam Preparation App",
     subtitle:
-      "Flutter / Dart / Firebase / Anthropic API - Solo project, live on the App Store",
-    body: "Designed, built and released a paid exam-preparation app for West Midlands private hire vehicle (taxi badge) licensing tests (Wolverhampton, Birmingham, Solihull, Coventry, Tamworth, Sandwell and Dudley), covering 300+ practice questions, timed mock exams that mirror the real exam's pass logic, and an AI tutor for UK taxi law. Built solo with Flutter and Firebase (Auth, Firestore, Cloud Functions, europe-west2). Security-focused throughout: server-side StoreKit 2 purchase verification, the Anthropic API key held in Secret Manager and never shipped in the client, Firestore rules locking premium status to the backend, and content-safety controls on the AI feature. The Android build is in Google Play closed testing, with launch expected 18 August 2026.",
+      "Flutter / Dart / Firebase / Anthropic API - Solo project, live on the App Store and Google Play",
+    body: "Designed, built and released a paid exam-preparation app for West Midlands private hire vehicle (taxi badge) licensing tests (Wolverhampton, Birmingham, Solihull, Coventry, Tamworth, Sandwell, Dudley and Walsall), covering 2,000+ practice questions, timed mock exams that mirror the real exam's pass logic, and an AI tutor for UK taxi law. Built solo with Flutter and Firebase (Auth, Firestore, Cloud Functions, europe-west2). Security-focused throughout: server-side StoreKit 2 purchase verification, the Anthropic API key held in Secret Manager and never shipped in the client, Firestore rules locking premium status to the backend, and content-safety controls on the AI feature. The Android build is in Google Play closed testing, with launch expected 18 August 2026.",
   },
   {
     title: "Yongchivo Tools — Cyber Security Micro-Tools",

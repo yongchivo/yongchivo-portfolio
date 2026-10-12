@@ -43,7 +43,7 @@ import HorizontalCard from "../components/HorizontalCard.astro";
   <HorizontalCard
     title="Yongchivo Tools"
     img="/tools-cover.webp"
-    desc="A hub of free, bilingual (EN/ES) cybersecurity micro-tools at tools.yongchivo.com — eight tools now live. Client-side utilities that run entirely in the browser: Password Generator, Password Strength Analyzer, Subnet Calculator, an EXIF Viewer that surfaces the camera, timestamp and GPS position hidden in a photo, a PDF Metadata Editor that inspects and strips the author and software fields left in a document, and a 'Which cyber role are you?' quiz; plus two Cloudflare Worker-backed tools — a Security Headers Checker (with strict SSRF-safe URL validation) and a Breach Checker (XposedOrNot). Built with Astro, Tailwind and Cloudflare Workers, with automatic deploys and its own A-grade security headers."
+    desc="A hub of free, bilingual (EN/ES) cybersecurity micro-tools at tools.yongchivo.com — password, subnet, EXIF and PDF-metadata utilities that run in the browser, plus a Security Headers Checker and a Breach Checker on Cloudflare Workers."
     url="https://tools.yongchivo.com"
     target="_blank"
     badge="LIVE"
@@ -52,7 +52,7 @@ import HorizontalCard from "../components/HorizontalCard.astro";
   <HorizontalCard
     title="File Converter — Private, In-Browser"
     img="/convert-cover.webp"
-    desc="A privacy-first file converter living at yongchivo.com/convert, built into this portfolio for SEO with a dedicated, keyword-targeted page per conversion. Converts images entirely in the browser — PNG ↔ JPG, PNG ↔ WebP, JPG ↔ WebP, plus HEIC → JPG/PNG for iPhone photos (Canvas API, with the libheif WASM for HEIC) — and data formats: CSV, JSON, YAML and XML, in every direction, with graceful errors on malformed input. Drag-and-drop, paste, batch and instant download; nothing is ever uploaded. Bilingual (EN/ES) on a single reusable conversion engine, structured so document and audio formats slot in next."
+    desc="Convert images (PNG, JPG, WebP, HEIC) and data formats (CSV, JSON, YAML, XML) entirely in your browser — nothing is ever uploaded. Bilingual (EN/ES), with a dedicated page per conversion."
     url="/convert"
     target="_self"
     badge="LIVE"
@@ -61,7 +61,7 @@ import HorizontalCard from "../components/HorizontalCard.astro";
   <HorizontalCard
     title="Analytics Dashboard"
     img="/analytics-cover.webp"
-    desc="A dashboard at yongchivo.com/analytics that reads the CSV exports the platforms already give you and visualizes what their own dashboards don't show. For Google Search Console: a CTR-against-position scatter that separates a wasted ranking from a real opportunity, a ranking distribution, and a genuine side-by-side of two date ranges. For App Store Connect: downloads and revenue together on a dual-axis chart, the full impressions → product page views → downloads funnel with the drop-off at each step, and day-of-week performance. Bilingual (EN/ES), parsed with Papaparse and drawn with Chart.js entirely in the browser — nothing is ever uploaded. Built one preset module per platform, so a new source is a parser and a list of views rather than a rewrite."
+    desc="Drop in your Google Search Console or App Store Connect CSV exports and see what their own dashboards don't show: CTR against position, conversion funnels and side-by-side date ranges. Runs entirely in the browser."
     url="/analytics"
     target="_self"
     badge="LIVE"
@@ -72,9 +72,9 @@ import HorizontalCard from "../components/HorizontalCard.astro";
   </div>
 
   <HorizontalCard
-    title="PHV Prep UK — iOS Exam Prep App"
+    title="PHV Prep UK — Taxi Badge Exam Prep App"
     img="/phv-prep-uk.webp"
-    desc="My first app submitted to the App Store: exam preparation for West Midlands private hire vehicle (&quot;taxi badge&quot;) licensing tests: Wolverhampton, Birmingham, Solihull, Coventry, Tamworth, Sandwell and Dudley. 300+ practice questions, realistic timed mock exams that mirror the real exam's pass logic, and an AI tutor for UK taxi law. Built solo with Flutter and Firebase (Auth, Firestore, Cloud Functions, europe-west2). Security-focused: server-side StoreKit 2 purchase verification, the Anthropic API key kept entirely server-side in Secret Manager (never shipped in the client), Firestore rules locking premium status to the backend, and content-safety controls on the AI feature."
+    desc="Exam prep for West Midlands private hire (&quot;taxi badge&quot;) licensing tests, on iOS and Android: 2,000+ practice questions, timed mock exams and an AI tutor for UK taxi law. Built solo with Flutter and Firebase, with purchases verified server-side and the AI key never shipped in the app."
     url="/phv-prep-uk"
     target="_self"
     badge="LIVE"
