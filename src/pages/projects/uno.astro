@@ -1,0 +1,107 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { Image } from "astro:assets";
+import unoImage from "../../../public/uno-cover.webp";
+---
+
+<BaseLayout
+  title="UNO — Secure AI Agent Orchestrator"
+  description="UNO coordinates several Claude Code agents on one project, treating every agent as an untrusted worker: isolated worktrees, least privilege and a deterministic review gate."
+  image="/uno-cover.webp"
+  sideBarActiveItemID="projects"
+>
+  <div class="mb-6">
+    <a href="/projects" class="text-sm opacity-70 hover:opacity-100">&larr; Back to projects</a>
+  </div>
+
+  <div class="hero-content flex-col md:flex-row items-start px-0 gap-6">
+    <Image
+      src={unoImage}
+      width={750}
+      height={422}
+      format="webp"
+      alt="UNO by Yongchivo logo"
+      class="max-w-full md:max-w-[16rem] rounded-lg"
+    />
+    <div class="grow">
+      <h1 class="text-3xl font-bold">
+        UNO
+        <div class="badge badge-secondary mx-2 align-middle">OPEN SOURCE</div>
+      </h1>
+      <div class="text-sm opacity-70 mt-1">
+        Python · Claude Code · Git · Application security · 2026
+      </div>
+      <p class="text-lg mt-2 opacity-90">
+        A tool that coordinates several Claude Code agents on one project — in
+        parallel, or as a role pipeline (developer → security analyst →
+        architect) — with a local web interface where I talk to the
+        orchestrator, watch the agents live and approve every change before it
+        reaches my code.
+      </p>
+    </div>
+  </div>
+
+  <div class="flex flex-wrap gap-3 mt-8">
+    <a
+      class="btn btn-primary"
+      href="https://github.com/yongchivo/uno-orchestra"
+      target="_blank"
+      rel="noopener"
+    >
+      View on GitHub
+    </a>
+  </div>
+
+  <div class="mt-8">
+    <div class="text-xl font-bold mb-2">The challenge</div>
+    <p class="opacity-90">
+      Giving AI agents autonomy without losing control. The design principle:
+      <b>every agent is an untrusted worker.</b>
+    </p>
+  </div>
+
+  <div class="mt-8">
+    <div class="text-xl font-bold mb-2">Security controls</div>
+    <ul class="list-disc list-inside opacity-90 space-y-1">
+      <li><b>Isolation:</b> one git worktree and one branch per agent.</li>
+      <li><b>Least privilege:</b> read/edit only — no shell, network or MCP servers.</li>
+      <li>
+        <b>Deterministic gate:</b> each role declares which files it may touch;
+        changes out of scope, on protected paths (CI, Firebase rules,
+        configuration) or with possible secrets wait for my review.
+      </li>
+      <li>
+        <b>Cross-agent prompt injection:</b> artifacts travel as labelled data,
+        and the planner only receives code-generated summaries.
+      </li>
+      <li>
+        <b>Configuration trust:</b> repo roles are hash-verified before every
+        run (TOCTOU protection).
+      </li>
+      <li>
+        <b>Local-only interface:</b> per-launch token, Origin/Host validation
+        (CSRF and DNS rebinding) and a strict CSP.
+      </li>
+    </ul>
+  </div>
+
+  <div class="mt-8">
+    <div class="text-xl font-bold mb-2">Verification</div>
+    <ul class="list-disc list-inside opacity-90 space-y-1">
+      <li>141 unit tests plus a smoke test that attacks the live server.</li>
+      <li>
+        Adversarial runs with real agents: an out-of-scope agent was blocked
+        and an injection attempt had no effect.
+      </li>
+      <li>A documented threat model, including residual risks.</li>
+    </ul>
+  </div>
+
+  <div class="mt-8">
+    <div class="text-xl font-bold mb-2">Process</div>
+    <p class="opacity-90">
+      I designed the architecture, the threat model and the controls, and
+      built it by directing Claude Code through PRs reviewed one by one.
+    </p>
+  </div>
+</BaseLayout>

@@ -31,8 +31,9 @@ import HorizontalCard from "../components/HorizontalCard.astro";
 <HorizontalCard
   title="UNO — Secure AI Agent Orchestrator"
   img="/uno-cover.webp"
-  desc="A Python tool that runs several Claude Code agents on one project — in parallel or as a developer → security analyst → architect pipeline — with a local web UI to watch them live and approve every change before it reaches my code. Every agent is treated as an untrusted worker: its own git worktree and branch, read/edit only (no shell, network or MCP), a deterministic gate that holds out-of-scope edits, protected paths and possible secrets for review, and defences against cross-agent prompt injection. Backed by 141 unit tests, adversarial runs with real agents and a documented threat model."
-  url="https://github.com/yongchivo/uno-orchestra"
+  desc="Coordinates several Claude Code agents on one project, treating every agent as an untrusted worker: isolated worktrees, least privilege and a deterministic gate that holds risky changes for my review."
+  url="/projects/uno"
+  target="_self"
   badge="OPEN SOURCE"
 />
 <div class="divider my-0"></div>
