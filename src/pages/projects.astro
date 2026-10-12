@@ -24,6 +24,14 @@ import HorizontalCard from "../components/HorizontalCard.astro";
   /> -->
   <div class="divider my-0"></div>
   <HorizontalCard
+    title="UNO — Secure AI Agent Orchestrator"
+    img="/uno-cover.webp"
+    desc="A Python tool that coordinates several Claude Code agents on one project — in parallel, or as a role pipeline (developer → security analyst → architect) — with a local web interface where I talk to the orchestrator, watch the agents live and approve every change before it reaches my code. Design principle: every agent is an untrusted worker. Each agent gets its own git worktree and branch, and least privilege (read/edit only — no shell, network or MCP servers). A deterministic gate checks every change against the files its role may touch; anything out of scope, on protected paths (CI, Firebase rules, config) or carrying possible secrets waits for my review. Cross-agent prompt injection is contained by passing artifacts as labelled data and giving the planner only code-generated summaries; repo roles are hash-verified before every run (TOCTOU protection); and the local-only UI uses a per-launch token, Origin/Host validation (CSRF and DNS rebinding) and a strict CSP. Verified by 141 unit tests, a smoke test that attacks the live server, adversarial runs with real agents (an out-of-scope agent was blocked, an injection attempt had no effect) and a documented threat model with residual risks. I designed the architecture, threat model and controls, and built it by directing Claude Code through PRs reviewed one by one."
+    url="https://github.com/yongchivo/uno-orchestra"
+    badge="OPEN SOURCE"
+  />
+  <div class="divider my-0"></div>
+  <HorizontalCard
     title="Personal Portfolio with Security Hardening"
     img="/portfolio.webp"
     desc="The site you are reading right now. Built with Astro, Tailwind and Cloudflare Pages, with continuous deployment from GitHub. Hardened HTTP security headers from grade D to A on securityheaders.com by configuring HSTS, Content-Security-Policy, X-Frame-Options, Permissions-Policy and other defences."
