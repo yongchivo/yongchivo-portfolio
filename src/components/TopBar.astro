@@ -291,7 +291,13 @@ const items = [
         bar.classList.toggle("is-open", open);
         button?.setAttribute("aria-expanded", String(open));
       };
-      button?.addEventListener("click", () => setOpen(!bar.classList.contains("is-open")));
+      button?.addEventListener("click", (event) => {
+        const open = !bar.classList.contains("is-open");
+        setOpen(open);
+        // Opened from the keyboard (Enter/Space -> detail 0): the links sit
+        // before the button in the DOM, so move focus to the first one.
+        if (open && event.detail === 0) bar.querySelector<HTMLElement>(".topnav a")?.focus();
+      });
       bar.addEventListener("keydown", (event) => {
         if (event.key === "Escape" && bar.classList.contains("is-open")) {
           setOpen(false);
