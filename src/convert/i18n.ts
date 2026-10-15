@@ -81,6 +81,24 @@ export interface ConverterStrings {
   imageTooLarge: string;
   /** {max} is replaced with the image limit. */
   tooManyImages: string;
+  // PDF errors (thrown as ConvertError from ./pdf).
+  pdfPasswordRequired: string;
+  pdfInvalid: string;
+  rangesEmpty: string;
+  /** {tok} is replaced with the offending range. */
+  rangeUnreadable: string;
+  /** {tok} / {count} are replaced. */
+  rangeOutOfRange: string;
+  /** {tok} is replaced with the offending page. */
+  pageListUnreadable: string;
+  /** {tok} / {count} are replaced. */
+  pageOutOfRange: string;
+  marginsTooLarge: string;
+  addAtLeastOneImage: string;
+  notSupportedImage: string;
+  /** {name} is the file name, {why} the (already localised) reason. */
+  fileError: string;
+  addAtLeastTwoPdfs: string;
   splitLabel: string;
   splitPlaceholder: string;
   rotationLabel: string;
@@ -177,6 +195,18 @@ export const strings: Record<Lang, ConverterStrings> = {
     notAnImage: "\"{name}\" isn't a JPG, PNG, WebP or HEIC image — skipped",
     imageTooLarge: "\"{name}\" is over {mb} MB — skipped",
     tooManyImages: "Up to {max} images per PDF — extra files skipped",
+    pdfPasswordRequired: "This PDF is password-protected. Remove the password and try again.",
+    pdfInvalid: "This file isn't a valid PDF, or it's corrupted.",
+    rangesEmpty: "Enter the page ranges to extract, e.g. 1-3, 5, 8-10",
+    rangeUnreadable: "Couldn't read \"{tok}\" — use pages like 1-3, 5, 8-10",
+    rangeOutOfRange: "\"{tok}\" is out of range — this PDF has {count} page(s)",
+    pageListUnreadable: "Couldn't read \"{tok}\" — use pages like 1-3, 5",
+    pageOutOfRange: "Page \"{tok}\" is out of range — this PDF has {count} page(s)",
+    marginsTooLarge: "The margins are too large for this page size",
+    addAtLeastOneImage: "Add at least one image",
+    notSupportedImage: "not a JPG, PNG, WebP or HEIC image",
+    fileError: "\"{name}\": {why}",
+    addAtLeastTwoPdfs: "Add at least two PDFs to merge",
     splitLabel: "Pages to extract",
     splitPlaceholder: "e.g. 1-3, 5, 8-10",
     rotationLabel: "Rotation",
@@ -272,6 +302,18 @@ export const strings: Record<Lang, ConverterStrings> = {
     notAnImage: "«{name}» no es una imagen JPG, PNG, WebP ni HEIC — omitido",
     imageTooLarge: "«{name}» supera los {mb} MB — omitido",
     tooManyImages: "Máximo {max} imágenes por PDF — se omiten las sobrantes",
+    pdfPasswordRequired: "Este PDF está protegido con contraseña. Quítala e inténtalo de nuevo.",
+    pdfInvalid: "Este archivo no es un PDF válido o está dañado.",
+    rangesEmpty: "Indica los rangos de páginas a extraer, p. ej. 1-3, 5, 8-10",
+    rangeUnreadable: "No se pudo leer «{tok}» — usa páginas como 1-3, 5, 8-10",
+    rangeOutOfRange: "«{tok}» está fuera de rango — este PDF tiene {count} página(s)",
+    pageListUnreadable: "No se pudo leer «{tok}» — usa páginas como 1-3, 5",
+    pageOutOfRange: "La página «{tok}» está fuera de rango — este PDF tiene {count} página(s)",
+    marginsTooLarge: "Los márgenes son demasiado grandes para este tamaño de página",
+    addAtLeastOneImage: "Añade al menos una imagen",
+    notSupportedImage: "no es una imagen JPG, PNG, WebP ni HEIC",
+    fileError: "«{name}»: {why}",
+    addAtLeastTwoPdfs: "Añade al menos dos PDFs para unir",
     splitLabel: "Páginas a extraer",
     splitPlaceholder: "p. ej. 1-3, 5, 8-10",
     rotationLabel: "Rotación",

@@ -7,6 +7,7 @@
 import { getConversion, type Conversion } from "./registry";
 import { strings, type ConverterStrings } from "./i18n";
 import { accepts, convertFile, sniffImage, type ConversionResult } from "./engine";
+import { ConvertError } from "./errors";
 
 type Status = "queued" | "working" | "done" | "error";
 
@@ -24,6 +25,25 @@ function humanSize(bytes: number): string {
   const kb = bytes / 1024;
   if (kb < 1024) return `${kb.toFixed(0)} KB`;
   return `${(kb / 1024).toFixed(1)} MB`;
+}
+
+/**
+ * Message to show for a caught error, in the page language. ConvertError ->
+ * its localised string with {params} filled in; any other Error -> its own
+ * (English) message; anything else -> the generic "Failed".
+ */
+function errorText(err: unknown, t: ConverterStrings): string {
+  if (err instanceof ConvertError) {
+    const params: Record<string, string | number> = { ...err.params };
+    // "{name}: {why}" wrappers: localise the inner reason too.
+    if (err.reason instanceof ConvertError && "why" in params) {
+      params.why = errorText(err.reason, t);
+    }
+    return t[err.key].replace(/\{(\w+)\}/g, (match, name: string) =>
+      name in params ? String(params[name]) : match
+    );
+  }
+  return err instanceof Error ? err.message : t.error;
 }
 
 /** Entry point called by <ConverterApp> for every widget on the page. */
@@ -154,7 +174,7 @@ function initImageConverter(
       item.status = "done";
     } catch (err) {
       item.status = "error";
-      item.message = err instanceof Error ? err.message : t.error;
+      item.message = errorText(err, t);
     }
     render();
   }
@@ -327,7 +347,7 @@ function initDataConverter(
       }
       setReady(true);
     } catch (err) {
-      showError(err instanceof Error ? err.message : t.error);
+      showError(errorText(err, t));
     }
   }
 
@@ -680,7 +700,7 @@ function initPdfConverter(
       const items = await runPdfTool(mode as never, files, readOptions());
       renderResults(items);
     } catch (err) {
-      showError(err instanceof Error ? err.message : t.error);
+      showError(errorText(err, t));
     } finally {
       runBtn!.disabled = false;
       runBtn!.textContent = label;
@@ -888,7 +908,7 @@ function initMediaConverter(
       renderResult(item);
     } catch (err) {
       setStatus("");
-      showError(err instanceof Error ? err.message : t.error);
+      showError(errorText(err, t));
     } finally {
       runBtn!.disabled = false;
       runBtn!.textContent = label;
