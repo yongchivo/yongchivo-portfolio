@@ -79,8 +79,8 @@ const spots = [
         }
       </ul>
     </nav>
+    <p class="bubble-hint" aria-hidden="true">{t.hint}</p>
   </div>
-  <p class="bubble-hint" aria-hidden="true">{t.hint}</p>
 </section>
 
 <style>
@@ -250,16 +250,32 @@ const spots = [
       opacity 0.25s ease calc(var(--i) * 70ms);
   }
 
-  /* Narrow screens: the sections stack under the bubble. */
+  /* Narrow screens: the sections stack under the bubble. While closed the list
+     collapses to zero height (0fr row) so it doesn't leave an empty gap. */
   .bubble-nav {
     width: 100%;
     max-width: 22rem;
-    margin-top: 1.75rem;
+    margin-top: 1.25rem;
+    display: grid;
+    grid-template-rows: 1fr;
+    transition:
+      grid-template-rows 0.45s cubic-bezier(0.2, 0.8, 0.2, 1),
+      margin-top 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
 
   .bubble-nav ul {
     display: grid;
     gap: 0.75rem;
+    min-height: 0;
+    overflow: hidden;
+    /* Room for the glow and focus ring inside the clipped area. */
+    padding: 1.25rem;
+    margin: -1.25rem;
+  }
+
+  .enhanced:not(.is-open) .bubble-nav {
+    grid-template-rows: 0fr;
+    margin-top: 0;
   }
 
   .enhanced:not(.is-open) .bubble-nav li {
@@ -274,17 +290,29 @@ const spots = [
       align-content: center;
     }
 
-    .bubble-nav {
+    .bubble-nav,
+    .enhanced:not(.is-open) .bubble-nav {
       position: absolute;
       inset: 0;
       max-width: none;
       margin: 0;
+      display: block;
       pointer-events: none;
     }
 
     .bubble-nav ul {
       display: block;
       height: 100%;
+      overflow: visible;
+      padding: 0;
+      margin: 0;
+    }
+
+    /* Under the bubble without pushing it off the stage's centre. */
+    .bubble-hint {
+      position: absolute;
+      top: calc(50% + 8rem);
+      margin: 0;
     }
 
     .bubble-nav li {

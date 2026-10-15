@@ -47,7 +47,7 @@ const {
             <slot />
           </main>
         </div>
-        <Footer lang={lang} />
+        <Footer lang={lang} brandOnly={sideBarActiveItemID === "home"} />
       </div>
       {includeSidebar && <SideBar sideBarActiveItemID={sideBarActiveItemID} lang={lang} />}
     </div>

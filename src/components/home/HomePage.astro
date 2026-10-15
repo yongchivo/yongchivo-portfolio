@@ -1,10 +1,9 @@
 ---
-// The home page, in both languages: the bubble hero first, then the text and
-// links that used to be the whole home (kept for SEO and for anyone who scrolls).
+// The home page, in both languages: just the brand and the bubble. Everything
+// about me (name, story, CV) lives behind the "Who am I?" bubble.
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import HorizontalCard from "../HorizontalCard.astro";
 import BubbleHero from "./BubbleHero.astro";
-import { localize, type SiteLang } from "../../i18n/site";
+import type { SiteLang } from "../../i18n/site";
 
 interface Props {
   lang: SiteLang;
@@ -12,179 +11,30 @@ interface Props {
 
 const { lang } = Astro.props;
 const es = lang === "es";
-
-const t = es
-  ? {
-      title: "Yongchivo | Ciberseguridad / Portfolio personal",
-      description:
-        "Estudiante de Ciberseguridad en la University of Worcester. Proyectos, herramientas gratuitas y lo que voy aprendiendo por el camino.",
-      hello: "Hola 👋",
-      role: "Estudiante de Ciberseguridad y desarrollador",
-      intro: [
-        "Estudio Ciberseguridad en la ",
-        "University of Worcester",
-        " y me apasionan la IA, la informática forense y el desarrollo de videojuegos. Construyo, experimento y comparto lo que aprendo, tanto los aciertos como los fallos. Este es mi espacio para documentar el camino.",
-      ],
-      contact: "Escríbeme",
-      latestProjects: "Mis últimos proyectos",
-      latestBlog: "Lo último del blog (en inglés)",
-    }
-  : {
-      title: undefined,
-      description: undefined,
-      hello: "Hey there 👋",
-      role: "Cyber Security Student & Builder",
-      intro: [
-        "Welcome! I'm a Cyber Security student at the ",
-        "University of Worcester",
-        ", passionate about AI, Digital Forensics, and Game Development. I build, experiment, and share what I learn along the way — from successes to failures. This is my space to document the journey.",
-      ],
-      contact: "Get in touch",
-      latestProjects: "My latest projects",
-      latestBlog: "Latest from blog",
-    };
-
-const projects = es
-  ? [
-      {
-        title: "UNO — Orquestador seguro de agentes de IA",
-        img: "/uno-cover.webp",
-        desc: "Coordina varios agentes de Claude Code en un mismo proyecto y trata a cada uno como un trabajador no confiable: worktrees aislados, mínimo privilegio y una compuerta determinista que retiene los cambios de riesgo para que yo los revise.",
-        url: "/es/projects/uno",
-        badge: "CÓDIGO ABIERTO",
-      },
-      {
-        title: "Conversor de archivos — Privado, en el navegador",
-        img: "/convert-cover.webp",
-        desc: "Convierte imágenes (PNG, JPG, WebP, HEIC) y formatos de datos (CSV, JSON, YAML, XML) por completo en tu navegador: nunca se sube nada. Bilingüe (EN/ES), con una página propia para cada conversión.",
-        url: "/es/convert",
-        badge: "EN LÍNEA",
-      },
-      {
-        title: "Yongchivo Tools",
-        img: "/tools-cover.webp",
-        desc: "Un hub de micro-herramientas de ciberseguridad gratuitas y bilingües en tools.yongchivo.com: contraseñas, subredes, EXIF y metadatos de PDF en el navegador, más un verificador de cabeceras de seguridad y un comprobador de filtraciones en Cloudflare Workers.",
-        url: "https://tools.yongchivo.com/es",
-        target: "_blank",
-        badge: "EN LÍNEA",
-      },
-      {
-        title: "PHV Prep UK — App para el examen de taxi",
-        img: "/phv-prep-uk.webp",
-        desc: "Preparación para los exámenes de licencia de private hire («taxi badge») de West Midlands, en iOS y Android: más de 2.000 preguntas, simulacros cronometrados y un tutor de IA de la normativa del taxi en Reino Unido. Hecha en solitario con Flutter y Firebase. (Página en inglés.)",
-        url: "/phv-prep-uk",
-        badge: "EN LÍNEA",
-      },
-    ]
-  : [
-      {
-        title: "UNO — Secure AI Agent Orchestrator",
-        img: "/uno-cover.webp",
-        desc: "Coordinates several Claude Code agents on one project, treating every agent as an untrusted worker: isolated worktrees, least privilege and a deterministic gate that holds risky changes for my review.",
-        url: "/projects/uno",
-        badge: "OPEN SOURCE",
-      },
-      {
-        title: "File Converter — Private, In-Browser",
-        img: "/convert-cover.webp",
-        desc: "Convert images (PNG, JPG, WebP, HEIC) and data formats (CSV, JSON, YAML, XML) entirely in your browser — nothing is ever uploaded. Bilingual (EN/ES), with a dedicated page per conversion.",
-        url: "/convert",
-        badge: "LIVE",
-      },
-      {
-        title: "Yongchivo Tools",
-        img: "/tools-cover.webp",
-        desc: "A hub of free, bilingual (EN/ES) cybersecurity micro-tools at tools.yongchivo.com — password, subnet, EXIF and PDF-metadata utilities that run in the browser, plus a Security Headers Checker and a Breach Checker on Cloudflare Workers.",
-        url: "https://tools.yongchivo.com",
-        target: "_blank",
-        badge: "LIVE",
-      },
-      {
-        title: "PHV Prep UK — Taxi Badge Exam Prep App",
-        img: "/phv-prep-uk.webp",
-        desc: "Exam prep for West Midlands private hire (\"taxi badge\") licensing tests, on iOS and Android: 2,000+ practice questions, timed mock exams and an AI tutor for UK taxi law. Built solo with Flutter and Firebase, with purchases verified server-side and the AI key never shipped in the app.",
-        url: "/phv-prep-uk",
-        badge: "LIVE",
-      },
-    ];
-
-// Newest first — keep in sync with the listing in blog/[...page].astro.
-// The posts themselves are English-only for now.
-const posts = [
-  {
-    title: "Making the PHV Prep UK Privacy Policy Match What the App Actually Does",
-    img: "/post-phv-prep-uk.webp",
-    desc: "Before submitting PHV Prep UK 1.7.3, I corrected two statements in the app's privacy policy: a consent mechanism the app never had, and crash data it never collected.",
-    url: "/blog/phv-prep-uk-privacy-policy-update/",
-  },
-  {
-    title: "Change Management When Your Live Database Is Your Product",
-    img: "/post-phv-prep-uk.webp",
-    desc: "What change management actually looks like when you're a solo developer, your product is a database, and every edit is a deployment.",
-    url: "/blog/change-management-live-database/",
-  },
-  {
-    title: "PHV Prep UK Is Now on Android — Both Stores, One Mission",
-    img: "/post-phv-prep-uk-launch.webp",
-    desc: "PHV Prep UK is now live on Android and iOS — exam prep for West Midlands PHV tests (Wolverhampton, Birmingham, Solihull and more), with 300+ questions, timed mock exams and an AI Tutor.",
-    url: "/blog/phv-prep-uk-android-launch/",
-  },
-];
-const postBadge = es ? "DESARROLLO DE APPS" : "APP DEVELOPMENT";
 ---
 
 <BaseLayout
-  title={t.title}
-  description={t.description}
+  title={es ? "Yongchivo | Ciberseguridad / Portfolio personal" : undefined}
+  description={es
+    ? "Estudiante de Ciberseguridad en la University of Worcester. Proyectos, herramientas gratuitas y lo que voy aprendiendo por el camino."
+    : undefined}
   lang={lang}
   sideBarActiveItemID="home"
   alternates={{ en: "/", es: "/es/" }}
 >
-  <BubbleHero lang={lang} />
-
-  <section class="pb-12">
-    <div class="text-xl py-1">{t.hello}</div>
-    <h1 class="text-5xl font-bold w-fit bg-gradient-to-r from-brand-magenta via-brand-purple to-brand-cyan bg-clip-text text-transparent">
-      {es ? "Soy John Akhis Moreno" : "I'm John Akhis Moreno"}
+  <div class="min-h-[calc(100vh-14rem)] flex flex-col justify-center">
+    <h1 class="brand-title text-center font-bold tracking-[0.2em] text-4xl sm:text-5xl mb-10 md:mb-0 bg-gradient-to-r from-brand-magenta via-brand-purple to-brand-cyan bg-clip-text text-transparent">
+      YONGCHIVO
     </h1>
-    <div class="text-2xl py-1 text-gray-500">Yongchivo</div>
-    <p class="text-3xl py-3 font-bold">{t.role}</p>
-    <div class="py-2">
-      <p class="text-lg">
-        {t.intro[0]}<b>{t.intro[1]}</b>{t.intro[2]}
-      </p>
-    </div>
-    <div class="mt-8">
-      <a class="btn" href="https://github.com/yongchivo" target="_blank" rel="noopener">GitHub</a>
-      <a href="mailto:contact@yongchivo.com" class="btn btn-outline ml-5">{t.contact}</a>
-    </div>
-  </section>
 
-  <h2 class="text-3xl w-full font-bold mb-2">{t.latestProjects}</h2>
-
-  {
-    projects.map((p, i) => (
-      <>
-        {i > 0 && <div class="divider my-0" />}
-        <HorizontalCard title={p.title} img={p.img} desc={p.desc} url={p.url} target={p.target ?? "_self"} badge={p.badge} />
-      </>
-    ))
-  }
-
-  <h2 class="text-3xl w-full font-bold mb-5 mt-10">{t.latestBlog}</h2>
-
-  {
-    posts.map((p) => (
-      <>
-        <HorizontalCard title={p.title} img={p.img} desc={p.desc} url={p.url} target="_self" badge={postBadge} />
-        <div class="divider my-0" />
-      </>
-    ))
-  }
-
-  <p class="mt-6 text-sm opacity-70">
-    <a class="link link-hover" href={localize("/projects", lang)}>{es ? "Todos los proyectos →" : "All projects →"}</a>
-    <span class="mx-3">·</span>
-    <a class="link link-hover" href="/blog/">{es ? "Todas las entradas →" : "All posts →"}</a>
-  </p>
+    <BubbleHero lang={lang} />
+  </div>
 </BaseLayout>
+
+<style>
+  /* letter-spacing adds trailing space after the last letter; pull it back so
+     the word sits optically centred over the bubble. */
+  .brand-title {
+    margin-right: -0.2em;
+  }
+</style>
