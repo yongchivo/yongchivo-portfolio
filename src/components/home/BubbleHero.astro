@@ -25,9 +25,9 @@ const t = es
       nav: "Secciones principales",
       hint: "Toca la burbuja",
       items: [
-        { label: "Herramientas", sub: "Ciberseguridad, conversor y analítica", href: localize("/tools/", lang), tone: "cyan" },
-        { label: "Proyectos", sub: "Apps, seguridad y juegos", href: localize("/projects", lang), tone: "magenta" },
-        { label: "¿Quién soy?", sub: "Mi CV y mi historia", href: localize("/cv", lang), tone: "purple" },
+        { label: "Herramientas", href: localize("/tools/", lang), tone: "cyan" },
+        { label: "Proyectos", href: localize("/projects", lang), tone: "magenta" },
+        { label: "¿Quién soy?", href: localize("/cv", lang), tone: "purple" },
       ],
     }
   : {
@@ -35,9 +35,9 @@ const t = es
       nav: "Main sections",
       hint: "Tap the bubble",
       items: [
-        { label: "Tools", sub: "Security, converter & analytics", href: "/tools/", tone: "cyan" },
-        { label: "Projects", sub: "Apps, security & games", href: "/projects", tone: "magenta" },
-        { label: "Who am I?", sub: "My CV and my story", href: "/cv", tone: "purple" },
+        { label: "Tools", href: "/tools/", tone: "cyan" },
+        { label: "Projects", href: "/projects", tone: "magenta" },
+        { label: "Who am I?", href: "/cv", tone: "purple" },
       ],
     };
 
@@ -74,7 +74,6 @@ const spots = [
             <li style={`--i:${i}; --x:${spots[i].x}; --y:${spots[i].y}`}>
               <a href={item.href} class={`bubble-link tone-${item.tone}`}>
                 <span class="bubble-link-label">{item.label}</span>
-                <span class="bubble-link-sub">{item.sub}</span>
               </a>
             </li>
           ))
@@ -242,7 +241,7 @@ const spots = [
     display: grid;
     gap: 0.15rem;
     text-align: center;
-    padding: 0.85rem 1.4rem;
+    padding: 0.8rem 1.4rem;
     border-radius: 9999px;
     background: #131120;
     border: 1px solid var(--tone);
@@ -270,11 +269,6 @@ const spots = [
   .bubble-link-label {
     font-weight: 700;
     font-size: 1.05rem;
-  }
-
-  .bubble-link-sub {
-    font-size: 0.78rem;
-    opacity: 0.7;
   }
 
   .bubble-nav li {
@@ -312,15 +306,6 @@ const spots = [
     margin-top: 0;
   }
 
-  /* On phones the buttons are just the section name. */
-  @media (max-width: 767.98px) {
-    .bubble-link-sub {
-      display: none;
-    }
-    .bubble-link {
-      padding: 0.8rem 1.4rem;
-    }
-  }
 
   .enhanced:not(.is-open) .bubble-nav li {
     opacity: 0;
@@ -369,7 +354,7 @@ const spots = [
     }
 
     .bubble-link {
-      min-width: 12.5rem;
+      min-width: 10.5rem;
     }
 
     .enhanced:not(.is-open) .bubble-nav li {
