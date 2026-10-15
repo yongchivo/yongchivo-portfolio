@@ -16,6 +16,7 @@ import { XMLParser, XMLBuilder, XMLValidator } from "fast-xml-parser";
 
 import type { Conversion, DataFormat } from "./registry";
 import type { ConversionResult } from "./engine";
+import { ConvertError } from "./errors";
 
 /** Swap a filename's extension, preserving the rest of the name. */
 function withExtension(name: string, ext: string): string {
@@ -32,6 +33,36 @@ const FORMAT_LABEL: Record<DataFormat, string> = {
   xml: "XML",
 };
 
+/**
+ * Parse failure for `format`. `detail` is the library's own message and stays
+ * in English; the surrounding sentence is localised via the key.
+ */
+function invalidFormat(
+  format: DataFormat,
+  detail: string,
+  where?: { row: number } | { line: number }
+): ConvertError {
+  const label = FORMAT_LABEL[format];
+  if (where && "row" in where) {
+    return new ConvertError(
+      "invalidFormatRow",
+      `Invalid ${label}: ${detail} (row ${where.row})`,
+      { format: label, detail, row: where.row }
+    );
+  }
+  if (where) {
+    return new ConvertError(
+      "invalidFormatLine",
+      `Invalid ${label}: ${detail} (line ${where.line})`,
+      { format: label, detail, line: where.line }
+    );
+  }
+  return new ConvertError("invalidFormat", `Invalid ${label}: ${detail}`, {
+    format: label,
+    detail,
+  });
+}
+
 const XML_ATTR_PREFIX = "@_";
 
 // --- parsing (text -> JS value) -------------------------------------------
@@ -42,7 +73,7 @@ function parseInput(text: string, format: DataFormat): unknown {
       try {
         return JSON.parse(text);
       } catch (err) {
-        throw new Error(`Invalid JSON: ${(err as Error).message}`);
+        throw invalidFormat("json", (err as Error).message);
       }
 
     case "yaml":
@@ -50,7 +81,7 @@ function parseInput(text: string, format: DataFormat): unknown {
         return yamlLoad(text);
       } catch (err) {
         // js-yaml's YAMLException message already includes line/column.
-        throw new Error(`Invalid YAML: ${(err as Error).message}`);
+        throw invalidFormat("yaml", (err as Error).message);
       }
 
     case "csv": {
@@ -61,8 +92,11 @@ function parseInput(text: string, format: DataFormat): unknown {
       });
       const fatal = result.errors?.find((e) => e.type !== "FieldMismatch");
       if (fatal) {
-        const where = fatal.row != null ? ` (row ${fatal.row + 1})` : "";
-        throw new Error(`Invalid CSV: ${fatal.message}${where}`);
+        throw invalidFormat(
+          "csv",
+          fatal.message,
+          fatal.row != null ? { row: fatal.row + 1 } : undefined
+        );
       }
       return result.data;
     }
@@ -71,7 +105,7 @@ function parseInput(text: string, format: DataFormat): unknown {
       const check = XMLValidator.validate(text);
       if (check !== true) {
         const { msg, line } = check.err;
-        throw new Error(`Invalid XML: ${msg} (line ${line})`);
+        throw invalidFormat("xml", msg, { line });
       }
       const parser = new XMLParser({
         ignoreAttributes: false,
@@ -176,7 +210,11 @@ export async function convertData(
 
   const text = await file.text();
   if (!text.trim()) {
-    throw new Error(`Nothing to convert — paste or drop some ${FORMAT_LABEL[from]}`);
+    throw new ConvertError(
+      "emptyInput",
+      `Nothing to convert — paste or drop some ${FORMAT_LABEL[from]}`,
+      { format: FORMAT_LABEL[from] }
+    );
   }
 
   const value = parseInput(text, from);

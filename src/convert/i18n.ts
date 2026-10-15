@@ -118,6 +118,22 @@ export interface ConverterStrings {
   /** {mb} is replaced with the size limit. */
   mediaTooLarge: string;
   safariVideoNote: string;
+  // Engine / media / data errors (thrown as ConvertError).
+  heicDecodeFailed: string;
+  heicNoImage: string;
+  encodeFailed: string;
+  mediaReadFailed: string;
+  mediaConvertFailed: string;
+  mediaNoOutput: string;
+  mediaEmptyOutput: string;
+  /** {format} is the data format, {detail} the parser's own (English) message. */
+  invalidFormat: string;
+  /** As invalidFormat, plus {row} (CSV row number). */
+  invalidFormatRow: string;
+  /** As invalidFormat, plus {line} (XML line number). */
+  invalidFormatLine: string;
+  /** {format} is the expected data format. */
+  emptyInput: string;
 }
 
 export const strings: Record<Lang, ConverterStrings> = {
@@ -226,6 +242,21 @@ export const strings: Record<Lang, ConverterStrings> = {
       "This file is too large for in-browser conversion (max {mb} MB). Try a shorter or smaller clip.",
     safariVideoNote:
       "Heads up: video conversion is memory-heavy and may fail on Safari for iPhone/iPad. For large files, use a desktop browser like Chrome or Firefox.",
+    heicDecodeFailed:
+      "Couldn't decode this HEIC. It may use a variant this in-browser tool doesn't support, be corrupted, or be too large. If it's an iPhone photo, try sharing/exporting it as JPEG and converting that.",
+    heicNoImage: "No image found in this HEIC file.",
+    encodeFailed: "This browser could not encode the image",
+    mediaReadFailed: "Couldn't read this file — it may be corrupted.",
+    mediaConvertFailed:
+      "The conversion failed — the file may be too large or use an unsupported codec.",
+    mediaNoOutput:
+      "This file couldn't be converted — it may use an unsupported codec or be corrupted.",
+    mediaEmptyOutput:
+      "The conversion produced an empty file — the input may use an unsupported codec.",
+    invalidFormat: "Invalid {format}: {detail}",
+    invalidFormatRow: "Invalid {format}: {detail} (row {row})",
+    invalidFormatLine: "Invalid {format}: {detail} (line {line})",
+    emptyInput: "Nothing to convert — paste or drop some {format}",
   },
   es: {
     dropTitle: "Suelta los archivos aquí",
@@ -333,5 +364,20 @@ export const strings: Record<Lang, ConverterStrings> = {
       "Este archivo es demasiado grande para convertir en el navegador (máx. {mb} MB). Prueba un clip más corto o pequeño.",
     safariVideoNote:
       "Aviso: la conversión de vídeo consume mucha memoria y puede fallar en Safari de iPhone/iPad. Para archivos grandes, usa un navegador de escritorio como Chrome o Firefox.",
+    heicDecodeFailed:
+      "No se pudo decodificar este HEIC. Puede usar una variante que esta herramienta del navegador no admite, estar dañado o ser demasiado grande. Si es una foto de iPhone, prueba a compartirla o exportarla como JPEG y convierte ese archivo.",
+    heicNoImage: "No se encontró ninguna imagen en este archivo HEIC.",
+    encodeFailed: "Este navegador no pudo codificar la imagen",
+    mediaReadFailed: "No se pudo leer este archivo — puede estar dañado.",
+    mediaConvertFailed:
+      "La conversión falló — puede que el archivo sea demasiado grande o use un códec no compatible.",
+    mediaNoOutput:
+      "No se pudo convertir este archivo — puede que use un códec no compatible o esté dañado.",
+    mediaEmptyOutput:
+      "La conversión produjo un archivo vacío — puede que el original use un códec no compatible.",
+    invalidFormat: "{format} no válido: {detail}",
+    invalidFormatRow: "{format} no válido: {detail} (fila {row})",
+    invalidFormatLine: "{format} no válido: {detail} (línea {line})",
+    emptyInput: "Nada que convertir — pega o suelta contenido en {format}",
   },
 };
