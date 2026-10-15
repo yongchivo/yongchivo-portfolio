@@ -15,6 +15,9 @@ const {
   sideBarActiveItemID,
   ogType,
   lang = "en",
+  // { en: "/cv", es: "/es/cv" } -> hreflang links. Pages that already emit their
+  // own (tools, convert, analytics) simply don't pass it.
+  alternates,
 } = Astro.props;
 ---
 
@@ -22,6 +25,15 @@ const {
 <html lang={lang} data-theme="yongchivo">
   <head>
     <BaseHead title={title} description={description} image={image} , ogType={ogType} />
+    {
+      alternates && (
+        <>
+          <link rel="alternate" hreflang="en" href={new URL(alternates.en, Astro.site)} />
+          <link rel="alternate" hreflang="es" href={new URL(alternates.es, Astro.site)} />
+          <link rel="alternate" hreflang="x-default" href={new URL(alternates.en, Astro.site)} />
+        </>
+      )
+    }
     <slot name="head" />
     {TRANSITION_API && <ViewTransitions />}
   </head>
@@ -29,15 +41,15 @@ const {
     <div class="bg-base-100 drawer lg:drawer-open">
       <input id="my-drawer" type="checkbox" class="drawer-toggle" />
       <div class="drawer-content bg-base-100">
-        <Header title={SITE_TITLE} />
+        <Header title={SITE_TITLE} lang={lang} />
         <div class="md:flex md:justify-center">
           <main class="p-6 pt-10 lg:max-w-[900px] max-w-[100vw]">
             <slot />
           </main>
         </div>
-        <Footer />
+        <Footer lang={lang} />
       </div>
-      {includeSidebar && <SideBar sideBarActiveItemID={sideBarActiveItemID} />}
+      {includeSidebar && <SideBar sideBarActiveItemID={sideBarActiveItemID} lang={lang} />}
     </div>
   </body>
 </html>

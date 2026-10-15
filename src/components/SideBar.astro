@@ -2,22 +2,26 @@
 import SideBarFooter from "./SideBarFooter.astro";
 import { Image } from "astro:assets";
 import SideBarMenu from "./SideBarMenu.astro";
-const { sideBarActiveItemID } = Astro.props;
+import { localize, ui } from "../i18n/site";
+const { sideBarActiveItemID, lang = "en" } = Astro.props;
+// On the home page the bubble owns the "brand-logo" transition name; giving it to
+// the sidebar logo too would duplicate the name and Astro would skip the morph.
+const logoTransition = sideBarActiveItemID === "home" ? undefined : "brand-logo";
 ---
 
 <div class="drawer-side z-40">
   <label for="my-drawer" class="drawer-overlay"></label>
   <aside class="px-2 pt-2 h-auto min-h-full w-[19rem] bg-base-200 text-base-content flex flex-col">
     <div class="w-fit mx-auto mt-5 mb-6">
-      <a href="/">
-        <div class="avatar transition ease-in-out hover:scale-[102%] block m-auto">
-          <div class="w-[8.5rem]">
-            <Image class="mask mask-circle" format="webp" width={300} height={300} src="/profile.webp" alt="Yongchivo logo" />
+      <a href={localize("/", lang)}>
+        <div class="avatar transition ease-in-out motion-safe:hover:scale-[102%] block m-auto">
+          <div class="w-[8.5rem] rounded-full" transition:name={logoTransition}>
+            <Image class="mask mask-circle" format="webp" width={300} height={300} src="/profile.webp" alt={ui[lang].logoAlt} />
           </div>
         </div>
       </a>
     </div>
-    <SideBarMenu sideBarActiveItemID={sideBarActiveItemID} />
+    <SideBarMenu sideBarActiveItemID={sideBarActiveItemID} lang={lang} />
     <SideBarFooter />
   </aside>
 </div>

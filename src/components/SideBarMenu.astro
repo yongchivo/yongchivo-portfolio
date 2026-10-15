@@ -1,15 +1,25 @@
 ---
-const { sideBarActiveItemID } = Astro.props;
+import { alternatePath, localize, ui } from "../i18n/site";
+const { sideBarActiveItemID, lang = "en" } = Astro.props;
 const activeClass = "bg-base-300";
+const t = ui[lang].nav;
+const other = lang === "es" ? "en" : "es";
+const switchHref = alternatePath(Astro.url.pathname);
 ---
 
 <ul class="menu grow shrink menu-md overflow-y-auto">
-    <li><a class="py-3 text-base" id="home" href="/">Home</a></li>
-    <li><a class="py-3 text-base" id="projects" href="/projects">Projects</a></li>
-    <li><a class="py-3 text-base" id="tools" href="/tools">Tools</a></li>
-    <li><a class="py-3 text-base" id="blog" href="/blog/">Blog</a></li>
-    <li><a class="py-3 text-base" id="cv" href="/cv">CV</a></li>
-    <li><a class="py-3 text-base" href="mailto:contact@yongchivo.com" referrerpolicy="no-referrer-when-downgrade">Contact</a></li>
+    <li><a class="py-3 text-base" id="home" href={localize("/", lang)}>{t.home}</a></li>
+    <li><a class="py-3 text-base" id="projects" href={localize("/projects", lang)}>{t.projects}</a></li>
+    <li><a class="py-3 text-base" id="tools" href={localize("/tools/", lang)}>{t.tools}</a></li>
+    <li><a class="py-3 text-base" id="blog" href="/blog/">{t.blog}</a></li>
+    <li><a class="py-3 text-base" id="cv" href={localize("/cv", lang)}>{t.cv}</a></li>
+    <li><a class="py-3 text-base" href="mailto:contact@yongchivo.com" referrerpolicy="no-referrer-when-downgrade">{t.contact}</a></li>
+    <li class="mt-2">
+        <a class="py-3 text-base opacity-80" href={switchHref} hreflang={other} lang={other}>
+            <span class="badge badge-outline badge-sm">{ui[lang].switchShort}</span>
+            {ui[lang].switchLabel}
+        </a>
+    </li>
 </ul>
 
 <script define:vars={{ sideBarActiveItemID: sideBarActiveItemID, activeClass: activeClass }}>

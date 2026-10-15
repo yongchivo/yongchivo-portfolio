@@ -1,4 +1,6 @@
 ---
+import { ui } from "../i18n/site";
+const { lang = "en" } = Astro.props;
 const today = new Date();
 ---
 
@@ -7,7 +9,7 @@ const today = new Date();
     &copy; {today.getFullYear()} John Akhis Moreno (Yongchivo)
   </div>
   <div class="inline opacity-75">
-    Built with <a href="https://github.com/manuelernestog/astrofy" target="_blank" class="font-bold">Astrofy</a>
+    {ui[lang].builtWith} <a href="https://github.com/manuelernestog/astrofy" target="_blank" class="font-bold">Astrofy</a>
   </div>
 </footer>
 <style></style>
