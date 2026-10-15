@@ -7,7 +7,7 @@
 import type { CvEntry, CvSkillGroup } from "./cv";
 
 export const profile =
-  "Estudiante de 2.º curso del BSc (Hons) en Ciberseguridad en la University of Worcester (graduación en 2027) que lleva software a producción. He diseñado, desarrollado y publicado PHV Prep UK, una app de pago de preparación de exámenes para iOS y Android hecha en solitario con Flutter y Firebase, con verificación de compras en el servidor y las claves de API fuera del cliente, junto con un hub de seis herramientas de ciberseguridad en el navegador que funcionan sobre Cloudflare Workers. Experiencia práctica en informática forense, diseño seguro de aplicaciones, desarrollo móvil y web, y entornos Linux a medida. Bilingüe en español e inglés. Titular de la licencia SIA Door Supervisor, del certificado de Emergency First Aid at Work y del carné de conducir británico. Cuatro años de hostelería de cara al público me han dado buenas dotes de comunicación, fiabilidad y capacidad para mantener la calma bajo presión, tanto trabajando por mi cuenta como en equipos con mucho ritmo.";
+  "Estudiante de 2.º curso del BSc (Hons) en Ciberseguridad en la University of Worcester (graduación en 2027) que lleva software a producción. He diseñado, desarrollado y publicado PHV Prep UK, una app de pago de preparación de exámenes para iOS y Android hecha en solitario con Flutter y Firebase, con verificación de compras en el servidor y las claves de API fuera del cliente, junto con un hub de ocho herramientas de ciberseguridad gratuitas en Cloudflare, un conversor de archivos que funciona en el navegador y UNO, un orquestador de código abierto que mantiene a raya a los agentes de IA que programan. Experiencia práctica en informática forense, diseño seguro de aplicaciones, desarrollo móvil y web, y entornos Linux a medida. Bilingüe en español e inglés. Titular de la licencia SIA Door Supervisor, del certificado de Emergency First Aid at Work y del carné de conducir británico. Cuatro años de hostelería de cara al público me han dado buenas dotes de comunicación, fiabilidad y capacidad para mantener la calma bajo presión, tanto trabajando por mi cuenta como en equipos con mucho ritmo.";
 
 export const education: CvEntry[] = [
   {
@@ -24,20 +24,35 @@ export const education: CvEntry[] = [
 
 export const projects: CvEntry[] = [
   {
+    title: "UNO — Orquestador seguro de agentes de IA",
+    subtitle: "Python / Claude Code / Git - Código abierto, github.com/yongchivo/uno-orchestra",
+    body: "Diseñé y desarrollé una herramienta que coordina varios agentes de Claude Code en un mismo proyecto, en paralelo o como una cadena de roles (desarrollador, analista de seguridad, arquitecto), con una interfaz web local para ver a los agentes en directo y aprobar cada cambio. Cada agente se trata como un trabajador no confiable: un git worktree y una rama por agente, mínimo privilegio (solo leer y editar; sin shell, sin red y sin servidores MCP) y una compuerta determinista que retiene para revisión los cambios fuera de alcance, las rutas protegidas y los posibles secretos. Mitiga la inyección de prompts entre agentes, verifica por hash la configuración de roles antes de cada ejecución (TOCTOU) y protege la interfaz local con un token por arranque, validación de Origin/Host y una CSP estricta. Cubierto por 141 tests unitarios, un smoke test que ataca el servidor en marcha y un modelo de amenazas documentado.",
+  },
+  {
     title: "PHV Prep UK — App de preparación del examen de taxi",
     subtitle:
       "Flutter / Dart / Firebase / Anthropic API - Proyecto en solitario, publicado en App Store y Google Play",
-    body: "Diseñé, desarrollé y publiqué una app de pago para preparar los exámenes de licencia de vehículo de alquiler privado («taxi badge») de West Midlands (Wolverhampton, Birmingham, Solihull, Coventry, Tamworth, Sandwell, Dudley y Walsall), con más de 2.000 preguntas de práctica, simulacros cronometrados que replican la lógica de aprobado del examen real y un tutor de IA sobre la normativa del taxi en Reino Unido. Hecha en solitario con Flutter y Firebase (Auth, Firestore, Cloud Functions, europe-west2). Con la seguridad presente en todo momento: verificación de compras de StoreKit 2 en el servidor, la clave de la API de Anthropic guardada en Secret Manager y nunca incluida en el cliente, reglas de Firestore que dejan el estado premium en manos del backend y controles de seguridad del contenido en la función de IA. La versión de Android está en pruebas cerradas de Google Play, con lanzamiento previsto el 18 de agosto de 2026.",
+    body: "Diseñé, desarrollé y publiqué una app de pago para preparar los exámenes de licencia de vehículo de alquiler privado («taxi badge») de West Midlands (Wolverhampton, Birmingham, Solihull, Coventry, Tamworth, Sandwell, Dudley y Walsall), con más de 2.000 preguntas de práctica, simulacros cronometrados que replican la lógica de aprobado del examen real y un tutor de IA sobre la normativa del taxi en Reino Unido. Hecha en solitario con Flutter y Firebase (Auth, Firestore, Cloud Functions, europe-west2). Con la seguridad presente en todo momento: verificación de compras de StoreKit 2 en el servidor, la clave de la API de Anthropic guardada en Secret Manager y nunca incluida en el cliente, reglas de Firestore que dejan el estado premium en manos del backend y controles de seguridad del contenido en la función de IA. Publicada en App Store y Google Play.",
   },
   {
     title: "Yongchivo Tools — Micro-herramientas de ciberseguridad",
     subtitle: "Astro / Tailwind / Cloudflare Workers - tools.yongchivo.com",
-    body: "Desarrollé y lancé un hub de seis herramientas de ciberseguridad gratuitas y bilingües (inglés/español). Cuatro funcionan por completo en el cliente —generador de contraseñas, analizador de fortaleza de contraseñas, calculadora de subredes y un test de perfiles cyber— y dos se apoyan en Cloudflare Workers: un verificador de cabeceras de seguridad con validación de URL estricta y segura frente a SSRF, y un comprobador de filtraciones basado en la API de XposedOrNot. Desplegado con builds automáticos desde GitHub y con sus propias cabeceras de seguridad de nota A.",
+    body: "Desarrollé y lancé un hub de ocho herramientas de ciberseguridad gratuitas y bilingües (inglés/español). Seis funcionan por completo en el cliente —generador de contraseñas, analizador de fortaleza de contraseñas, calculadora de subredes, test de perfiles cyber, visor EXIF y editor de metadatos PDF— y dos se apoyan en Cloudflare Workers: un verificador de cabeceras de seguridad con validación de URL estricta y segura frente a SSRF, y un comprobador de filtraciones basado en la API de XposedOrNot. Desplegado con builds automáticos desde GitHub y con sus propias cabeceras de seguridad de nota A.",
   },
   {
     title: "Conversor de archivos — Privado, en el navegador",
     subtitle: "JavaScript / WebAssembly / Astro - yongchivo.com/convert",
-    body: "Desarrollé un conversor de archivos centrado en la privacidad que funciona por completo en el navegador, así que nunca se sube ningún archivo. Convierte imágenes (PNG, JPG, WebP y HEIC mediante la versión WebAssembly de libheif) y formatos de datos (CSV, JSON, YAML, XML) en todas las direcciones, con arrastrar y soltar, conversión por lotes y un manejo cuidadoso de las entradas mal formadas. Bilingüe (EN/ES) sobre un único motor de conversión reutilizable.",
+    body: "Desarrollé un conversor de archivos centrado en la privacidad que funciona por completo en el navegador, así que nunca se sube ningún archivo. Convierte imágenes (PNG, JPG, WebP y HEIC mediante la versión WebAssembly de libheif), formatos de datos (CSV, JSON, YAML, XML), PDF (de imágenes a PDF y al revés, unir, dividir, rotar, comprimir) y audio y vídeo (FFmpeg.wasm), con arrastrar y soltar, conversión por lotes y un manejo cuidadoso de las entradas mal formadas. Bilingüe (EN/ES) sobre un único motor de conversión reutilizable, sin debilitar la Content-Security-Policy estricta de la web.",
+  },
+  {
+    title: "Panel de analítica — En el navegador",
+    subtitle: "TypeScript / Chart.js / Astro - yongchivo.com/analytics",
+    body: "Desarrollé un panel que lee las exportaciones CSV de Google Search Console y App Store Connect por completo en el navegador y muestra lo que los paneles nativos no enseñan: CTR frente a posición, distribución de posiciones, embudos de conversión, rendimiento por día de la semana y comparación de dos periodos. Los archivos nunca salen del dispositivo del usuario.",
+  },
+  {
+    title: "Portfolio personal con hardening de seguridad",
+    subtitle: "Astro / Tailwind / Cloudflare Pages - yongchivo.com",
+    body: "Desarrollé y mantengo esta web bilingüe (EN/ES) con despliegue continuo desde GitHub a Cloudflare Pages. Subí sus cabeceras de seguridad HTTP de una D a una A en securityheaders.com configurando HSTS, Content-Security-Policy, X-Frame-Options y Permissions-Policy mediante un archivo _headers.",
   },
 ];
 
@@ -65,6 +80,11 @@ export const academicProjects: CvEntry[] = [
 ];
 
 export const experience: CvEntry[] = [
+  {
+    title: "Door Supervisor en Pavilion Security",
+    subtitle: "Jul. 2026 – actualidad",
+    body: "Door Supervisor con licencia SIA.",
+  },
   {
     title: "Bartender en Sabai Sabai",
     subtitle: "Abr. 2024 – mar. 2026, Birmingham, Reino Unido",
