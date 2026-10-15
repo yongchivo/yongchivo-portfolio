@@ -6,7 +6,7 @@
 
 import { getConversion, type Conversion } from "./registry";
 import { strings, type ConverterStrings } from "./i18n";
-import { accepts, convertFile, type ConversionResult } from "./engine";
+import { accepts, convertFile, sniffImage, type ConversionResult } from "./engine";
 
 type Status = "queued" | "working" | "done" | "error";
 
@@ -385,6 +385,10 @@ function initDataConverter(
 }
 
 // --- PDF widget -----------------------------------------------------------
+
+// images-to-pdf limits: keep a tab from running out of memory decoding photos.
+const IMG_MAX_MB = 20;
+const IMG_MAX_COUNT = 50;
 //
 // Multi-file capable (image->pdf, merge) with reorder; single-file for the
 // rest. Produces one or many result files, each individually downloadable.
@@ -406,13 +410,20 @@ function initPdfConverter(
   const results = root.querySelector<HTMLElement>("[data-cv-results]");
   const qualityInput = root.querySelector<HTMLInputElement>("[data-cv-quality]");
   const qualityValue = root.querySelector<HTMLElement>("[data-cv-quality-value]");
+  const pagesize = root.querySelector<HTMLSelectElement>("[data-cv-pagesize]");
+  const orientation = root.querySelector<HTMLSelectElement>("[data-cv-orientation]");
+  const margin = root.querySelector<HTMLSelectElement>("[data-cv-margin]");
+  const marginCustom = root.querySelector<HTMLInputElement>("[data-cv-margin-custom]");
+  const marginCustomWrap = root.querySelector<HTMLElement>("[data-cv-margin-custom-wrap]");
   if (!box || !input || !filesList || !runBtn || !results) return;
 
   const mode = box.dataset.cvMode ?? "";
   const multi = box.dataset.cvMulti === "1";
+  const isImages = mode === "images-to-pdf";
 
   let files: File[] = [];
   let urls: string[] = [];
+  let thumbs: string[] = [];
 
   function hideError() {
     errorBox?.classList.add("hidden");
@@ -430,13 +441,40 @@ function initPdfConverter(
     if (results) results.innerHTML = "";
   }
 
-  function renderFiles() {
+  /** Re-render the list; `focus` puts keyboard focus back after a move/remove. */
+  function renderFiles(focus?: { index: number; act: string }) {
     if (!filesList) return;
     filesList.innerHTML = "";
+    thumbs.forEach((u) => URL.revokeObjectURL(u));
+    thumbs = [];
+    if (isImages && files.length === 0) {
+      const empty = document.createElement("li");
+      empty.className = "text-sm opacity-60";
+      empty.textContent = t.imagesEmpty;
+      filesList.appendChild(empty);
+    }
     files.forEach((file, index) => {
       const li = document.createElement("li");
       li.className =
         "flex items-center gap-2 rounded-lg bg-base-200 border border-base-300 px-3 py-2";
+
+      if (isImages) {
+        // Thumbnail; falls back to the extension where the browser can't
+        // render the format in an <img> (HEIC outside Safari).
+        const box = document.createElement("div");
+        box.className =
+          "relative w-12 h-12 shrink-0 rounded bg-base-300 overflow-hidden grid place-items-center text-[10px] uppercase opacity-90";
+        box.textContent = file.name.split(".").pop() ?? "";
+        const url = URL.createObjectURL(file);
+        thumbs.push(url);
+        const img = document.createElement("img");
+        img.src = url;
+        img.alt = "";
+        img.className = "absolute inset-0 w-full h-full object-cover bg-white";
+        img.addEventListener("error", () => img.remove());
+        box.appendChild(img);
+        li.appendChild(box);
+      }
 
       const meta = document.createElement("div");
       meta.className = "min-w-0 grow";
@@ -453,38 +491,49 @@ function initPdfConverter(
 
       if (multi) {
         controls.appendChild(
-          iconButton("↑", t.moveUp, index === 0, () => {
+          iconButton("↑", t.moveUp, "up", index === 0, () => {
             [files[index - 1], files[index]] = [files[index], files[index - 1]];
-            renderFiles();
+            renderFiles({ index: index - 1, act: "up" });
           })
         );
         controls.appendChild(
-          iconButton("↓", t.moveDown, index === files.length - 1, () => {
+          iconButton("↓", t.moveDown, "down", index === files.length - 1, () => {
             [files[index + 1], files[index]] = [files[index], files[index + 1]];
-            renderFiles();
+            renderFiles({ index: index + 1, act: "down" });
           })
         );
       }
       controls.appendChild(
-        iconButton("✕", t.remove, false, () => {
+        iconButton("✕", `${t.remove}: ${file.name}`, "remove", false, () => {
           files.splice(index, 1);
-          renderFiles();
+          renderFiles({ index: Math.min(index, files.length - 1), act: "remove" });
         })
       );
 
       li.append(meta, controls);
       filesList.appendChild(li);
     });
+
+    if (focus) {
+      const li = filesList.children[focus.index];
+      const target =
+        li?.querySelector<HTMLElement>(`[data-act="${focus.act}"]:not(:disabled)`) ??
+        li?.querySelector<HTMLElement>("button:not(:disabled)") ??
+        input;
+      target?.focus();
+    }
   }
 
   function iconButton(
     label: string,
     title: string,
+    act: string,
     disabled: boolean,
     onClick: () => void
   ): HTMLButtonElement {
     const b = document.createElement("button");
     b.type = "button";
+    b.dataset.act = act;
     b.className = "btn btn-ghost btn-xs";
     b.textContent = label;
     b.title = title;
@@ -494,13 +543,44 @@ function initPdfConverter(
     return b;
   }
 
-  function addFiles(incoming: FileList | File[]) {
-    const valid = Array.from(incoming).filter((f) => accepts(conversion, f));
-    if (valid.length === 0) {
-      showError(t.wrongType);
-      return;
+  /** images-to-pdf: size, magic-byte and count checks; problems are reported per file. */
+  async function screenImages(list: File[], problems: string[]): Promise<File[]> {
+    const ok: File[] = [];
+    for (const f of list) {
+      if (f.size > IMG_MAX_MB * 1024 * 1024) {
+        problems.push(t.imageTooLarge.replace("{name}", f.name).replace("{mb}", String(IMG_MAX_MB)));
+        continue;
+      }
+      let head: Uint8Array | null = null;
+      try {
+        head = new Uint8Array(await f.slice(0, 12).arrayBuffer());
+      } catch {
+        /* unreadable — rejected below */
+      }
+      if (!accepts(conversion, f) || !head || !sniffImage(head)) {
+        problems.push(t.notAnImage.replace("{name}", f.name));
+        continue;
+      }
+      ok.push(f);
     }
-    hideError();
+    const room = IMG_MAX_COUNT - files.length;
+    if (ok.length > room) {
+      problems.push(t.tooManyImages.replace("{max}", String(IMG_MAX_COUNT)));
+      return ok.slice(0, Math.max(0, room));
+    }
+    return ok;
+  }
+
+  async function addFiles(incoming: FileList | File[]) {
+    const list = Array.from(incoming); // copy before any await: the input's FileList is reset
+    const problems: string[] = [];
+    const valid = isImages
+      ? await screenImages(list, problems)
+      : list.filter((f) => accepts(conversion, f));
+    if (!isImages && valid.length === 0) problems.push(t.wrongType);
+    if (problems.length) showError(problems.join("\n"));
+    else hideError();
+    if (valid.length === 0) return;
     files = multi ? [...files, ...valid] : [valid[0]];
     renderFiles();
   }
@@ -511,8 +591,14 @@ function initPdfConverter(
       opts.format = conversion.pdf.imageFormat;
       opts.ext = conversion.targetExt;
     }
-    const pagesize = root.querySelector<HTMLSelectElement>("[data-cv-pagesize]");
     if (pagesize) opts.pageSize = pagesize.value;
+    if (orientation) opts.orientation = orientation.value;
+    if (margin) {
+      opts.marginMm =
+        margin.value === "custom"
+          ? Math.max(0, Math.min(100, Number(marginCustom?.value) || 0))
+          : Number(margin.value);
+    }
     const ranges = root.querySelector<HTMLInputElement>("[data-cv-ranges]");
     if (ranges) opts.ranges = ranges.value;
     const angle = root.querySelector<HTMLSelectElement>("[data-cv-angle]");
@@ -634,6 +720,17 @@ function initPdfConverter(
     );
   }
 
+  // Orientation only means something on a fixed page size; "fit" takes the image's shape.
+  const syncPageOptions = () => {
+    if (orientation && pagesize) orientation.disabled = pagesize.value === "fit";
+    const custom = margin?.value === "custom";
+    marginCustomWrap?.classList.toggle("hidden", !custom);
+    marginCustomWrap?.classList.toggle("flex", custom);
+  };
+  pagesize?.addEventListener("change", syncPageOptions);
+  margin?.addEventListener("change", syncPageOptions);
+  syncPageOptions();
+
   runBtn.addEventListener("click", run);
   clearBtn?.addEventListener("click", () => {
     files = [];
@@ -641,6 +738,7 @@ function initPdfConverter(
     clearResults();
     hideError();
   });
+  renderFiles(); // empty state
 }
 
 // --- media widget (audio / video via FFmpeg.wasm) -------------------------
