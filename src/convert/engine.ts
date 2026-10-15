@@ -36,6 +36,25 @@ export function accepts(conversion: Conversion, file: File): boolean {
   return byExt || byMime;
 }
 
+export type ImageSignature = "jpeg" | "png" | "webp" | "heic";
+
+/**
+ * Identify an image by its magic bytes (pass at least the first 12), so a
+ * renamed .txt can't sneak past the extension/MIME check. null = not an image
+ * we handle.
+ */
+export function sniffImage(b: Uint8Array): ImageSignature | null {
+  const ascii = (start: number, end: number) =>
+    String.fromCharCode(...b.subarray(start, end));
+  if (b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff) return "jpeg";
+  if (b[0] === 0x89 && ascii(1, 4) === "PNG") return "png";
+  if (ascii(0, 4) === "RIFF" && ascii(8, 12) === "WEBP") return "webp";
+  // ISO-BMFF "ftyp" box with a HEIF/HEIC brand.
+  if (ascii(4, 8) === "ftyp" && /^(heic|heix|hevc|hevx|heim|heis|mif1|msf1)$/.test(ascii(8, 12)))
+    return "heic";
+  return null;
+}
+
 /** A decoded image ready to be painted onto an output canvas. */
 interface DecodedSource {
   width: number;
@@ -137,7 +156,7 @@ async function decodeHeic(file: Blob): Promise<DecodedSource> {
   }
 }
 
-async function decodeSource(
+export async function decodeSource(
   file: Blob,
   strategy: DecodeStrategy
 ): Promise<DecodedSource> {

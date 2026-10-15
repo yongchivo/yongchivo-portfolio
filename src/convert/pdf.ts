@@ -13,7 +13,7 @@
 // pdf-lib is loaded by every tool; pdf.js only by the ones that rasterise
 // (pdf-to-images, compress), so image->pdf / merge / split / rotate stay light.
 
-import type { ConversionResult } from "./engine";
+import { decodeSource, sniffImage, type ConversionResult } from "./engine";
 
 // --- lazy library loaders -------------------------------------------------
 
@@ -45,15 +45,6 @@ async function loadPdfLib() {
 function stripExt(name: string): string {
   const dot = name.lastIndexOf(".");
   return dot > 0 ? name.slice(0, dot) : name;
-}
-
-function isPng(bytes: Uint8Array): boolean {
-  return (
-    bytes[0] === 0x89 &&
-    bytes[1] === 0x50 &&
-    bytes[2] === 0x4e &&
-    bytes[3] === 0x47
-  );
 }
 
 function pdfBlob(bytes: Uint8Array, name: string): ConversionResult {
@@ -129,47 +120,94 @@ function parsePageList(spec: string | undefined, pageCount: number): number[] | 
 
 // --- Family A: format conversions -----------------------------------------
 
-const PAGE_SIZES: Record<string, [number, number]> = {
+const PAGE_SIZES: Record<"a4" | "letter", [number, number]> = {
   a4: [595.28, 841.89],
   letter: [612, 792],
 };
-const PAGE_MARGIN = 24;
+const PT_PER_MM = 72 / 25.4;
+// Fixed re-encode quality for images that go through the canvas.
+const JPEG_QUALITY = 0.92;
 
 export interface ImagesToPdfOptions {
   pageSize?: "fit" | "a4" | "letter";
+  /** Ignored for "fit" (the page takes the image's shape). */
+  orientation?: "auto" | "portrait" | "landscape";
+  /** White space on every side, in mm. */
+  marginMm?: number;
+}
+
+/** Page size + where the image sits on it, in PDF points. Contain-fit, centred. */
+export function layoutPage(
+  iw: number,
+  ih: number,
+  { pageSize = "fit", orientation = "auto", marginMm = 0 }: ImagesToPdfOptions
+) {
+  const m = Math.max(0, marginMm) * PT_PER_MM;
+  if (pageSize === "fit") {
+    return { page: [iw + 2 * m, ih + 2 * m] as [number, number], x: m, y: m, w: iw, h: ih };
+  }
+  let [pw, ph] = PAGE_SIZES[pageSize];
+  if (orientation === "landscape" || (orientation === "auto" && iw > ih)) [pw, ph] = [ph, pw];
+  const aw = pw - 2 * m;
+  const ah = ph - 2 * m;
+  if (aw <= 0 || ah <= 0) throw new Error("The margins are too large for this page size");
+  const scale = Math.min(aw / iw, ah / ih);
+  const w = iw * scale;
+  const h = ih * scale;
+  return { page: [pw, ph] as [number, number], x: (pw - w) / 2, y: (ph - h) / 2, w, h };
+}
+
+/**
+ * Decode any supported image (WebP/HEIC/JPEG) and re-encode it as a JPEG pdf-lib
+ * can embed. Going through createImageBitmap also applies EXIF rotation, which
+ * pdf-lib's embedJpg ignores (phone photos would come out sideways). Alpha is
+ * flattened onto white.
+ */
+async function toJpeg(file: File, heic: boolean): Promise<Uint8Array> {
+  const source = await decodeSource(file, heic ? "heic" : "canvas");
+  const canvas = document.createElement("canvas");
+  canvas.width = source.width;
+  canvas.height = source.height;
+  try {
+    const ctx = canvas.getContext("2d");
+    if (!ctx) throw new Error("Canvas 2D context unavailable");
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    source.drawTo(ctx);
+    const blob = await canvasToBlob(canvas, "image/jpeg", JPEG_QUALITY);
+    return new Uint8Array(await blob.arrayBuffer());
+  } finally {
+    source.dispose();
+    canvas.width = canvas.height = 0; // release the backing store now, not at GC
+  }
 }
 
 async function imagesToPdf(
   files: File[],
-  { pageSize = "fit" }: ImagesToPdfOptions
+  opts: ImagesToPdfOptions
 ): Promise<ConversionResult> {
   if (files.length === 0) throw new Error("Add at least one image");
   const { PDFDocument } = await loadPdfLib();
   const pdf = await PDFDocument.create();
 
   for (const file of files) {
-    const bytes = new Uint8Array(await file.arrayBuffer());
     let img;
     try {
-      img = isPng(bytes) ? await pdf.embedPng(bytes) : await pdf.embedJpg(bytes);
-    } catch {
-      throw new Error(`Couldn't read "${file.name}" as an image`);
+      const bytes = new Uint8Array(await file.arrayBuffer());
+      const kind = sniffImage(bytes);
+      if (!kind) throw new Error("not a JPG, PNG, WebP or HEIC image");
+      // PNG embeds losslessly as-is (its transparency shows as the white page).
+      img =
+        kind === "png"
+          ? await pdf.embedPng(bytes)
+          : await pdf.embedJpg(await toJpeg(file, kind === "heic"));
+    } catch (err) {
+      const why = err instanceof Error && err.message ? err.message : "couldn't read this image";
+      throw new Error(`"${file.name}": ${why}`);
     }
 
-    if (pageSize === "fit") {
-      const page = pdf.addPage([img.width, img.height]);
-      page.drawImage(img, { x: 0, y: 0, width: img.width, height: img.height });
-    } else {
-      const [pw, ph] = PAGE_SIZES[pageSize];
-      const page = pdf.addPage([pw, ph]);
-      const scale = Math.min(
-        (pw - PAGE_MARGIN * 2) / img.width,
-        (ph - PAGE_MARGIN * 2) / img.height
-      );
-      const w = img.width * scale;
-      const h = img.height * scale;
-      page.drawImage(img, { x: (pw - w) / 2, y: (ph - h) / 2, width: w, height: h });
-    }
+    const { page, x, y, w, h } = layoutPage(img.width, img.height, opts);
+    pdf.addPage(page).drawImage(img, { x, y, width: w, height: h });
   }
 
   const out = await pdf.save();
@@ -370,8 +408,7 @@ export type PdfMode =
   | "rotate"
   | "compress";
 
-export interface PdfToolOptions {
-  pageSize?: "fit" | "a4" | "letter";
+export interface PdfToolOptions extends ImagesToPdfOptions {
   format?: "image/jpeg" | "image/png";
   ext?: string;
   quality?: number;
