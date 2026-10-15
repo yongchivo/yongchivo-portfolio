@@ -14,6 +14,7 @@
 // (pdf-to-images, compress), so image->pdf / merge / split / rotate stay light.
 
 import { decodeSource, sniffImage, type ConversionResult } from "./engine";
+import { ConvertError } from "./errors";
 
 // --- lazy library loaders -------------------------------------------------
 
@@ -72,28 +73,44 @@ function canvasToBlob(
  * both throw low-level parser messages ("Failed to parse number …") that would
  * only confuse the user.
  */
-function friendlyPdfError(err: unknown): string {
+function friendlyPdfError(err: unknown): ConvertError {
   const name = (err as { name?: string })?.name ?? "";
   const msg = (err as { message?: string })?.message ?? "";
   if (name === "PasswordException" || /password|encrypted/i.test(msg)) {
-    return "This PDF is password-protected. Remove the password and try again.";
+    return new ConvertError(
+      "pdfPasswordRequired",
+      "This PDF is password-protected. Remove the password and try again."
+    );
   }
-  return "This file isn't a valid PDF, or it's corrupted.";
+  return new ConvertError("pdfInvalid", "This file isn't a valid PDF, or it's corrupted.");
 }
 
 /** "1-3, 5, 8-10" -> one labelled range per comma token (for split). */
 function parseRanges(spec: string, pageCount: number) {
   const tokens = (spec ?? "").split(",").map((s) => s.trim()).filter(Boolean);
   if (tokens.length === 0) {
-    throw new Error("Enter the page ranges to extract, e.g. 1-3, 5, 8-10");
+    throw new ConvertError(
+      "rangesEmpty",
+      "Enter the page ranges to extract, e.g. 1-3, 5, 8-10"
+    );
   }
   return tokens.map((tok) => {
     const m = tok.match(/^(\d+)(?:\s*-\s*(\d+))?$/);
-    if (!m) throw new Error(`Couldn't read "${tok}" — use pages like 1-3, 5, 8-10`);
+    if (!m) {
+      throw new ConvertError(
+        "rangeUnreadable",
+        `Couldn't read "${tok}" — use pages like 1-3, 5, 8-10`,
+        { tok }
+      );
+    }
     const start = parseInt(m[1], 10);
     const end = m[2] ? parseInt(m[2], 10) : start;
     if (start < 1 || end < start || end > pageCount) {
-      throw new Error(`"${tok}" is out of range — this PDF has ${pageCount} page(s)`);
+      throw new ConvertError(
+        "rangeOutOfRange",
+        `"${tok}" is out of range — this PDF has ${pageCount} page(s)`,
+        { tok, count: pageCount }
+      );
     }
     const indices: number[] = [];
     for (let p = start; p <= end; p++) indices.push(p - 1);
@@ -107,11 +124,21 @@ function parsePageList(spec: string | undefined, pageCount: number): number[] | 
   const set = new Set<number>();
   for (const tok of spec.split(",").map((s) => s.trim()).filter(Boolean)) {
     const m = tok.match(/^(\d+)(?:\s*-\s*(\d+))?$/);
-    if (!m) throw new Error(`Couldn't read "${tok}" — use pages like 1-3, 5`);
+    if (!m) {
+      throw new ConvertError(
+        "pageListUnreadable",
+        `Couldn't read "${tok}" — use pages like 1-3, 5`,
+        { tok }
+      );
+    }
     const start = parseInt(m[1], 10);
     const end = m[2] ? parseInt(m[2], 10) : start;
     if (start < 1 || end < start || end > pageCount) {
-      throw new Error(`Page "${tok}" is out of range — this PDF has ${pageCount} page(s)`);
+      throw new ConvertError(
+        "pageOutOfRange",
+        `Page "${tok}" is out of range — this PDF has ${pageCount} page(s)`,
+        { tok, count: pageCount }
+      );
     }
     for (let p = start; p <= end; p++) set.add(p - 1);
   }
@@ -150,7 +177,9 @@ export function layoutPage(
   if (orientation === "landscape" || (orientation === "auto" && iw > ih)) [pw, ph] = [ph, pw];
   const aw = pw - 2 * m;
   const ah = ph - 2 * m;
-  if (aw <= 0 || ah <= 0) throw new Error("The margins are too large for this page size");
+  if (aw <= 0 || ah <= 0) {
+    throw new ConvertError("marginsTooLarge", "The margins are too large for this page size");
+  }
   const scale = Math.min(aw / iw, ah / ih);
   const w = iw * scale;
   const h = ih * scale;
@@ -186,7 +215,7 @@ async function imagesToPdf(
   files: File[],
   opts: ImagesToPdfOptions
 ): Promise<ConversionResult> {
-  if (files.length === 0) throw new Error("Add at least one image");
+  if (files.length === 0) throw new ConvertError("addAtLeastOneImage", "Add at least one image");
   const { PDFDocument } = await loadPdfLib();
   const pdf = await PDFDocument.create();
 
@@ -195,7 +224,9 @@ async function imagesToPdf(
     try {
       const bytes = new Uint8Array(await file.arrayBuffer());
       const kind = sniffImage(bytes);
-      if (!kind) throw new Error("not a JPG, PNG, WebP or HEIC image");
+      if (!kind) {
+        throw new ConvertError("notSupportedImage", "not a JPG, PNG, WebP or HEIC image");
+      }
       // PNG embeds losslessly as-is (its transparency shows as the white page).
       img =
         kind === "png"
@@ -203,7 +234,7 @@ async function imagesToPdf(
           : await pdf.embedJpg(await toJpeg(file, kind === "heic"));
     } catch (err) {
       const why = err instanceof Error && err.message ? err.message : "couldn't read this image";
-      throw new Error(`"${file.name}": ${why}`);
+      throw new ConvertError("fileError", `"${file.name}": ${why}`, { name: file.name, why }, err);
     }
 
     const { page, x, y, w, h } = layoutPage(img.width, img.height, opts);
@@ -233,7 +264,7 @@ async function pdfToImages(
   try {
     doc = await pdfjs.getDocument({ data, isEvalSupported: false }).promise;
   } catch (err) {
-    throw new Error(friendlyPdfError(err));
+    throw friendlyPdfError(err);
   }
 
   const base = stripExt(file.name);
@@ -274,7 +305,7 @@ async function pdfToImages(
 // --- Family B: PDF tools --------------------------------------------------
 
 async function mergePdfs(files: File[]): Promise<ConversionResult> {
-  if (files.length < 2) throw new Error("Add at least two PDFs to merge");
+  if (files.length < 2) throw new ConvertError("addAtLeastTwoPdfs", "Add at least two PDFs to merge");
   const { PDFDocument } = await loadPdfLib();
   const out = await PDFDocument.create();
 
@@ -283,7 +314,13 @@ async function mergePdfs(files: File[]): Promise<ConversionResult> {
     try {
       src = await PDFDocument.load(await file.arrayBuffer());
     } catch (err) {
-      throw new Error(`"${file.name}": ${friendlyPdfError(err)}`);
+      const why = friendlyPdfError(err);
+      throw new ConvertError(
+        "fileError",
+        `"${file.name}": ${why.message}`,
+        { name: file.name, why: why.message },
+        why
+      );
     }
     const pages = await out.copyPages(src, src.getPageIndices());
     pages.forEach((p) => out.addPage(p));
@@ -299,7 +336,7 @@ async function splitPdf(file: File, ranges: string): Promise<ConversionResult[]>
   try {
     src = await PDFDocument.load(await file.arrayBuffer());
   } catch (err) {
-    throw new Error(friendlyPdfError(err));
+    throw friendlyPdfError(err);
   }
 
   const parsed = parseRanges(ranges, src.getPageCount());
@@ -330,7 +367,7 @@ async function rotatePdf(
   try {
     doc = await PDFDocument.load(await file.arrayBuffer());
   } catch (err) {
-    throw new Error(friendlyPdfError(err));
+    throw friendlyPdfError(err);
   }
 
   const all = doc.getPages();
@@ -365,7 +402,7 @@ async function compressPdf(
   try {
     doc = await pdfjs.getDocument({ data, isEvalSupported: false }).promise;
   } catch (err) {
-    throw new Error(friendlyPdfError(err));
+    throw friendlyPdfError(err);
   }
 
   const out = await PDFDocument.create();
