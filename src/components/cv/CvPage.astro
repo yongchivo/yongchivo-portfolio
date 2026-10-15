@@ -1,0 +1,101 @@
+---
+// /cv and /es/cv. English content comes from src/data/cv.ts (which also feeds
+// the PDF); Spanish from src/data/cv.es.ts.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import TimeLineElement from "./TimeLine.astro";
+import * as en from "../../data/cv";
+import * as es from "../../data/cv.es";
+import type { SiteLang } from "../../i18n/site";
+
+interface Props {
+  lang: SiteLang;
+}
+
+const { lang } = Astro.props;
+const { profile, education, projects, academicProjects, experience, certifications, skills } =
+  lang === "es" ? es : en;
+
+const t =
+  lang === "es"
+    ? {
+        h1: "CV — John Akhis Moreno",
+        profile: "Perfil",
+        projects: "Proyectos",
+        education: "Formación",
+        academic: "Proyectos académicos",
+        experience: "Experiencia",
+        certifications: "Certificaciones y licencias",
+        skills: "Habilidades",
+      }
+    : {
+        h1: "CV — John Akhis Moreno",
+        profile: "Profile",
+        projects: "Projects",
+        education: "Education",
+        academic: "Academic Projects",
+        experience: "Experience",
+        certifications: "Certifications & Licences",
+        skills: "Skills",
+      };
+
+const timelines = [
+  { heading: t.projects, items: projects, extra: "" },
+  { heading: t.education, items: education, extra: "grid gap-4" },
+  { heading: t.academic, items: academicProjects, extra: "" },
+  { heading: t.experience, items: experience, extra: "" },
+];
+---
+
+<BaseLayout title="CV" lang={lang} sideBarActiveItemID="cv" alternates={{ en: "/cv", es: "/es/cv" }}>
+  <h1 class="sr-only">{t.h1}</h1>
+
+  <div class="mb-5">
+    <h2 class="text-3xl w-full font-bold">{t.profile}</h2>
+  </div>
+
+  <div class="mb-10 text-justify">
+    {profile}
+  </div>
+
+  {
+    timelines.map((section) => (
+      <>
+        <div class="mb-5">
+          <h2 class="text-3xl w-full font-bold">{section.heading}</h2>
+        </div>
+        <div class={`time-line-container mb-10 ${section.extra}`}>
+          {section.items.map((item) => (
+            <TimeLineElement title={item.title} subtitle={item.subtitle}>
+              {item.body}
+            </TimeLineElement>
+          ))}
+        </div>
+      </>
+    ))
+  }
+
+  <div class="mb-5">
+    <h2 class="text-3xl w-full font-bold">{t.certifications}</h2>
+  </div>
+
+  <ul class="list-disc mx-6 mb-10 grid gap-2">
+    {certifications.map((item) => <li>{item}</li>)}
+  </ul>
+
+  <div class="mb-5">
+    <h2 class="text-3xl w-full font-bold">{t.skills}</h2>
+  </div>
+
+  {
+    skills.map((group) => (
+      <div class="mb-5">
+        <h3 class="text-xl font-bold mb-2">{group.name}</h3>
+        <ul class="list-disc md:columns-3 columns-2 mx-6">
+          {group.items.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ul>
+      </div>
+    ))
+  }
+</BaseLayout>

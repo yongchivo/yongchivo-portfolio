@@ -1,0 +1,140 @@
+---
+// /projects/uno and /es/projects/uno.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { Image } from "astro:assets";
+import unoImage from "../../../public/uno-cover.webp";
+import { localize, type SiteLang } from "../../i18n/site";
+
+interface Props {
+  lang: SiteLang;
+}
+
+const { lang } = Astro.props;
+const es = lang === "es";
+
+const t = es
+  ? {
+      title: "UNO — Orquestador seguro de agentes de IA",
+      description:
+        "UNO coordina varios agentes de Claude Code en un mismo proyecto y trata a cada uno como un trabajador no confiable: worktrees aislados, mínimo privilegio y una compuerta de revisión determinista.",
+      back: "Volver a proyectos",
+      badge: "CÓDIGO ABIERTO",
+      meta: "Python · Claude Code · Git · Seguridad de aplicaciones · 2026",
+      lead: "Una herramienta que coordina varios agentes de Claude Code en un mismo proyecto —en paralelo o como una cadena de roles (desarrollador → analista de seguridad → arquitecto)— con una interfaz web local desde la que hablo con el orquestador, veo a los agentes en directo y apruebo cada cambio antes de que llegue a mi código.",
+      github: "Ver en GitHub",
+      challengeH: "El reto",
+      challenge: ["Dar autonomía a los agentes de IA sin perder el control. El principio de diseño: ", "cada agente es un trabajador no confiable."],
+      controlsH: "Controles de seguridad",
+      controls: [
+        ["Aislamiento:", "un git worktree y una rama por agente."],
+        ["Mínimo privilegio:", "solo leer y editar; sin shell, sin red y sin servidores MCP."],
+        ["Compuerta determinista:", "cada rol declara qué archivos puede tocar; los cambios fuera de su alcance, en rutas protegidas (CI, reglas de Firebase, configuración) o con posibles secretos esperan a mi revisión."],
+        ["Inyección de prompts entre agentes:", "los artefactos viajan como datos etiquetados y el planificador solo recibe resúmenes generados por código."],
+        ["Confianza en la configuración:", "los roles del repo se verifican por hash antes de cada ejecución (protección TOCTOU)."],
+        ["Interfaz solo local:", "token por arranque, validación de Origin/Host (CSRF y DNS rebinding) y una CSP estricta."],
+      ],
+      verificationH: "Verificación",
+      verification: [
+        "141 tests unitarios y un smoke test que ataca el servidor en marcha.",
+        "Ejecuciones adversarias con agentes reales: se bloqueó a un agente fuera de su alcance y un intento de inyección no tuvo efecto.",
+        "Un modelo de amenazas documentado, con los riesgos residuales.",
+      ],
+      processH: "Proceso",
+      process:
+        "Diseñé la arquitectura, el modelo de amenazas y los controles, y lo construí dirigiendo a Claude Code mediante PRs revisadas una a una.",
+      alt: "Logo de UNO by Yongchivo",
+    }
+  : {
+      title: "UNO — Secure AI Agent Orchestrator",
+      description:
+        "UNO coordinates several Claude Code agents on one project, treating every agent as an untrusted worker: isolated worktrees, least privilege and a deterministic review gate.",
+      back: "Back to projects",
+      badge: "OPEN SOURCE",
+      meta: "Python · Claude Code · Git · Application security · 2026",
+      lead: "A tool that coordinates several Claude Code agents on one project — in parallel, or as a role pipeline (developer → security analyst → architect) — with a local web interface where I talk to the orchestrator, watch the agents live and approve every change before it reaches my code.",
+      github: "View on GitHub",
+      challengeH: "The challenge",
+      challenge: ["Giving AI agents autonomy without losing control. The design principle: ", "every agent is an untrusted worker."],
+      controlsH: "Security controls",
+      controls: [
+        ["Isolation:", "one git worktree and one branch per agent."],
+        ["Least privilege:", "read/edit only — no shell, network or MCP servers."],
+        ["Deterministic gate:", "each role declares which files it may touch; changes out of scope, on protected paths (CI, Firebase rules, configuration) or with possible secrets wait for my review."],
+        ["Cross-agent prompt injection:", "artifacts travel as labelled data, and the planner only receives code-generated summaries."],
+        ["Configuration trust:", "repo roles are hash-verified before every run (TOCTOU protection)."],
+        ["Local-only interface:", "per-launch token, Origin/Host validation (CSRF and DNS rebinding) and a strict CSP."],
+      ],
+      verificationH: "Verification",
+      verification: [
+        "141 unit tests plus a smoke test that attacks the live server.",
+        "Adversarial runs with real agents: an out-of-scope agent was blocked and an injection attempt had no effect.",
+        "A documented threat model, including residual risks.",
+      ],
+      processH: "Process",
+      process:
+        "I designed the architecture, the threat model and the controls, and built it by directing Claude Code through PRs reviewed one by one.",
+      alt: "UNO by Yongchivo logo",
+    };
+---
+
+<BaseLayout
+  title={t.title}
+  description={t.description}
+  image="/uno-cover.webp"
+  lang={lang}
+  sideBarActiveItemID="projects"
+  alternates={{ en: "/projects/uno", es: "/es/projects/uno" }}
+>
+  <div class="mb-6">
+    <a href={localize("/projects", lang)} class="text-sm opacity-70 hover:opacity-100">&larr; {t.back}</a>
+  </div>
+
+  <div class="hero-content flex-col md:flex-row items-start px-0 gap-6">
+    <Image
+      src={unoImage}
+      width={750}
+      height={422}
+      format="webp"
+      alt={t.alt}
+      class="max-w-full md:max-w-[16rem] rounded-lg"
+    />
+    <div class="grow">
+      <h1 class="text-3xl font-bold">
+        UNO
+        <div class="badge badge-secondary mx-2 align-middle">{t.badge}</div>
+      </h1>
+      <div class="text-sm opacity-70 mt-1">{t.meta}</div>
+      <p class="text-lg mt-2 opacity-90">{t.lead}</p>
+    </div>
+  </div>
+
+  <div class="flex flex-wrap gap-3 mt-8">
+    <a class="btn btn-primary" href="https://github.com/yongchivo/uno-orchestra" target="_blank" rel="noopener">
+      {t.github}
+    </a>
+  </div>
+
+  <div class="mt-8">
+    <h2 class="text-xl font-bold mb-2">{t.challengeH}</h2>
+    <p class="opacity-90">{t.challenge[0]}<b>{t.challenge[1]}</b></p>
+  </div>
+
+  <div class="mt-8">
+    <h2 class="text-xl font-bold mb-2">{t.controlsH}</h2>
+    <ul class="list-disc list-inside opacity-90 space-y-1">
+      {t.controls.map(([label, text]) => <li><b>{label}</b> {text}</li>)}
+    </ul>
+  </div>
+
+  <div class="mt-8">
+    <h2 class="text-xl font-bold mb-2">{t.verificationH}</h2>
+    <ul class="list-disc list-inside opacity-90 space-y-1">
+      {t.verification.map((item) => <li>{item}</li>)}
+    </ul>
+  </div>
+
+  <div class="mt-8">
+    <h2 class="text-xl font-bold mb-2">{t.processH}</h2>
+    <p class="opacity-90">{t.process}</p>
+  </div>
+</BaseLayout>

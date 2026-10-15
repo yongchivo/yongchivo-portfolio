@@ -1,12 +1,39 @@
 ---
+// One 404 for the whole site (Cloudflare Pages serves /404.html for any
+// missing path), so it speaks both languages.
 import BaseLayout from "../layouts/BaseLayout.astro";
+import YMark from "../components/brand/YMark.astro";
 ---
 
-<BaseLayout title = "404: Not Found" includeSidebar={false}>
+<BaseLayout title="404: Not Found" includeSidebar={false}>
   <div class="text-center">
-    <h1 class="text-9xl font-bold mb-4">🏝</h1>
+    <div class="lost-y mx-auto mb-6" aria-hidden="true">
+      <YMark draw strokeWidth={2.4} />
+    </div>
     <h1 class="text-9xl font-bold mb-2">404</h1>
-    <h3 class="text-2xl">The page you're looking for couldn't be found.</h3>
-    <a class="btn btn-accent mt-9" href="/">Home</a>
+    <p class="text-2xl">The page you're looking for couldn't be found.</p>
+    <p class="text-lg opacity-70 mt-1" lang="es">La página que buscas no existe.</p>
+    <div class="mt-9 flex justify-center gap-3">
+      <a class="btn btn-accent" href="/">Home</a>
+      <a class="btn btn-outline" href="/es/" lang="es">Inicio</a>
+    </div>
   </div>
 </BaseLayout>
+
+<style>
+  .lost-y {
+    width: 7rem;
+    height: 7rem;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .lost-y {
+      animation: lost-float 5s ease-in-out infinite;
+    }
+  }
+
+  @keyframes lost-float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-12px) rotate(4deg); }
+  }
+</style>
