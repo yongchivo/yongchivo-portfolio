@@ -744,6 +744,41 @@ export const conversions: Conversion[] = [
   // --- PDF format conversions (kind "pdf"; see ./pdf.ts) -------------------
 
   {
+    id: "images-to-pdf",
+    kind: "pdf",
+    from: "IMG",
+    to: "PDF",
+    accept:
+      ".jpg,.jpeg,.png,.webp,.heic,.heif,image/jpeg,image/png,image/webp,image/heic,image/heif",
+    sourceExts: ["jpg", "jpeg", "png", "webp", "heic", "heif"],
+    sourceMimes: [JPG_MIME, PNG_MIME, WEBP_MIME, "image/heic", "image/heif"],
+    targetMime: "application/pdf",
+    targetExt: "pdf",
+    pdf: { direction: "images-to-pdf" },
+    multi: true,
+    related: ["jpg-to-pdf", "png-to-pdf", "heic-to-jpg"],
+    copy: {
+      en: {
+        title: "Image to PDF Converter — JPG, PNG, WebP, HEIC | Free & Private",
+        description:
+          "Turn JPG, PNG, WebP and HEIC images into one PDF. Reorder pages, pick A4 or Letter, orientation and margins — 100% in your browser, nothing uploaded.",
+        h1: "Image to PDF converter",
+        intro:
+          "Combine JPG, PNG, WebP and HEIC images into a single PDF, in the order you choose, with your page size, orientation and margins. Your images never leave your browser.",
+        card: "Combine any images into one PDF",
+      },
+      es: {
+        title: "Convertir Imágenes a PDF — JPG, PNG, WebP, HEIC | Gratis y Privado",
+        description:
+          "Convierte imágenes JPG, PNG, WebP y HEIC en un solo PDF. Reordena páginas, elige A4 o Carta, orientación y márgenes — 100% en tu navegador, nada se sube.",
+        h1: "Convertir imágenes a PDF",
+        intro:
+          "Combina imágenes JPG, PNG, WebP y HEIC en un único PDF, en el orden que elijas, con tu tamaño de página, orientación y márgenes. Tus imágenes nunca salen del navegador.",
+        card: "Combina cualquier imagen en un PDF",
+      },
+    },
+  },
+  {
     id: "jpg-to-pdf",
     kind: "pdf",
     from: "JPG",
@@ -755,7 +790,7 @@ export const conversions: Conversion[] = [
     targetExt: "pdf",
     pdf: { direction: "images-to-pdf" },
     multi: true,
-    related: ["png-to-pdf", "pdf-to-jpg", "merge-pdf"],
+    related: ["images-to-pdf", "png-to-pdf", "pdf-to-jpg"],
     copy: {
       en: {
         title: "JPG to PDF Converter — Free, Private, In Your Browser",
@@ -789,7 +824,7 @@ export const conversions: Conversion[] = [
     targetExt: "pdf",
     pdf: { direction: "images-to-pdf" },
     multi: true,
-    related: ["jpg-to-pdf", "pdf-to-png", "merge-pdf"],
+    related: ["images-to-pdf", "jpg-to-pdf", "pdf-to-png"],
     copy: {
       en: {
         title: "PNG to PDF Converter — Free, Private, In Your Browser",

@@ -51,6 +51,24 @@ export interface ConverterStrings {
   remove: string;
   pageSizeLabel: string;
   pageSizeFit: string;
+  pageSizeLetter: string;
+  orientationLabel: string;
+  orientationAuto: string;
+  orientationPortrait: string;
+  orientationLandscape: string;
+  marginLabel: string;
+  marginNone: string;
+  marginSmall: string;
+  marginLarge: string;
+  marginCustom: string;
+  marginCustomLabel: string;
+  imagesEmpty: string;
+  /** {name} is replaced with the file name. */
+  notAnImage: string;
+  /** {name} / {mb} are replaced. */
+  imageTooLarge: string;
+  /** {max} is replaced with the image limit. */
+  tooManyImages: string;
   splitLabel: string;
   splitPlaceholder: string;
   rotationLabel: string;
@@ -120,6 +138,21 @@ export const strings: Record<Lang, ConverterStrings> = {
     remove: "Remove",
     pageSizeLabel: "Page size",
     pageSizeFit: "Fit to image",
+    pageSizeLetter: "Letter",
+    orientationLabel: "Orientation",
+    orientationAuto: "Auto (per image)",
+    orientationPortrait: "Portrait",
+    orientationLandscape: "Landscape",
+    marginLabel: "Margins",
+    marginNone: "None",
+    marginSmall: "Small (10 mm)",
+    marginLarge: "Large (20 mm)",
+    marginCustom: "Custom",
+    marginCustomLabel: "Margin (mm)",
+    imagesEmpty: "No images yet — add one or more to build your PDF.",
+    notAnImage: "\"{name}\" isn't a JPG, PNG, WebP or HEIC image — skipped",
+    imageTooLarge: "\"{name}\" is over {mb} MB — skipped",
+    tooManyImages: "Up to {max} images per PDF — extra files skipped",
     splitLabel: "Pages to extract",
     splitPlaceholder: "e.g. 1-3, 5, 8-10",
     rotationLabel: "Rotation",
@@ -188,6 +221,21 @@ export const strings: Record<Lang, ConverterStrings> = {
     remove: "Quitar",
     pageSizeLabel: "Tamaño de página",
     pageSizeFit: "Ajustar a la imagen",
+    pageSizeLetter: "Carta",
+    orientationLabel: "Orientación",
+    orientationAuto: "Automática (según la imagen)",
+    orientationPortrait: "Vertical",
+    orientationLandscape: "Horizontal",
+    marginLabel: "Márgenes",
+    marginNone: "Ninguno",
+    marginSmall: "Pequeño (10 mm)",
+    marginLarge: "Grande (20 mm)",
+    marginCustom: "Personalizado",
+    marginCustomLabel: "Margen (mm)",
+    imagesEmpty: "Aún no hay imágenes — añade una o varias para crear tu PDF.",
+    notAnImage: "«{name}» no es una imagen JPG, PNG, WebP ni HEIC — omitido",
+    imageTooLarge: "«{name}» supera los {mb} MB — omitido",
+    tooManyImages: "Máximo {max} imágenes por PDF — se omiten las sobrantes",
     splitLabel: "Páginas a extraer",
     splitPlaceholder: "p. ej. 1-3, 5, 8-10",
     rotationLabel: "Rotación",
