@@ -16,6 +16,8 @@
 //  - "audio"     audio conversions + audio extraction (FFmpeg.wasm) — grouped
 //                under "Audio" on the landing (by OUTPUT family).
 //  - "video"     video conversions + video->GIF (FFmpeg.wasm) — "Video" group.
+//  - "document"  Word (.docx) -> PDF: docx-preview renders the pages, the
+//                browser's print dialog saves them as PDF (see ./docx.ts).
 // Adding a family = new `kind` here + a branch in ./engine.ts / ./pdf.ts /
 // ./media.ts, and (only if the UI differs) a branch in <ConverterApp>.
 // Routing/SEO don't change. This is the final block — the converter is complete.
@@ -26,7 +28,8 @@ export type ConversionKind =
   | "pdf"
   | "operation"
   | "audio"
-  | "video";
+  | "video"
+  | "document";
 
 // How an image source is turned into something the canvas can draw.
 //  - "canvas": the browser can decode it natively (PNG/JPG/WebP).
@@ -737,6 +740,42 @@ export const conversions: Conversion[] = [
         intro:
           "Pasa las filas de un CSV a una lista YAML legible. Pega tus datos o suelta un archivo: todo se ejecuta en tu dispositivo, nada se sube.",
         card: "Pasa filas CSV a una lista YAML",
+      },
+    },
+  },
+
+  // --- Documents (kind "document"; see ./docx.ts) --------------------------
+
+  {
+    id: "word-to-pdf",
+    kind: "document",
+    from: "Word",
+    to: "PDF",
+    accept:
+      ".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    sourceExts: ["docx"],
+    sourceMimes: ["application/vnd.openxmlformats-officedocument.wordprocessingml.document"],
+    targetMime: "application/pdf",
+    targetExt: "pdf",
+    related: ["images-to-pdf", "merge-pdf", "compress-pdf"],
+    copy: {
+      en: {
+        title: "Word to PDF Converter — DOCX to PDF, Free & Private",
+        description:
+          "Convert Word documents (.docx) to PDF for free. Preview the pages and save them as a PDF — 100% in your browser, nothing uploaded.",
+        h1: "Word to PDF converter",
+        intro:
+          "Open a Word document (.docx), check the preview, and save it as a PDF from your browser's print dialog. Your document never leaves your device.",
+        card: "Turn Word documents into PDF",
+      },
+      es: {
+        title: "Convertir Word a PDF — DOCX a PDF, Gratis y Privado",
+        description:
+          "Convierte documentos Word (.docx) a PDF gratis. Revisa las páginas y guárdalas como PDF — 100% en tu navegador, nada se sube.",
+        h1: "Convertir Word a PDF",
+        intro:
+          "Abre un documento Word (.docx), revisa la vista previa y guárdalo como PDF desde el diálogo de imprimir del navegador. Tu documento nunca sale de tu dispositivo.",
+        card: "Convierte documentos Word en PDF",
       },
     },
   },

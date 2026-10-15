@@ -36,6 +36,18 @@ export interface ConverterStrings {
   // PDF widget + landing categories.
   catPdf: string;
   catPdfTools: string;
+  // Word -> PDF (document kind).
+  catDocument: string;
+  docDrop: string;
+  runSavePdf: string;
+  docPrintHint: string;
+  docRendering: string;
+  docNotDocx: string;
+  docLegacyDoc: string;
+  /** {mb} is replaced with the size limit. */
+  docTooLarge: string;
+  docReadFailed: string;
+  docPreviewLabel: string;
   pdfDropImages: string;
   pdfDropPdf: string;
   runCreatePdf: string;
@@ -123,6 +135,18 @@ export const strings: Record<Lang, ConverterStrings> = {
     emptyOutput: "Your converted result will appear here.",
     catPdf: "PDF",
     catPdfTools: "PDF tools",
+    catDocument: "Documents",
+    docDrop: "Drop a Word document (.docx) here, or click to choose",
+    runSavePdf: "Save as PDF",
+    docPrintHint:
+      "Opens your browser's print dialog — choose \u201cSave as PDF\u201d as the destination. Fonts the document uses that aren't on this device are replaced with similar ones.",
+    docRendering: "Preparing the preview…",
+    docNotDocx: "That isn't a Word .docx document.",
+    docLegacyDoc:
+      "This is an old Word .doc file, which can't be read in the browser. Open it in Word or Pages, save it as .docx, and try again.",
+    docTooLarge: "This document is over {mb} MB — too large to open in the browser.",
+    docReadFailed: "Couldn't read this document. It may be damaged or password-protected.",
+    docPreviewLabel: "Document preview",
     pdfDropImages: "Drop images here, or click to choose",
     pdfDropPdf: "Drop a PDF here, or click to choose",
     runCreatePdf: "Create PDF",
@@ -206,6 +230,18 @@ export const strings: Record<Lang, ConverterStrings> = {
     emptyOutput: "Tu resultado convertido aparecerá aquí.",
     catPdf: "PDF",
     catPdfTools: "Herramientas PDF",
+    catDocument: "Documentos",
+    docDrop: "Suelta un documento Word (.docx), o haz clic para elegir",
+    runSavePdf: "Guardar como PDF",
+    docPrintHint:
+      "Abre el diálogo de imprimir del navegador: elige \u00abGuardar como PDF\u00bb como destino. Las fuentes del documento que no estén en este dispositivo se sustituyen por otras parecidas.",
+    docRendering: "Preparando la vista previa…",
+    docNotDocx: "Eso no es un documento Word .docx.",
+    docLegacyDoc:
+      "Es un archivo .doc antiguo de Word, que no se puede leer en el navegador. Ábrelo en Word o Pages, guárdalo como .docx y vuelve a intentarlo.",
+    docTooLarge: "Este documento supera los {mb} MB: es demasiado grande para abrirlo en el navegador.",
+    docReadFailed: "No se pudo leer este documento. Puede estar dañado o protegido con contraseña.",
+    docPreviewLabel: "Vista previa del documento",
     pdfDropImages: "Suelta imágenes aquí, o haz clic para elegir",
     pdfDropPdf: "Suelta un PDF aquí, o haz clic para elegir",
     runCreatePdf: "Crear PDF",
