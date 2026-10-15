@@ -92,7 +92,7 @@ const mail = "mailto:contact@yongchivo.com";
         }
       </ul>
       <div class="cta-row">
-        <a href={mail} class="btn-primary">
+        <a href={mail} class="yv-btn-main">
           {about.services.cta[lang]}
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
         </a>
@@ -120,7 +120,7 @@ const mail = "mailto:contact@yongchivo.com";
     <section class="next reveal">
       <h2 class="block-title">{about.next.heading[lang]}</h2>
       <p>{about.next.text[lang]}</p>
-      <a href={mail} class="btn-primary">
+      <a href={mail} class="yv-btn-main">
         {about.services.cta[lang]}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
       </a>
@@ -130,7 +130,7 @@ const mail = "mailto:contact@yongchivo.com";
     <section class="cv-wrap" id="cv">
       <div class="cv-head">
         <h2 class="block-title">{about.cv.heading[lang]}</h2>
-        <a href="/cv/john-cv.pdf" class="btn-secondary" download>
+        <a href="/cv/john-cv.pdf" class="yv-btn-ghost" download>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"></path></svg>
           {about.cv.download[lang]}
         </a>
@@ -462,8 +462,8 @@ const mail = "mailto:contact@yongchivo.com";
     opacity: 0.6;
   }
 
-  .btn-primary,
-  .btn-secondary {
+  .yv-btn-main,
+  .yv-btn-ghost {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
@@ -476,35 +476,36 @@ const mail = "mailto:contact@yongchivo.com";
       transform 0.45s var(--spring);
   }
 
-  .btn-primary svg,
-  .btn-secondary svg {
+  .yv-btn-main svg,
+  .yv-btn-ghost svg {
     width: 1rem;
     height: 1rem;
   }
 
-  .btn-primary {
+  .yv-btn-main {
     color: #0b0a14;
     background: linear-gradient(to right, var(--magenta), var(--purple));
   }
 
-  .btn-primary:hover,
-  .btn-primary:focus-visible {
+  .yv-btn-main:hover,
+  .yv-btn-main:focus-visible {
     box-shadow: 0 0 24px -4px var(--magenta);
   }
 
-  .btn-secondary {
+  .yv-btn-ghost {
+    color: #e8e6f2;
     border: 1px solid rgba(232, 230, 242, 0.25);
     font-size: 0.9rem;
   }
 
-  .btn-secondary:hover,
-  .btn-secondary:focus-visible {
+  .yv-btn-ghost:hover,
+  .yv-btn-ghost:focus-visible {
     border-color: var(--purple);
     box-shadow: 0 0 18px -6px var(--purple);
   }
 
-  .btn-primary:focus-visible,
-  .btn-secondary:focus-visible {
+  .yv-btn-main:focus-visible,
+  .yv-btn-ghost:focus-visible {
     outline: 2px solid var(--cyan);
     outline-offset: 3px;
   }
@@ -544,8 +545,8 @@ const mail = "mailto:contact@yongchivo.com";
 
   /* ---------- motion ---------- */
   @media (prefers-reduced-motion: no-preference) {
-    .btn-primary:hover,
-    .btn-secondary:hover {
+    .yv-btn-main:hover,
+    .yv-btn-ghost:hover {
       transform: translateY(-2px);
     }
 
