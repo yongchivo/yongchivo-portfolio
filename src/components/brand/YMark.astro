@@ -1,7 +1,10 @@
 ---
 // The Yongchivo "Y", as a stroked SVG so it can be drawn on and recoloured.
-// Geometry is the same path as public/favicon.svg ("M8 9l8 9 8-9M16 18v6"),
-// split into arms + stem so the two can be drawn one after the other.
+// Geometry matches public/favicon.svg ("M8 9l8 9 8-9M16 18v6"), split into
+// three strokes that all END at the centre (16,18): left arm, right arm and
+// stem. With `draw`, each one grows from its own tip and the three meet in the
+// middle at the same moment (pathLength="1" makes them finish together despite
+// their different lengths), then a small spark flashes where they join.
 // The gradient runs top -> bottom like public/profile.webp, using the theme
 // tokens from tailwind.config.cjs (magenta -> purple -> cyan).
 interface Props {
@@ -31,9 +34,11 @@ const gid = `ymark-${Math.random().toString(36).slice(2, 8)}`;
     </linearGradient>
   </defs>
   <g fill="none" stroke={`url(#${gid})`} stroke-width={strokeWidth} stroke-linecap="round" stroke-linejoin="round">
-    <path class="ymark-arms" d="M8 9l8 9 8-9" pathLength="1"></path>
-    <path class="ymark-stem" d="M16 18v6" pathLength="1"></path>
+    <path class="ymark-stroke" d="M8 9L16 18" pathLength="1"></path>
+    <path class="ymark-stroke" d="M24 9L16 18" pathLength="1"></path>
+    <path class="ymark-stroke" d="M16 24L16 18" pathLength="1"></path>
   </g>
+  {draw && <circle class="ymark-spark" cx="16" cy="18" r="1.6" fill="#f5d0fe"></circle>}
 </svg>
 
 <style>
@@ -44,21 +49,40 @@ const gid = `ymark-${Math.random().toString(36).slice(2, 8)}`;
     overflow: visible;
   }
 
+  .ymark-spark {
+    opacity: 0;
+  }
+
   @media (prefers-reduced-motion: no-preference) {
-    .ymark--draw path {
+    /* The three strokes grow from their tips and meet in the centre together. */
+    .ymark--draw .ymark-stroke {
       stroke-dasharray: 1;
       stroke-dashoffset: 1;
-      animation: ymark-draw 0.7s cubic-bezier(0.65, 0, 0.35, 1) 0.15s forwards;
+      animation: ymark-draw 0.85s cubic-bezier(0.55, 0, 0.25, 1) 0.15s forwards;
     }
-    .ymark--draw .ymark-stem {
-      animation-duration: 0.35s;
-      animation-delay: 0.75s;
+
+    /* Flash where they join, just as they arrive. */
+    .ymark--draw .ymark-spark {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: ymark-spark 0.6s ease-out 0.92s forwards;
     }
   }
 
   @keyframes ymark-draw {
     to {
       stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes ymark-spark {
+    0% {
+      opacity: 0.95;
+      transform: scale(0.4);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(2.6);
     }
   }
 </style>
