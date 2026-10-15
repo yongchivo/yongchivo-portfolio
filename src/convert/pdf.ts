@@ -59,7 +59,7 @@ function canvasToBlob(
 ): Promise<Blob> {
   return new Promise((resolve, reject) =>
     canvas.toBlob(
-      (b) => (b ? resolve(b) : reject(new Error("This browser could not encode the image"))),
+      (b) => (b ? resolve(b) : reject(new ConvertError("encodeFailed", "This browser could not encode the image"))),
       type,
       quality
     )
