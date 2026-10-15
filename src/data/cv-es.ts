@@ -7,13 +7,13 @@
 import type { CvEntry, CvSkillGroup } from "./cv";
 
 export const profile =
-  "Estudiante de 2.º curso del BSc (Hons) en Ciberseguridad en la University of Worcester (graduación en 2027) que lleva software a producción. He diseñado, desarrollado y publicado PHV Prep UK, una app de pago de preparación de exámenes para iOS y Android hecha en solitario con Flutter y Firebase, con verificación de compras en el servidor y las claves de API fuera del cliente, junto con un hub de ocho herramientas de ciberseguridad gratuitas en Cloudflare, un conversor de archivos que funciona en el navegador y UNO, un orquestador de código abierto que mantiene a raya a los agentes de IA que programan. Experiencia práctica en informática forense, diseño seguro de aplicaciones, desarrollo móvil y web, y entornos Linux a medida. Bilingüe en español e inglés. Titular de la licencia SIA Door Supervisor, del certificado de Emergency First Aid at Work y del carné de conducir británico. Cuatro años de hostelería de cara al público me han dado buenas dotes de comunicación, fiabilidad y capacidad para mantener la calma bajo presión, tanto trabajando por mi cuenta como en equipos con mucho ritmo.";
+  "Estudiante de último curso del BSc (Hons) en Ciberseguridad en la University of Worcester (graduación en 2027) que lleva software a producción. He diseñado, desarrollado y publicado PHV Prep UK, una app de pago de preparación de exámenes para iOS y Android hecha en solitario con Flutter y Firebase, con verificación de compras en el servidor y las claves de API fuera del cliente, junto con un hub de ocho herramientas de ciberseguridad gratuitas en Cloudflare, un conversor de archivos que funciona en el navegador y UNO, un orquestador de código abierto que mantiene a raya a los agentes de IA que programan. Experiencia práctica en informática forense, diseño seguro de aplicaciones, desarrollo móvil y web, y entornos Linux a medida. Bilingüe en español e inglés. Trabajo como Door Supervisor con licencia SIA y tengo el certificado de Emergency First Aid at Work y el carné de conducir británico. Cuatro años de hostelería de cara al público me han dado buenas dotes de comunicación, fiabilidad y capacidad para mantener la calma bajo presión, tanto trabajando por mi cuenta como en equipos con mucho ritmo.";
 
 export const education: CvEntry[] = [
   {
     title: "BSc (Hons) Cyber Security (Single Honours)",
     subtitle: "Sept. 2024 – jun. 2027 (prevista), University of Worcester, Worcester, Reino Unido",
-    body: "2.º curso, media de notable (B). Módulos como Digital Forensics, Mobile Application Development, Web Technologies y fundamentos de redes y seguridad. Los trabajos se centran en técnicas prácticas de investigación, diseño seguro y desarrollo de aplicaciones modernas.",
+    body: "Último curso; media de notable (B) en 2.º. Módulos como Digital Forensics, Mobile Application Development, Web Technologies y fundamentos de redes y seguridad. Los trabajos se centran en técnicas prácticas de investigación, diseño seguro y desarrollo de aplicaciones modernas.",
   },
   {
     title: "BTEC Level 3 National Extended Diploma in Information Technology",
@@ -81,9 +81,9 @@ export const academicProjects: CvEntry[] = [
 
 export const experience: CvEntry[] = [
   {
-    title: "Door Supervisor en Pavilion Security",
-    subtitle: "Jul. 2026 – actualidad",
-    body: "Door Supervisor con licencia SIA.",
+    title: "Door Supervisor en Pavilon Security",
+    subtitle: "Jul. 2026 – actualidad, West Midlands, Reino Unido",
+    body: "Seguridad de puerta con licencia SIA en West Midlands, sobre todo en pubs y fiestas, además de estrenos de cine y control de CCTV en almacenes (en pausa durante el curso). Me encargo del control de acceso y de aforo, la comprobación de identificación, la gestión de conflictos y el informe de incidentes.",
   },
   {
     title: "Bartender en Sabai Sabai",

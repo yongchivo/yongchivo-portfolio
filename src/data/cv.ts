@@ -38,14 +38,14 @@ export const contact = {
 };
 
 export const profile =
-  "Year 2 BSc (Hons) Cyber Security student at the University of Worcester (graduating 2027) who ships production software. Designed, built and released PHV Prep UK, a paid iOS and Android exam-preparation app built solo in Flutter and Firebase with server-side purchase verification and API keys kept off the client, alongside a hub of eight free cyber security tools on Cloudflare, an in-browser file converter and UNO, an open-source orchestrator that keeps AI coding agents on a short leash. Practical experience across digital forensics, secure application design, mobile and web development, and custom Linux environments. Bilingual in Spanish and English. Holder of an SIA Door Supervisor licence, Emergency First Aid at Work certification and a full UK driving licence. Four years of customer-facing hospitality experience have built strong communication skills, reliability and the ability to stay calm under pressure, both independently and in fast-moving teams.";
+  "Final-year BSc (Hons) Cyber Security student at the University of Worcester (graduating 2027) who ships production software. Designed, built and released PHV Prep UK, a paid iOS and Android exam-preparation app built solo in Flutter and Firebase with server-side purchase verification and API keys kept off the client, alongside a hub of eight free cyber security tools on Cloudflare, an in-browser file converter and UNO, an open-source orchestrator that keeps AI coding agents on a short leash. Practical experience across digital forensics, secure application design, mobile and web development, and custom Linux environments. Bilingual in Spanish and English. Working as an SIA-licensed Door Supervisor, and holder of Emergency First Aid at Work certification and a full UK driving licence. Four years of customer-facing hospitality experience have built strong communication skills, reliability and the ability to stay calm under pressure, both independently and in fast-moving teams.";
 
 export const education: CvEntry[] = [
   {
     title: "BSc (Hons) Cyber Security (Single Honours)",
     subtitle:
       "Sept 2024 – Jun 2027 (expected) at University of Worcester, Worcester, UK",
-    body: "Year 2, B-grade average. Modules include Digital Forensics, Mobile Application Development, Web Technologies, networking and security fundamentals. Coursework focuses on practical investigation techniques, secure design and modern application development.",
+    body: "Final year; B-grade average in Year 2. Modules include Digital Forensics, Mobile Application Development, Web Technologies, networking and security fundamentals. Coursework focuses on practical investigation techniques, secure design and modern application development.",
   },
   {
     title: "BTEC Level 3 National Extended Diploma in Information Technology",
@@ -115,9 +115,9 @@ export const academicProjects: CvEntry[] = [
 
 export const experience: CvEntry[] = [
   {
-    title: "Door Supervisor at Pavilion Security",
-    subtitle: "Jul 2026 – Present",
-    body: "SIA-licensed Door Supervisor.",
+    title: "Door Supervisor at Pavilon Security",
+    subtitle: "Jul 2026 – Present in the West Midlands, UK",
+    body: "SIA-licensed door supervision across the West Midlands, mainly at pubs and events, as well as film premieres and CCTV control at warehouses (paused during term time). Responsible for access and capacity control, ID checks, conflict management and incident reporting.",
   },
   {
     title: "Bartender at Sabai Sabai",
