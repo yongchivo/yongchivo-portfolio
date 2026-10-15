@@ -20,3 +20,7 @@ pnpm-debug.log*
 
 # Astro
 .astro/
+
+# Uno
+events.jsonl
+events.jsonl.1
