@@ -14,6 +14,7 @@
 // will likely fit convertFile; if so, add a kind here.
 
 import type { Conversion, DecodeStrategy } from "./registry";
+import { ConvertError } from "./errors";
 
 export interface ConversionResult {
   blob: Blob;
@@ -82,8 +83,11 @@ async function decodeNative(file: Blob): Promise<DecodedSource> {
  */
 // Shown when libheif can't turn the file into pixels (unsupported variant,
 // corruption, or an oversized image) — actionable rather than a bare "Failed".
-const HEIC_DECODE_FAILED =
-  "Couldn't decode this HEIC. It may use a variant this in-browser tool doesn't support, be corrupted, or be too large. If it's an iPhone photo, try sharing/exporting it as JPEG and converting that.";
+const heicDecodeFailed = () =>
+  new ConvertError(
+    "heicDecodeFailed",
+    "Couldn't decode this HEIC. It may use a variant this in-browser tool doesn't support, be corrupted, or be too large. If it's an iPhone photo, try sharing/exporting it as JPEG and converting that."
+  );
 
 interface HeifImage {
   get_width(): number;
@@ -105,10 +109,10 @@ async function decodeHeic(file: Blob): Promise<DecodedSource> {
   try {
     images = new libheif.HeifDecoder().decode(bytes) as HeifImage[];
   } catch {
-    throw new Error(HEIC_DECODE_FAILED);
+    throw heicDecodeFailed();
   }
   if (!images || images.length === 0) {
-    throw new Error("No image found in this HEIC file.");
+    throw new ConvertError("heicNoImage", "No image found in this HEIC file.");
   }
 
   const image = images[0];
@@ -122,7 +126,7 @@ async function decodeHeic(file: Blob): Promise<DecodedSource> {
     // A failed/empty decode reports 0 dimensions; createImageData(0,0) would
     // otherwise throw a cryptic IndexSizeError.
     if (!Number.isFinite(width) || !Number.isFinite(height) || width < 1 || height < 1) {
-      throw new Error(HEIC_DECODE_FAILED);
+      throw heicDecodeFailed();
     }
 
     // libheif paints RGBA into an ImageData; render it to an offscreen canvas
@@ -137,10 +141,10 @@ async function decodeHeic(file: Blob): Promise<DecodedSource> {
     await new Promise<void>((resolve, reject) => {
       try {
         image.display(imageData, (out) =>
-          out ? resolve() : reject(new Error(HEIC_DECODE_FAILED))
+          out ? resolve() : reject(heicDecodeFailed())
         );
       } catch {
-        reject(new Error(HEIC_DECODE_FAILED));
+        reject(heicDecodeFailed());
       }
     });
     sctx.putImageData(imageData, 0, 0);
@@ -189,7 +193,9 @@ async function convertImage(
   const blob = await new Promise<Blob>((resolve, reject) => {
     canvas.toBlob(
       (b) =>
-        b ? resolve(b) : reject(new Error("This browser could not encode the image")),
+        b
+          ? resolve(b)
+          : reject(new ConvertError("encodeFailed", "This browser could not encode the image")),
       conversion.targetMime,
       conversion.lossy ? quality : undefined
     );
