@@ -60,7 +60,9 @@ const spots = [
       aria-label={t.label}
     >
       <span class="bubble-halo" aria-hidden="true"></span>
+      <span class="bubble-ripple" aria-hidden="true"></span>
       <span class="bubble-body" style="view-transition-name: brand-logo">
+        <span class="bubble-sheen" aria-hidden="true"></span>
         <span class="bubble-y"><YMark draw strokeWidth={2.4} /></span>
       </span>
     </button>
@@ -159,10 +161,41 @@ const spots = [
     box-shadow:
       inset 0 -14px 30px rgba(0, 0, 0, 0.4),
       inset 0 6px 18px rgba(255, 255, 255, 0.06);
+    overflow: hidden;
     transition: transform 0.6s var(--spring);
   }
 
+  /* Soap-bubble iridescence: a soft colour band that sweeps round the edge. */
+  .bubble-sheen {
+    position: absolute;
+    inset: -20%;
+    background: conic-gradient(
+      from 0deg,
+      transparent 0deg,
+      rgba(34, 211, 238, 0.28) 40deg,
+      transparent 90deg,
+      transparent 180deg,
+      rgba(217, 70, 239, 0.3) 230deg,
+      transparent 280deg
+    );
+    -webkit-mask: radial-gradient(circle, transparent 52%, #000 70%);
+    mask: radial-gradient(circle, transparent 52%, #000 70%);
+    will-change: transform;
+  }
+
+  /* Ring that bursts outwards when the bubble pops open. */
+  .bubble-ripple {
+    position: absolute;
+    inset: 0;
+    border-radius: 9999px;
+    border: 2px solid var(--purple);
+    box-shadow: 0 0 18px var(--magenta), inset 0 0 18px var(--cyan);
+    opacity: 0;
+    pointer-events: none;
+  }
+
   .bubble-y {
+    position: relative;
     width: 52%;
     aspect-ratio: 1;
   }
@@ -255,7 +288,8 @@ const spots = [
   .bubble-nav {
     width: 100%;
     max-width: 22rem;
-    margin-top: 1.25rem;
+    /* Clear of the neon halo, which spills well past the bubble's edge. */
+    margin-top: 4rem;
     display: grid;
     grid-template-rows: 1fr;
     transition:
@@ -276,6 +310,16 @@ const spots = [
   .enhanced:not(.is-open) .bubble-nav {
     grid-template-rows: 0fr;
     margin-top: 0;
+  }
+
+  /* On phones the buttons are just the section name. */
+  @media (max-width: 767.98px) {
+    .bubble-link-sub {
+      display: none;
+    }
+    .bubble-link {
+      padding: 0.8rem 1.4rem;
+    }
   }
 
   .enhanced:not(.is-open) .bubble-nav li {
@@ -343,14 +387,28 @@ const spots = [
   /* ---------- ambient motion (only if the visitor allows it) ---------- */
 
   @media (prefers-reduced-motion: no-preference) {
+    /* Drift up and down with a slight sway. */
     .bubble {
-      animation: bubble-float 6s ease-in-out infinite;
+      animation: bubble-float 5s ease-in-out infinite;
     }
+    /* The neon halo turns and breathes. */
     .bubble-halo {
-      animation: bubble-spin 14s linear infinite;
+      animation: bubble-halo 9s linear infinite;
     }
-    .is-open.bubble-hero .bubble {
-      animation-play-state: paused;
+    /* Iridescent band sweeping round the edge, the other way. */
+    .bubble-sheen {
+      animation: bubble-spin 7s linear infinite reverse;
+    }
+    /* The Y bobs gently inside the bubble (after it has been drawn). */
+    .bubble-y {
+      animation: bubble-y 5s ease-in-out 1.2s infinite;
+    }
+    /* Pop: a quick squash-and-stretch, then a ring bursts outwards. */
+    .is-open .bubble-body {
+      animation: bubble-pop 0.55s cubic-bezier(0.3, 0.7, 0.4, 1) both;
+    }
+    .is-open .bubble-ripple {
+      animation: bubble-ripple 0.7s ease-out;
     }
   }
 
@@ -377,11 +435,34 @@ const spots = [
 
   @keyframes bubble-float {
     0%, 100% { transform: translateY(0) rotate(0deg); }
-    50% { transform: translateY(-10px) rotate(-1.5deg); }
+    50% { transform: translateY(-16px) rotate(-2deg); }
+  }
+
+  @keyframes bubble-halo {
+    0% { transform: rotate(0turn) scale(1); }
+    50% { transform: rotate(0.5turn) scale(1.12); }
+    100% { transform: rotate(1turn) scale(1); }
   }
 
   @keyframes bubble-spin {
     to { transform: rotate(1turn); }
+  }
+
+  @keyframes bubble-y {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(3%) scale(0.97); }
+  }
+
+  @keyframes bubble-pop {
+    0% { transform: scale(1); }
+    35% { transform: scale(1.12, 1.04); }
+    65% { transform: scale(0.78, 0.86); }
+    100% { transform: scale(0.82); }
+  }
+
+  @keyframes bubble-ripple {
+    0% { opacity: 0.9; transform: scale(0.95); }
+    100% { opacity: 0; transform: scale(1.7); }
   }
 </style>
 
