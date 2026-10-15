@@ -45,6 +45,8 @@ export function initConverter(root: HTMLElement): void {
     initPdfConverter(root, conversion, t);
   } else if (conversion.kind === "audio" || conversion.kind === "video") {
     initMediaConverter(root, conversion, t);
+  } else if (conversion.kind === "document") {
+    initDocConverter(root, conversion, t);
   } else {
     initImageConverter(root, conversion, t);
   }
@@ -925,5 +927,106 @@ function initMediaConverter(
     clearResult();
     hideError();
     setStatus("");
+  });
+}
+
+// --- document widget (Word .docx -> PDF via the print dialog) ---------------
+//
+// One file. docx.ts renders it into the preview <iframe>; "Save as PDF" prints
+// that frame, and the browser's print engine writes the PDF.
+
+const DOC_MAX_MB = 30;
+
+function initDocConverter(
+  root: HTMLElement,
+  conversion: Conversion,
+  t: ConverterStrings
+): void {
+  const input = root.querySelector<HTMLInputElement>("[data-cv-input]");
+  const drop = root.querySelector<HTMLElement>("[data-cv-drop]");
+  const runBtn = root.querySelector<HTMLButtonElement>("[data-cv-run]");
+  const clearBtn = root.querySelector<HTMLButtonElement>("[data-cv-clear]");
+  const errorBox = root.querySelector<HTMLElement>("[data-cv-error]");
+  const status = root.querySelector<HTMLElement>("[data-cv-status]");
+  const frame = root.querySelector<HTMLIFrameElement>("[data-cv-preview]");
+  if (!input || !runBtn || !frame) return;
+
+  function setError(message: string | null) {
+    if (!errorBox) return;
+    errorBox.textContent = message ?? "";
+    errorBox.classList.toggle("hidden", !message);
+  }
+  function reset() {
+    runBtn!.disabled = true;
+    frame!.classList.add("hidden");
+    frame!.contentDocument?.body.replaceChildren();
+    if (status) status.textContent = "";
+  }
+
+  async function open(file: File) {
+    reset();
+    setError(null);
+    if (file.size > DOC_MAX_MB * 1024 * 1024) {
+      setError(t.docTooLarge.replace("{mb}", String(DOC_MAX_MB)));
+      return;
+    }
+    const head = new Uint8Array(await file.slice(0, 4).arrayBuffer());
+    // OLE2 header = legacy binary .doc; a .docx is a ZIP ("PK\x03\x04").
+    if (head[0] === 0xd0 && head[1] === 0xcf && head[2] === 0x11 && head[3] === 0xe0) {
+      setError(t.docLegacyDoc);
+      return;
+    }
+    const isZip = head[0] === 0x50 && head[1] === 0x4b && head[2] === 0x03 && head[3] === 0x04;
+    if (!isZip || !accepts(conversion, file)) {
+      setError(t.docNotDocx);
+      return;
+    }
+
+    if (status) status.textContent = t.docRendering;
+    try {
+      const { renderDocx } = await import("./docx");
+      frame!.classList.remove("hidden"); // visible first: renderDocx sizes pages to it
+      await renderDocx(file, frame!);
+      runBtn!.disabled = false;
+      if (status) status.textContent = file.name;
+    } catch {
+      reset();
+      setError(t.docReadFailed);
+    }
+  }
+
+  input.addEventListener("change", () => {
+    const file = input.files?.[0];
+    input.value = "";
+    if (file) open(file);
+  });
+
+  if (drop) {
+    ["dragenter", "dragover"].forEach((ev) =>
+      drop.addEventListener(ev, (e) => {
+        e.preventDefault();
+        drop.classList.add("border-primary", "bg-base-200");
+      })
+    );
+    ["dragleave", "drop"].forEach((ev) =>
+      drop.addEventListener(ev, (e) => {
+        e.preventDefault();
+        if (ev === "dragleave" && drop.contains((e as DragEvent).relatedTarget as Node)) return;
+        drop.classList.remove("border-primary", "bg-base-200");
+      })
+    );
+    drop.addEventListener("drop", (e) => {
+      const file = (e as DragEvent).dataTransfer?.files?.[0];
+      if (file) open(file);
+    });
+  }
+
+  runBtn.addEventListener("click", () => {
+    frame.contentWindow?.focus();
+    frame.contentWindow?.print();
+  });
+  clearBtn?.addEventListener("click", () => {
+    reset();
+    setError(null);
   });
 }
