@@ -26,6 +26,7 @@
 
 import type { Conversion } from "./registry";
 import type { ConversionResult } from "./engine";
+import { ConvertError } from "./errors";
 
 const CORE_URL = "/ffmpeg-core.js";
 const WASM_URL = "https://assets.yongchivo.com/ffmpeg-core.wasm";
@@ -114,7 +115,7 @@ export async function convertMedia(
   try {
     await ffmpeg.writeFile(inName, new Uint8Array(await file.arrayBuffer()));
   } catch {
-    throw new Error("Couldn't read this file — it may be corrupted.");
+    throw new ConvertError("mediaReadFailed", "Couldn't read this file — it may be corrupted.");
   }
 
   opts.onStatus?.("running");
@@ -123,7 +124,8 @@ export async function convertMedia(
     await ffmpeg.exec(buildArgs(conversion, inName, outName, opts));
   } catch {
     // exec throws when ffmpeg aborts (e.g. a decoder ran out of memory).
-    throw new Error(
+    throw new ConvertError(
+      "mediaConvertFailed",
       "The conversion failed — the file may be too large or use an unsupported codec."
     );
   } finally {
@@ -135,7 +137,8 @@ export async function convertMedia(
     data = (await ffmpeg.readFile(outName)) as Uint8Array;
   } catch {
     // No output file -> ffmpeg couldn't handle the input.
-    throw new Error(
+    throw new ConvertError(
+      "mediaNoOutput",
       "This file couldn't be converted — it may use an unsupported codec or be corrupted."
     );
   } finally {
@@ -145,7 +148,8 @@ export async function convertMedia(
   }
 
   if (!data || data.length === 0) {
-    throw new Error(
+    throw new ConvertError(
+      "mediaEmptyOutput",
       "The conversion produced an empty file — the input may use an unsupported codec."
     );
   }
