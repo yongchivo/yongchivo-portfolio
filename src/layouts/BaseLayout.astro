@@ -1,8 +1,7 @@
 ---
 import BaseHead from "../components/BaseHead.astro";
-import Header from "../components/Header.astro";
+import TopBar from "../components/TopBar.astro";
 import Footer from "../components/Footer.astro";
-import SideBar from "../components/SideBar.astro";
 import { ViewTransitions } from "astro:transitions";
 
 import { SITE_TITLE, SITE_DESCRIPTION, TRANSITION_API } from "../config";
@@ -11,33 +10,46 @@ const {
   image,
   title = SITE_TITLE,
   description = SITE_DESCRIPTION,
+  // Kept under its old name so existing pages keep working: false hides the
+  // site navigation (the 404 page).
   includeSidebar = true,
+  // The section to highlight in the top bar ("tools", "projects", "cv", "blog").
+  // "home" means the home page, which has no top bar: the bubble is the nav.
   sideBarActiveItemID,
   ogType,
   lang = "en",
+  // { en: "/cv", es: "/es/cv" } -> hreflang links. Pages that already emit their
+  // own (tools, convert, analytics) simply don't pass it.
+  alternates,
 } = Astro.props;
+
+const isHome = sideBarActiveItemID === "home";
+const showTopBar = includeSidebar && !isHome;
 ---
 
 <!doctype html>
 <html lang={lang} data-theme="yongchivo">
   <head>
     <BaseHead title={title} description={description} image={image} , ogType={ogType} />
+    {
+      alternates && (
+        <>
+          <link rel="alternate" hreflang="en" href={new URL(alternates.en, Astro.site)} />
+          <link rel="alternate" hreflang="es" href={new URL(alternates.es, Astro.site)} />
+          <link rel="alternate" hreflang="x-default" href={new URL(alternates.en, Astro.site)} />
+        </>
+      )
+    }
     <slot name="head" />
     {TRANSITION_API && <ViewTransitions />}
   </head>
-  <body>
-    <div class="bg-base-100 drawer lg:drawer-open">
-      <input id="my-drawer" type="checkbox" class="drawer-toggle" />
-      <div class="drawer-content bg-base-100">
-        <Header title={SITE_TITLE} />
-        <div class="md:flex md:justify-center">
-          <main class="p-6 pt-10 lg:max-w-[900px] max-w-[100vw]">
-            <slot />
-          </main>
-        </div>
-        <Footer />
-      </div>
-      {includeSidebar && <SideBar sideBarActiveItemID={sideBarActiveItemID} />}
+  <body class="bg-base-100 min-h-screen flex flex-col">
+    {showTopBar && <TopBar lang={lang} active={sideBarActiveItemID} />}
+    <div class="grow md:flex md:justify-center">
+      <main class="p-6 pt-10 w-full lg:max-w-[900px] max-w-[100vw]">
+        <slot />
+      </main>
     </div>
+    <Footer lang={lang} brandOnly={isHome} />
   </body>
 </html>

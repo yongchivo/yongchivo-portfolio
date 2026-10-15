@@ -1,0 +1,67 @@
+---
+// "Live" (green dot that pulses), "Open source" (cyan) or "Coursework".
+import { statusLabel, type ProjectStatus, type SiteLang } from "../../data/projects";
+
+interface Props {
+  status: ProjectStatus;
+  lang: SiteLang;
+}
+
+const { status, lang } = Astro.props;
+---
+
+<span class={`status status-${status}`}>
+  {status === "live" && <span class="status-dot" aria-hidden="true"></span>}
+  {statusLabel[status][lang]}
+</span>
+
+<style>
+  .status {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    padding: 0.2rem 0.55rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(232, 230, 242, 0.2);
+    opacity: 0.9;
+  }
+
+  .status-dot {
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 9999px;
+    background: currentColor;
+  }
+
+  .status-live {
+    color: #34d399;
+    border-color: rgba(52, 211, 153, 0.45);
+  }
+
+  .status-oss {
+    color: #22d3ee;
+    border-color: rgba(34, 211, 238, 0.45);
+  }
+
+  .status-coursework {
+    color: #e8e6f2;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .status-live .status-dot {
+      animation: live-pulse 2s ease-out infinite;
+    }
+  }
+
+  @keyframes live-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.7); }
+    70% { box-shadow: 0 0 0 6px rgba(52, 211, 153, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+  }
+</style>

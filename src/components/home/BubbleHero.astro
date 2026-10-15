@@ -1,0 +1,499 @@
+---
+// Home hero: the Yongchivo "Y" floats in a bubble; clicking it pops open the
+// three main sections. CSS-only animation (no library), plus a few lines of JS
+// for the open/close state.
+//
+// - Without JS the links are simply shown (the closed state is only applied
+//   once the script has marked the hero as enhanced).
+// - prefers-reduced-motion: no float, no halo spin, no draw-on, no springs —
+//   the links just fade in.
+// - Keyboard: Enter/Space toggles, focus moves to the first link when opened
+//   from the keyboard, Escape closes and returns focus to the bubble.
+import YMark from "../brand/YMark.astro";
+import { localize, type SiteLang } from "../../i18n/site";
+
+interface Props {
+  lang: SiteLang;
+}
+
+const { lang } = Astro.props;
+const es = lang === "es";
+
+const t = es
+  ? {
+      label: "Explorar: herramientas, proyectos y quién soy",
+      nav: "Secciones principales",
+      hint: "Toca la burbuja",
+      items: [
+        { label: "Herramientas", href: localize("/tools/", lang), tone: "cyan" },
+        { label: "Proyectos", href: localize("/projects", lang), tone: "magenta" },
+        { label: "¿Quién soy?", href: localize("/cv", lang), tone: "purple" },
+      ],
+    }
+  : {
+      label: "Explore: tools, projects and who I am",
+      nav: "Main sections",
+      hint: "Tap the bubble",
+      items: [
+        { label: "Tools", href: "/tools/", tone: "cyan" },
+        { label: "Projects", href: "/projects", tone: "magenta" },
+        { label: "Who am I?", href: "/cv", tone: "purple" },
+      ],
+    };
+
+// Where each satellite lands on wide screens (relative to the bubble's centre):
+// top, bottom-left, bottom-right.
+const spots = [
+  { x: "0px", y: "-12.5rem" },
+  { x: "-13rem", y: "7.5rem" },
+  { x: "13rem", y: "7.5rem" },
+];
+---
+
+<section class="bubble-hero" data-bubble>
+  <div class="bubble-stage">
+    <button
+      type="button"
+      class="bubble"
+      aria-expanded="false"
+      aria-controls="bubble-nav"
+      aria-label={t.label}
+    >
+      <span class="bubble-halo" aria-hidden="true"></span>
+      <span class="bubble-ripple" aria-hidden="true"></span>
+      <span class="bubble-body" style="view-transition-name: brand-logo">
+        <span class="bubble-sheen" aria-hidden="true"></span>
+        <span class="bubble-y"><YMark draw strokeWidth={2.4} /></span>
+      </span>
+    </button>
+
+    <nav id="bubble-nav" class="bubble-nav" aria-label={t.nav}>
+      <ul>
+        {
+          t.items.map((item, i) => (
+            <li style={`--i:${i}; --x:${spots[i].x}; --y:${spots[i].y}`}>
+              <a href={item.href} class={`bubble-link tone-${item.tone}`}>
+                <span class="bubble-link-label">{item.label}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <p class="bubble-hint" aria-hidden="true">{t.hint}</p>
+  </div>
+</section>
+
+<style>
+  .bubble-hero {
+    --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --magenta: #d946ef;
+    --purple: #a855f7;
+    --cyan: #22d3ee;
+    display: grid;
+    justify-items: center;
+    padding: 1rem 0 2.5rem;
+  }
+
+  /* A real spring where supported (Chrome 113+, Firefox 112+, Safari 17.2+). */
+  @supports (transition-timing-function: linear(0, 1)) {
+    .bubble-hero {
+      --spring: linear(
+        0, 0.009, 0.035 2.1%, 0.141, 0.281 6.7%, 0.723 12.9%, 0.938 16.7%, 1.017,
+        1.077, 1.121, 1.149 24.3%, 1.159, 1.163, 1.161, 1.154 29.9%, 1.129 32.8%,
+        1.051 39.6%, 1.017 43.1%, 0.991, 0.977 51%, 0.974 53.8%, 0.975 57.1%,
+        0.997 69.8%, 1.003 76.9%, 1
+      );
+    }
+  }
+
+  .bubble-stage {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    width: 100%;
+  }
+
+  /* ---------- the bubble ---------- */
+
+  .bubble {
+    position: relative;
+    width: clamp(9.5rem, 34vw, 13rem);
+    aspect-ratio: 1;
+    border-radius: 9999px;
+    cursor: pointer;
+    background: none;
+    border: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .bubble:focus-visible {
+    outline: 3px solid var(--cyan);
+    outline-offset: 8px;
+  }
+
+  .bubble-halo {
+    position: absolute;
+    inset: -14%;
+    border-radius: 9999px;
+    background: conic-gradient(from 0deg, var(--magenta), var(--purple), var(--cyan), var(--magenta));
+    filter: blur(28px);
+    opacity: 0.45;
+    transition: opacity 0.4s ease;
+    will-change: transform;
+  }
+
+  .bubble-body {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 9999px;
+    /* Same mood as public/profile.webp: purple glow top-left, teal bottom-right. */
+    background:
+      radial-gradient(circle at 30% 22%, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0) 30%),
+      radial-gradient(circle at 25% 25%, rgba(217, 70, 239, 0.32), transparent 58%),
+      radial-gradient(circle at 78% 82%, rgba(34, 211, 238, 0.22), transparent 55%),
+      #131120;
+    border: 1px solid rgba(232, 230, 242, 0.14);
+    box-shadow:
+      inset 0 -14px 30px rgba(0, 0, 0, 0.4),
+      inset 0 6px 18px rgba(255, 255, 255, 0.06);
+    overflow: hidden;
+    transition: transform 0.6s var(--spring);
+  }
+
+  /* Soap-bubble iridescence: a soft colour band that sweeps round the edge. */
+  .bubble-sheen {
+    position: absolute;
+    inset: -20%;
+    background: conic-gradient(
+      from 0deg,
+      transparent 0deg,
+      rgba(34, 211, 238, 0.28) 40deg,
+      transparent 90deg,
+      transparent 180deg,
+      rgba(217, 70, 239, 0.3) 230deg,
+      transparent 280deg
+    );
+    -webkit-mask: radial-gradient(circle, transparent 52%, #000 70%);
+    mask: radial-gradient(circle, transparent 52%, #000 70%);
+    will-change: transform;
+  }
+
+  /* Ring that bursts outwards when the bubble pops open. */
+  .bubble-ripple {
+    position: absolute;
+    inset: 0;
+    border-radius: 9999px;
+    border: 2px solid var(--purple);
+    box-shadow: 0 0 18px var(--magenta), inset 0 0 18px var(--cyan);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .bubble-y {
+    position: relative;
+    width: 52%;
+    aspect-ratio: 1;
+  }
+
+  .bubble:hover .bubble-halo,
+  .bubble:focus-visible .bubble-halo {
+    opacity: 0.7;
+  }
+
+  .bubble:active .bubble-body {
+    transform: scale(0.94);
+    transition-duration: 0.12s;
+  }
+
+  .is-open .bubble-body {
+    transform: scale(0.82);
+  }
+
+  .is-open .bubble-halo {
+    opacity: 0.75;
+  }
+
+  .bubble-hint {
+    margin-top: 1.25rem;
+    font-size: 0.875rem;
+    opacity: 0.55;
+    transition: opacity 0.3s ease;
+  }
+
+  .is-open .bubble-hint,
+  .bubble-hero:not(.enhanced) .bubble-hint {
+    opacity: 0;
+  }
+
+  /* ---------- the three sections ---------- */
+
+  .bubble-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .bubble-link {
+    display: grid;
+    gap: 0.15rem;
+    text-align: center;
+    padding: 0.8rem 1.4rem;
+    border-radius: 9999px;
+    background: #131120;
+    border: 1px solid var(--tone);
+    box-shadow: 0 0 0 0 transparent;
+    transition:
+      box-shadow 0.25s ease,
+      background-color 0.25s ease;
+  }
+
+  .tone-cyan { --tone: var(--cyan); }
+  .tone-magenta { --tone: var(--magenta); }
+  .tone-purple { --tone: var(--purple); }
+
+  .bubble-link:hover,
+  .bubble-link:focus-visible {
+    background: #1c1a2e;
+    box-shadow: 0 0 22px -4px var(--tone);
+  }
+
+  .bubble-link:focus-visible {
+    outline: 2px solid var(--tone);
+    outline-offset: 4px;
+  }
+
+  .bubble-link-label {
+    font-weight: 700;
+    font-size: 1.05rem;
+  }
+
+  .bubble-nav li {
+    transition:
+      transform 0.65s var(--spring) calc(var(--i) * 70ms),
+      opacity 0.25s ease calc(var(--i) * 70ms);
+  }
+
+  /* Narrow screens: the sections stack under the bubble. While closed the list
+     collapses to zero height (0fr row) so it doesn't leave an empty gap. */
+  .bubble-nav {
+    width: 100%;
+    max-width: 22rem;
+    /* Clear of the neon halo, which spills well past the bubble's edge. */
+    margin-top: 4rem;
+    display: grid;
+    grid-template-rows: 1fr;
+    transition:
+      grid-template-rows 0.45s cubic-bezier(0.2, 0.8, 0.2, 1),
+      margin-top 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .bubble-nav ul {
+    display: grid;
+    gap: 0.75rem;
+    min-height: 0;
+    overflow: hidden;
+    /* Room for the glow and focus ring inside the clipped area. */
+    padding: 1.25rem;
+    margin: -1.25rem;
+  }
+
+  .enhanced:not(.is-open) .bubble-nav {
+    grid-template-rows: 0fr;
+    margin-top: 0;
+  }
+
+
+  .enhanced:not(.is-open) .bubble-nav li {
+    opacity: 0;
+    transform: translateY(-1.5rem) scale(0.85);
+  }
+
+  /* Wide screens: the sections orbit the bubble. */
+  @media (min-width: 768px) {
+    .bubble-stage {
+      height: 33rem;
+      align-content: center;
+    }
+
+    .bubble-nav,
+    .enhanced:not(.is-open) .bubble-nav {
+      position: absolute;
+      inset: 0;
+      max-width: none;
+      margin: 0;
+      display: block;
+      pointer-events: none;
+    }
+
+    .bubble-nav ul {
+      display: block;
+      height: 100%;
+      overflow: visible;
+      padding: 0;
+      margin: 0;
+    }
+
+    /* Under the bubble without pushing it off the stage's centre. */
+    .bubble-hint {
+      position: absolute;
+      top: calc(50% + 8rem);
+      margin: 0;
+    }
+
+    .bubble-nav li {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      translate: -50% -50%;
+      transform: translate(var(--x), var(--y));
+      pointer-events: auto;
+    }
+
+    .bubble-link {
+      min-width: 10.5rem;
+    }
+
+    .enhanced:not(.is-open) .bubble-nav li {
+      transform: translate(0, 0) scale(0.3);
+    }
+  }
+
+  /* Closed: invisible to clicks, Tab and screen readers. The delay lets the
+     exit animation play before the links disappear. */
+  .enhanced:not(.is-open) .bubble-nav {
+    visibility: hidden;
+    transition: visibility 0s linear 0.45s;
+  }
+
+  /* ---------- ambient motion (only if the visitor allows it) ---------- */
+
+  @media (prefers-reduced-motion: no-preference) {
+    /* Drift up and down with a slight sway. */
+    .bubble {
+      animation: bubble-float 5s ease-in-out infinite;
+    }
+    /* The neon halo turns and breathes. */
+    .bubble-halo {
+      animation: bubble-halo 9s linear infinite;
+    }
+    /* Iridescent band sweeping round the edge, the other way. */
+    .bubble-sheen {
+      animation: bubble-spin 7s linear infinite reverse;
+    }
+    /* The Y bobs gently inside the bubble (after it has been drawn). */
+    .bubble-y {
+      animation: bubble-y 5s ease-in-out 1.2s infinite;
+    }
+    /* Pop: a quick squash-and-stretch, then a ring bursts outwards. */
+    .is-open .bubble-body {
+      animation: bubble-pop 0.55s cubic-bezier(0.3, 0.7, 0.4, 1) both;
+    }
+    .is-open .bubble-ripple {
+      animation: bubble-ripple 0.7s ease-out;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bubble-body,
+    .bubble-nav li {
+      transition: opacity 0.15s ease;
+    }
+    .bubble-nav li,
+    .enhanced:not(.is-open) .bubble-nav li {
+      transform: translate(var(--x, 0), var(--y, 0));
+    }
+    .is-open .bubble-body {
+      transform: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) and (max-width: 767.98px) {
+    .bubble-nav li,
+    .enhanced:not(.is-open) .bubble-nav li {
+      transform: none;
+    }
+  }
+
+  @keyframes bubble-float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-16px) rotate(-2deg); }
+  }
+
+  @keyframes bubble-halo {
+    0% { transform: rotate(0turn) scale(1); }
+    50% { transform: rotate(0.5turn) scale(1.12); }
+    100% { transform: rotate(1turn) scale(1); }
+  }
+
+  @keyframes bubble-spin {
+    to { transform: rotate(1turn); }
+  }
+
+  @keyframes bubble-y {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(3%) scale(0.97); }
+  }
+
+  @keyframes bubble-pop {
+    0% { transform: scale(1); }
+    35% { transform: scale(1.12, 1.04); }
+    65% { transform: scale(0.78, 0.86); }
+    100% { transform: scale(0.82); }
+  }
+
+  @keyframes bubble-ripple {
+    0% { opacity: 0.9; transform: scale(0.95); }
+    100% { opacity: 0; transform: scale(1.7); }
+  }
+</style>
+
+<script>
+  function setOpen(root: HTMLElement, open: boolean, focusFirst = false) {
+    const button = root.querySelector<HTMLButtonElement>(".bubble");
+    root.classList.toggle("is-open", open);
+    button?.setAttribute("aria-expanded", String(open));
+    if (open && focusFirst) {
+      // Wait a frame so the nav is no longer visibility:hidden.
+      requestAnimationFrame(() => root.querySelector<HTMLElement>(".bubble-link")?.focus());
+    }
+  }
+
+  function initBubbles() {
+    document.querySelectorAll<HTMLElement>("[data-bubble]").forEach((root) => {
+      if (root.dataset.ready) return;
+      root.dataset.ready = "1";
+      root.classList.add("enhanced");
+
+      const button = root.querySelector<HTMLButtonElement>(".bubble");
+      button?.addEventListener("click", (event) => {
+        const open = !root.classList.contains("is-open");
+        // detail === 0 -> activated with Enter/Space rather than a pointer.
+        setOpen(root, open, (event as MouseEvent).detail === 0);
+      });
+
+      root.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && root.classList.contains("is-open")) {
+          setOpen(root, false);
+          button?.focus();
+        }
+      });
+    });
+  }
+
+  // Click anywhere outside an open bubble closes it. One listener for the whole
+  // site, so View Transition navigations don't stack up duplicates.
+  document.addEventListener("pointerdown", (event) => {
+    document.querySelectorAll<HTMLElement>("[data-bubble].is-open").forEach((root) => {
+      if (!root.contains(event.target as Node)) setOpen(root, false);
+    });
+  });
+
+  // Same pattern as ConverterApp.astro: run now, and again after every
+  // View Transition swap (bundled scripts only execute once).
+  initBubbles();
+  document.addEventListener("astro:page-load", initBubbles);
+</script>

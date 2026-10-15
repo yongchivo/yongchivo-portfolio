@@ -25,9 +25,9 @@ export interface CvSkillGroup {
  * committed PDF shows up as modified in git after every run. Bump it when the
  * CV content below actually changes.
  */
-export const lastUpdated = "2026-08-06";
+export const lastUpdated = "2026-10-15";
 
-/** Header details for the PDF. The web page gets these from the sidebar instead. */
+/** Header details for the PDF. The web page shows them in the footer instead. */
 export const contact = {
   name: "John Akhis Moreno",
   headline: "Cyber Security Student & Builder",
@@ -38,14 +38,14 @@ export const contact = {
 };
 
 export const profile =
-  "Year 2 BSc (Hons) Cyber Security student at the University of Worcester (graduating 2027) who ships production software. Designed, built and released PHV Prep UK, a paid iOS and Android exam-preparation app built solo in Flutter and Firebase with server-side purchase verification and API keys kept off the client, alongside a hub of six browser-based cyber security tools running on Cloudflare Workers. Practical experience across digital forensics, secure application design, mobile and web development, and custom Linux environments. Bilingual in Spanish and English. Holder of an SIA Door Supervisor licence, Emergency First Aid at Work certification and a full UK driving licence. Four years of customer-facing hospitality experience have built strong communication skills, reliability and the ability to stay calm under pressure, both independently and in fast-moving teams.";
+  "Final-year BSc (Hons) Cyber Security student at the University of Worcester (graduating 2027) who ships production software. Designed, built and released PHV Prep UK, a paid iOS and Android exam-preparation app built solo in Flutter and Firebase with server-side purchase verification and API keys kept off the client, alongside a hub of eight free cyber security tools on Cloudflare, an in-browser file converter and UNO, an open-source orchestrator that keeps AI coding agents on a short leash. Practical experience across digital forensics, secure application design, mobile and web development, and custom Linux environments. Bilingual in Spanish and English. Working as an SIA-licensed Door Supervisor, and holder of Emergency First Aid at Work certification and a full UK driving licence. Four years of customer-facing hospitality experience have built strong communication skills, reliability and the ability to stay calm under pressure, both independently and in fast-moving teams.";
 
 export const education: CvEntry[] = [
   {
     title: "BSc (Hons) Cyber Security (Single Honours)",
     subtitle:
       "Sept 2024 – Jun 2027 (expected) at University of Worcester, Worcester, UK",
-    body: "Year 2, B-grade average. Modules include Digital Forensics, Mobile Application Development, Web Technologies, networking and security fundamentals. Coursework focuses on practical investigation techniques, secure design and modern application development.",
+    body: "Final year; B-grade average in Year 2. Modules include Digital Forensics, Mobile Application Development, Web Technologies, networking and security fundamentals. Coursework focuses on practical investigation techniques, secure design and modern application development.",
   },
   {
     title: "BTEC Level 3 National Extended Diploma in Information Technology",
@@ -57,20 +57,35 @@ export const education: CvEntry[] = [
 /** Shipped, self-directed work. Listed before the academic projects. */
 export const projects: CvEntry[] = [
   {
+    title: "UNO — Secure AI Agent Orchestrator",
+    subtitle: "Python / Claude Code / Git - Open source, github.com/yongchivo/uno-orchestra",
+    body: "Designed and built a tool that coordinates several Claude Code agents on one project, in parallel or as a role pipeline (developer, security analyst, architect), with a local web interface to watch the agents live and approve every change. Every agent is treated as an untrusted worker: one git worktree and branch per agent, least privilege (read/edit only, no shell, network or MCP servers), and a deterministic gate that holds out-of-scope changes, protected paths and possible secrets for review. Mitigates cross-agent prompt injection, hash-verifies role configuration before every run (TOCTOU) and locks the local interface down with a per-launch token, Origin/Host validation and a strict CSP. Covered by 141 unit tests, a smoke test that attacks the live server and a documented threat model.",
+  },
+  {
     title: "PHV Prep UK — Taxi Badge Exam Preparation App",
     subtitle:
       "Flutter / Dart / Firebase / Anthropic API - Solo project, live on the App Store and Google Play",
-    body: "Designed, built and released a paid exam-preparation app for West Midlands private hire vehicle (taxi badge) licensing tests (Wolverhampton, Birmingham, Solihull, Coventry, Tamworth, Sandwell, Dudley and Walsall), covering 2,000+ practice questions, timed mock exams that mirror the real exam's pass logic, and an AI tutor for UK taxi law. Built solo with Flutter and Firebase (Auth, Firestore, Cloud Functions, europe-west2). Security-focused throughout: server-side StoreKit 2 purchase verification, the Anthropic API key held in Secret Manager and never shipped in the client, Firestore rules locking premium status to the backend, and content-safety controls on the AI feature. The Android build is in Google Play closed testing, with launch expected 18 August 2026.",
+    body: "Designed, built and released a paid exam-preparation app for West Midlands private hire vehicle (taxi badge) licensing tests (Wolverhampton, Birmingham, Solihull, Coventry, Tamworth, Sandwell, Dudley and Walsall), covering 2,000+ practice questions, timed mock exams that mirror the real exam's pass logic, and an AI tutor for UK taxi law. Built solo with Flutter and Firebase (Auth, Firestore, Cloud Functions, europe-west2). Security-focused throughout: server-side StoreKit 2 purchase verification, the Anthropic API key held in Secret Manager and never shipped in the client, Firestore rules locking premium status to the backend, and content-safety controls on the AI feature. Live on both the App Store and Google Play.",
   },
   {
     title: "Yongchivo Tools — Cyber Security Micro-Tools",
     subtitle: "Astro / Tailwind / Cloudflare Workers - tools.yongchivo.com",
-    body: "Built and launched a hub of six free, bilingual (English/Spanish) cyber security tools. Four run entirely client-side — password generator, password strength analyser, subnet calculator and a cyber-role quiz — with two backed by Cloudflare Workers: a security headers checker with strict SSRF-safe URL validation, and a breach checker built on the XposedOrNot API. Deployed with automatic builds from GitHub and its own A-grade security headers.",
+    body: "Built and launched a hub of eight free, bilingual (English/Spanish) cyber security tools. Six run entirely client-side — password generator, password strength analyser, subnet calculator, cyber-role quiz, EXIF viewer and PDF metadata editor — with two backed by Cloudflare Workers: a security headers checker with strict SSRF-safe URL validation, and a breach checker built on the XposedOrNot API. Deployed with automatic builds from GitHub and its own A-grade security headers.",
   },
   {
     title: "File Converter — Private, In-Browser",
     subtitle: "JavaScript / WebAssembly / Astro - yongchivo.com/convert",
-    body: "Built a privacy-first file converter that runs entirely in the browser, so no file is ever uploaded. Converts images (PNG, JPG, WebP, and HEIC via the libheif WebAssembly build) and data formats (CSV, JSON, YAML, XML) in every direction, with drag-and-drop, batch conversion and graceful handling of malformed input. Bilingual (EN/ES) on a single reusable conversion engine.",
+    body: "Built a privacy-first file converter that runs entirely in the browser, so no file is ever uploaded. Converts images (PNG, JPG, WebP, and HEIC via the libheif WebAssembly build), data formats (CSV, JSON, YAML, XML), PDFs (images to PDF and back, merge, split, rotate, compress) and audio and video (FFmpeg.wasm), with drag-and-drop, batch conversion and graceful handling of malformed input. Bilingual (EN/ES) on a single reusable conversion engine, without weakening the site's strict Content-Security-Policy.",
+  },
+  {
+    title: "Analytics Dashboard — In-Browser",
+    subtitle: "TypeScript / Chart.js / Astro - yongchivo.com/analytics",
+    body: "Built a dashboard that reads Google Search Console and App Store Connect CSV exports entirely in the browser and shows what the native dashboards don't: CTR against position, ranking distribution, conversion funnels, day-of-week performance and side-by-side comparison of two date ranges. Files never leave the user's device.",
+  },
+  {
+    title: "Personal Portfolio with Security Hardening",
+    subtitle: "Astro / Tailwind / Cloudflare Pages - yongchivo.com",
+    body: "Built and maintain this bilingual (EN/ES) site with continuous deployment from GitHub to Cloudflare Pages. Hardened its HTTP security headers from grade D to A on securityheaders.com by configuring HSTS, Content-Security-Policy, X-Frame-Options and Permissions-Policy through a _headers file.",
   },
 ];
 
@@ -99,6 +114,11 @@ export const academicProjects: CvEntry[] = [
 ];
 
 export const experience: CvEntry[] = [
+  {
+    title: "Door Supervisor at Pavilon Security",
+    subtitle: "Jul 2026 – Present in the West Midlands, UK",
+    body: "SIA-licensed door supervision across the West Midlands, mainly at pubs and events, as well as film premieres and CCTV control at warehouses (paused during term time). Responsible for access and capacity control, ID checks, conflict management and incident reporting.",
+  },
   {
     title: "Bartender at Sabai Sabai",
     subtitle: "Apr 2024 – Mar 2026 in Birmingham, UK",

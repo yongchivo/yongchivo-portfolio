@@ -1,0 +1,40 @@
+---
+// The home page, in both languages: just the brand and the bubble. Everything
+// about me (name, story, CV) lives behind the "Who am I?" bubble.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import BubbleHero from "./BubbleHero.astro";
+import type { SiteLang } from "../../i18n/site";
+
+interface Props {
+  lang: SiteLang;
+}
+
+const { lang } = Astro.props;
+const es = lang === "es";
+---
+
+<BaseLayout
+  title={es ? "Yongchivo | Ciberseguridad / Portfolio personal" : undefined}
+  description={es
+    ? "Estudiante de Ciberseguridad en la University of Worcester. Proyectos, herramientas gratuitas y lo que voy aprendiendo por el camino."
+    : undefined}
+  lang={lang}
+  sideBarActiveItemID="home"
+  alternates={{ en: "/", es: "/es/" }}
+>
+  <div class="min-h-[calc(100vh-14rem)] flex flex-col justify-center">
+    <h1 class="brand-title text-center font-bold tracking-[0.2em] text-4xl sm:text-5xl mb-10 md:mb-0 bg-gradient-to-r from-brand-magenta via-brand-purple to-brand-cyan bg-clip-text text-transparent">
+      YONGCHIVO
+    </h1>
+
+    <BubbleHero lang={lang} />
+  </div>
+</BaseLayout>
+
+<style>
+  /* letter-spacing adds trailing space after the last letter; pull it back so
+     the word sits optically centred over the bubble. */
+  .brand-title {
+    margin-right: -0.2em;
+  }
+</style>

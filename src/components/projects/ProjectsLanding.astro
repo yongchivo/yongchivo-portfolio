@@ -1,0 +1,330 @@
+---
+// /projects and /es/projects, built from src/data/projects.ts.
+// The newest project (first entry) is featured at the top; the rest are
+// grouped by section. Every card opens the project's own page.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import StatusPill from "./StatusPill.astro";
+import { Image } from "astro:assets";
+import {
+  projects,
+  projectHref,
+  sectionInfo,
+  statusLabel,
+  type ProjectSection,
+  type SiteLang,
+} from "../../data/projects";
+
+interface Props {
+  lang: SiteLang;
+}
+
+const { lang } = Astro.props;
+const es = lang === "es";
+
+const t = es
+  ? {
+      title: "Proyectos",
+      intro: "Proyectos académicos, personales y publicados de ciberseguridad, web, móvil y desarrollo de videojuegos.",
+      latest: "Proyecto más reciente",
+      see: "Ver el proyecto",
+    }
+  : {
+      title: "Projects",
+      intro: "Academic, personal and shipped projects across cyber security, web, mobile and game development.",
+      latest: "Latest project",
+      see: "See the project",
+    };
+
+/* Hidden for now, kept verbatim from the original projects.astro (EN only):
+   <HorizontalCard
+    title="LLM-Powered Forensic Assistant"
+    img="/llm-forensic.webp"
+    desc="My upcoming Final Year dissertation project (2026/27). Exploring how large language models can assist digital forensic investigators with evidence triage, timeline reconstruction and report drafting. Researching prompt design, hallucination mitigation and the role of human-in-the-loop verification in forensic workflows."
+    url="#"
+    badge="DISSERTATION"
+  /> 
+   <HorizontalCard
+  title="TeamTill — Employee Management App"
+  img="/teamtill.webp"
+  desc="A self-directed cross-platform mobile app (iOS and Android), built around a realistic scenario: a small retail shop that needs secure clock-in/out, schedule management and access to employment documents. Built with React Native (Expo) and Firebase. Security-focused by design: GDPR-conscious handling of employee data, EU-region storage (europe-west1), role-based Firestore and Storage rules restricting payslip access to the owning employee or an administrator, and Firebase credentials kept out of version control. Currently in development."
+  url="https://github.com/yongchivo/Employee-Management-Mobile-Application-for-Retail"
+  badge="PERSONAL PROJECT"
+  />
+*/
+
+const [featured, ...rest] = projects;
+const order: ProjectSection[] = ["security", "mobile", "games"];
+const sections = order
+  .map((id) => ({ id, ...sectionInfo[id], items: rest.filter((p) => p.section === id) }))
+  .filter((s) => s.items.length > 0);
+
+const icons: Record<ProjectSection | "arrow", string> = {
+  security: '<path d="M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6l7-3z"/>',
+  mobile: '<rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/>',
+  games: '<rect x="2.5" y="7" width="19" height="11" rx="4"/><path d="M7 12.5h3M8.5 11v3M15 12h.01M17.5 13.5h.01"/>',
+  arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
+};
+---
+
+<BaseLayout title={t.title} lang={lang} sideBarActiveItemID="projects" alternates={{ en: "/projects", es: "/es/projects" }}>
+  <div class="projects" data-projects>
+    <h1 class="projects-title">{t.title.toUpperCase()}</h1>
+    <p class="projects-intro">{t.intro}</p>
+
+    <ul class="orbs">
+      {
+        sections.map((section, i) => (
+          <li>
+            <a href={`#${section.id}`} class={`orb tone-${section.tone}`} style={`--i:${i}`}>
+              <span class="orb-ball">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={icons[section.id]} />
+                <span class="orb-count">{section.items.length}</span>
+              </span>
+              <span class="orb-label">{section.short[lang]}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    {
+      featured && (
+        <article class="featured reveal">
+          <a href={projectHref(featured, lang)} class="featured-img" tabindex="-1" aria-hidden="true">
+            <Image
+              src={featured.cover}
+              width={1500}
+              height={844}
+              format="webp"
+              alt=""
+              style={`view-transition-name: project-${featured.slug}`}
+            />
+          </a>
+          <div>
+            <div class="featured-kicker">
+              {t.latest} · {statusLabel[featured.status][lang]}
+            </div>
+            <h2 class="featured-title">{featured.title[lang]}</h2>
+            <p class="featured-desc">{featured.summary[lang]}</p>
+            {featured.meta && (
+              <ul class="featured-meta">
+                {featured.meta[lang]
+                  .split(" — ")[0]
+                  .split(" · ")
+                  .map((tag) => (
+                    <li>{tag}</li>
+                  ))}
+              </ul>
+            )}
+            <a href={projectHref(featured, lang)} class="featured-cta">
+              {t.see}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={icons.arrow} />
+            </a>
+          </div>
+        </article>
+      )
+    }
+
+    {
+      sections.map((section) => (
+        <section id={section.id} class={`projects-section tone-${section.tone}`}>
+          <div class="section-head">
+            <span class="section-dot" aria-hidden="true" />
+            <h2 class="section-title">{section.title[lang]}</h2>
+            <span class="section-count">{section.items.length}</span>
+          </div>
+          <ul class="project-grid">
+            {section.items.map((project, i) => (
+              <li class="reveal" style={`--d:${i}`}>
+                <a href={projectHref(project, lang)} class="project-card">
+                  <span class="project-img">
+                    <Image
+                      src={project.cover}
+                      width={750}
+                      height={422}
+                      format="webp"
+                      alt=""
+                      style={`view-transition-name: project-${project.slug}`}
+                    />
+                  </span>
+                  <span class="project-body">
+                    <span class="project-top">
+                      <span class="project-name">{project.title[lang]}</span>
+                      <StatusPill status={project.status} lang={lang} />
+                    </span>
+                    <span class="project-desc">{project.summary[lang]}</span>
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+  </div>
+</BaseLayout>
+
+<style>
+.projects {
+  --magenta: #d946ef;
+  --purple: #a855f7;
+  --cyan: #22d3ee;
+  --green: #34d399;
+  --surface: #131120;
+  --surface-2: #1c1a2e;
+  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@supports (transition-timing-function: linear(0, 1)) {
+  .projects {
+    --spring: linear(0, 0.009, 0.035 2.1%, 0.141, 0.281 6.7%, 0.723 12.9%, 0.938 16.7%, 1.017, 1.077, 1.121, 1.149 24.3%, 1.159, 1.163, 1.161, 1.154 29.9%, 1.129 32.8%, 1.051 39.6%, 1.017 43.1%, 0.991, 0.977 51%, 0.974 53.8%, 0.975 57.1%, 0.997 69.8%, 1.003 76.9%, 1);
+  }
+}
+.tone-cyan { --tone: var(--cyan); --tone-soft: rgba(34, 211, 238, 0.14); }
+.tone-magenta { --tone: var(--magenta); --tone-soft: rgba(217, 70, 239, 0.14); }
+.tone-purple { --tone: var(--purple); --tone-soft: rgba(168, 85, 247, 0.16); }
+
+/* ---------- title ---------- */
+.projects-title {
+  text-align: center;
+  font-weight: 700;
+  font-size: clamp(1.6rem, 7.5vw, 3rem);
+  letter-spacing: 0.18em;
+  margin: 0 -0.18em 0 0;
+  background: linear-gradient(to right, var(--magenta), var(--purple), var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.projects-intro { text-align: center; opacity: 0.7; margin: 0.75rem auto 0; max-width: 34rem; }
+
+/* ---------- category orbs (same as Tools) ---------- */
+.orbs { display: flex; justify-content: center; gap: clamp(1.25rem, 6vw, 3.5rem); margin: 2.75rem 0 3rem; list-style: none; padding: 0; }
+.orb { display: grid; justify-items: center; gap: 0.7rem; text-align: center; }
+.orb-ball {
+  position: relative; width: clamp(4.75rem, 18vw, 6.5rem); aspect-ratio: 1; border-radius: 9999px;
+  display: grid; place-items: center; color: var(--tone);
+  background:
+    radial-gradient(circle at 30% 22%, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0) 32%),
+    radial-gradient(circle at 70% 80%, var(--tone-soft), transparent 60%),
+    var(--surface);
+  border: 1px solid rgba(232, 230, 242, 0.14);
+  box-shadow: inset 0 -10px 20px rgba(0, 0, 0, 0.4), 0 0 26px -6px var(--tone);
+  transition: transform 0.5s var(--spring), box-shadow 0.3s ease;
+}
+.orb-ball svg { width: 42%; height: 42%; }
+.orb-count {
+  position: absolute; top: -0.2rem; right: -0.35rem; min-width: 1.7rem; height: 1.7rem; padding: 0 0.4rem;
+  border-radius: 9999px; display: grid; place-items: center; font-size: 0.75rem; font-weight: 700;
+  color: #0b0a14; background: var(--tone);
+}
+.orb-label { font-weight: 600; font-size: 0.95rem; max-width: 8rem; line-height: 1.25; }
+.orb:hover .orb-ball, .orb:focus-visible .orb-ball {
+  transform: translateY(-6px) scale(1.06);
+  box-shadow: inset 0 -10px 20px rgba(0, 0, 0, 0.4), 0 0 38px -4px var(--tone);
+}
+.orb:focus-visible { outline: none; }
+.orb:focus-visible .orb-ball { outline: 2px solid var(--tone); outline-offset: 5px; }
+
+/* ---------- featured project ---------- */
+.featured {
+  display: grid;
+  gap: 1.25rem;
+  padding: 1.1rem;
+  margin-bottom: 3.5rem;
+  border-radius: 1.25rem;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(217, 70, 239, 0.16), transparent 50%),
+    radial-gradient(circle at 0% 100%, rgba(34, 211, 238, 0.12), transparent 50%),
+    var(--surface);
+  border: 1px solid rgba(217, 70, 239, 0.45);
+  box-shadow: 0 0 40px -16px var(--magenta);
+}
+@media (min-width: 768px) { .featured { grid-template-columns: 1.1fr 1fr; align-items: center; padding: 1.25rem; } }
+.featured-img { border-radius: 0.85rem; overflow: hidden; aspect-ratio: 16 / 9; background: var(--surface-2); }
+.featured-img :global(img) { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.6s ease; }
+.featured:hover .featured-img :global(img) { transform: scale(1.04); }
+.featured-kicker { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--magenta); font-weight: 700; }
+.featured-title { font-size: 1.6rem; font-weight: 700; margin: 0.35rem 0 0.5rem; line-height: 1.2; }
+.featured-desc { opacity: 0.8; line-height: 1.5; margin: 0; }
+.featured-meta { display: flex; flex-wrap: wrap; gap: 0.45rem; margin: 0.9rem 0 1.1rem; list-style: none; padding: 0; }
+.featured-meta li { font-size: 0.75rem; padding: 0.2rem 0.6rem; border-radius: 9999px; border: 1px solid rgba(232, 230, 242, 0.18); opacity: 0.85; }
+.featured-cta {
+  display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.1rem; border-radius: 9999px;
+  font-weight: 600; color: #0b0a14; background: var(--magenta);
+  transition: box-shadow 0.25s ease, transform 0.45s var(--spring);
+}
+.featured-cta svg { width: 1rem; height: 1rem; }
+.featured-cta:hover, .featured-cta:focus-visible { box-shadow: 0 0 22px -4px var(--magenta); }
+
+/* ---------- sections ---------- */
+.projects-section { margin-bottom: 3.5rem; scroll-margin-top: 5rem; }
+.section-head { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.1rem; }
+.section-dot { width: 0.7rem; height: 0.7rem; border-radius: 9999px; background: var(--tone); box-shadow: 0 0 12px var(--tone); }
+.section-title { font-size: 1.35rem; font-weight: 700; margin: 0; }
+.section-count { font-size: 0.75rem; font-weight: 700; padding: 0.15rem 0.55rem; border-radius: 9999px; color: var(--tone); border: 1px solid var(--tone); }
+
+/* ---------- project cards ---------- */
+.project-grid { display: grid; gap: 1rem; list-style: none; padding: 0; margin: 0; }
+@media (min-width: 640px) { .project-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.project-card {
+  display: flex; flex-direction: column; height: 100%;
+  border-radius: 1rem; overflow: hidden;
+  background: var(--surface); border: 1px solid var(--surface-2);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.45s var(--spring);
+}
+.project-card:hover, .project-card:focus-visible { border-color: var(--tone); box-shadow: 0 0 26px -8px var(--tone); }
+.project-card:focus-visible { outline: 2px solid var(--tone); outline-offset: 3px; }
+.project-img { aspect-ratio: 16 / 9; overflow: hidden; background: var(--surface-2); }
+.project-img :global(img) { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.6s ease; }
+.project-body { padding: 0.95rem 1.1rem 1.15rem; display: grid; gap: 0.4rem; }
+.project-top { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+.project-name { font-weight: 700; font-size: 1.05rem; line-height: 1.3; }
+.project-desc {
+  font-size: 0.875rem; opacity: 0.72; line-height: 1.45;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+.project-ext { display: inline-block; width: 0.85rem; height: 0.85rem; margin-left: 0.3rem; vertical-align: -1px; opacity: 0.45; }
+
+
+/* ---------- motion (only if allowed) ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  .orb-ball { animation: orb-float 5s ease-in-out infinite; animation-delay: calc(var(--i) * -1.6s); }
+  .orb:hover .orb-ball, .orb:focus-visible .orb-ball { animation-play-state: paused; }
+  .project-card:hover { transform: translateY(-4px); }
+  .project-card:hover .project-img :global(img) { transform: scale(1.05); }
+  .featured-cta:hover { transform: translateX(3px); }
+
+  .reveal-ready .reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.5s ease, transform 0.6s var(--spring); transition-delay: calc(var(--d, 0) * 70ms); }
+  .reveal-ready .reveal.is-visible { opacity: 1; transform: none; }
+}
+@keyframes orb-float { 0%, 100% { translate: 0 0; } 50% { translate: 0 -7px; } }
+</style>
+
+<script>
+  // Cards fade up as they scroll into view — only when motion is allowed and
+  // IntersectionObserver exists; otherwise everything is simply visible.
+  function initReveal() {
+    if (!("IntersectionObserver" in window)) return;
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    document.querySelectorAll<HTMLElement>("[data-projects]").forEach((root) => {
+      if (root.dataset.ready) return;
+      root.dataset.ready = "1";
+      root.classList.add("reveal-ready");
+      const io = new IntersectionObserver(
+        (entries) =>
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add("is-visible");
+            io.unobserve(entry.target);
+          }),
+        { rootMargin: "0px 0px -8% 0px" },
+      );
+      root.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+    });
+  }
+
+  // Same pattern as ConverterApp.astro: run now, and after every View
+  // Transition swap (bundled scripts only execute once).
+  initReveal();
+  document.addEventListener("astro:page-load", initReveal);
+</script>
