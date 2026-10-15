@@ -42,8 +42,8 @@ export const about = {
   name: {
     heading: { en: "Why “Yongchivo”?", es: "¿Por qué «Yongchivo»?" },
     text: {
-      en: "It comes from “baby chivo” — the young goat, the young promise. The name was born in my streaming days, inspired by a song by Yonchimi and Ñengo Flow, and today it's the brand behind everything I build.",
-      es: "Viene de «baby chivo»: la cabra joven, la joven promesa. El nombre nació en mi etapa de streamer, inspirado en una canción de Yonchimi y Ñengo Flow, y hoy es la marca detrás de todo lo que construyo.",
+      en: "It comes from “baby chivo” — the young goat, the young promise. The name was born in my streaming days, inspired by a song by Yovngchimi and Ñengo Flow, and today it's the brand behind everything I build.",
+      es: "Viene de «baby chivo»: la cabra joven, la joven promesa. El nombre nació en mi etapa de streamer, inspirado en una canción de Yovngchimi y Ñengo Flow, y hoy es la marca detrás de todo lo que construyo.",
     },
   },
 
