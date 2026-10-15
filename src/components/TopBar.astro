@@ -1,0 +1,316 @@
+---
+// Site navigation (replaces the old sidebar). Shown on every page except the
+// home page, where the bubble is the navigation.
+//
+// - The Y mini-bubble shares view-transition-name "brand-logo" with the home
+//   bubble, so the Y morphs between them when navigating.
+// - The current section is lit in its home-bubble colour: Tools cyan,
+//   Projects magenta, Who am I? purple.
+// - Below 768px the links fold into a menu button.
+import YMark from "./brand/YMark.astro";
+import { alternatePath, localize, ui, type SiteLang } from "../i18n/site";
+
+interface Props {
+  lang?: SiteLang;
+  /** "tools" | "projects" | "cv" | "blog" — the section to highlight. */
+  active?: string;
+}
+
+const { lang = "en", active } = Astro.props;
+const t = ui[lang];
+const other = lang === "es" ? "en" : "es";
+
+const items = [
+  { id: "tools", label: t.nav.tools, href: localize("/tools/", lang), tone: "cyan" },
+  { id: "projects", label: t.nav.projects, href: localize("/projects", lang), tone: "magenta" },
+  { id: "cv", label: t.nav.who, href: localize("/cv", lang), tone: "purple" },
+  { id: "blog", label: t.nav.blog, href: "/blog/", tone: "neutral" },
+];
+---
+
+<header class="topbar" data-topbar>
+  <div class="topbar-inner">
+    <a href={localize("/", lang)} class="topbar-logo" aria-label={t.home} style="view-transition-name: brand-logo">
+      <YMark strokeWidth={2.6} />
+    </a>
+
+    <nav aria-label={t.navLabel}>
+      <ul class="topnav" id="topnav">
+        {
+          items.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                class={`tone-${item.tone}`}
+                aria-current={item.id === active ? "page" : undefined}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="topbar-right">
+      <a href={alternatePath(Astro.url.pathname)} class="lang-pill" hreflang={other} lang={other} title={t.switchLabel}>
+        <span aria-hidden="true">{t.switchShort}</span>
+        <span class="sr-only">{t.switchLabel}</span>
+      </a>
+      <button type="button" class="menu-btn" aria-expanded="false" aria-controls="topnav" aria-label={t.menu}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <path class="menu-line menu-line-1" d="M4 7h16"></path>
+          <path class="menu-line menu-line-2" d="M4 12h16"></path>
+          <path class="menu-line menu-line-3" d="M4 17h16"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<style>
+  .topbar {
+    --magenta: #d946ef;
+    --purple: #a855f7;
+    --cyan: #22d3ee;
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    background: rgba(11, 10, 20, 0.8);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(232, 230, 242, 0.07);
+  }
+
+  .topbar-inner {
+    position: relative;
+    max-width: 1100px;
+    margin: 0 auto;
+    height: 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0 1.25rem;
+  }
+
+  .topbar-logo {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 9999px;
+    display: grid;
+    place-items: center;
+    background:
+      radial-gradient(circle at 30% 22%, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0) 32%),
+      radial-gradient(circle at 25% 25%, rgba(217, 70, 239, 0.32), transparent 58%),
+      radial-gradient(circle at 78% 82%, rgba(34, 211, 238, 0.22), transparent 55%),
+      #131120;
+    border: 1px solid rgba(232, 230, 242, 0.14);
+    box-shadow: 0 0 18px -6px var(--purple);
+    transition:
+      transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
+      box-shadow 0.25s ease;
+  }
+
+  .topbar-logo :global(.ymark) {
+    width: 58%;
+    height: 58%;
+  }
+
+  .topbar-logo:hover,
+  .topbar-logo:focus-visible {
+    box-shadow: 0 0 24px -4px var(--magenta);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .topbar-logo:hover,
+    .topbar-logo:focus-visible {
+      transform: scale(1.08);
+    }
+  }
+
+  .topnav {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .topnav a {
+    position: relative;
+    display: block;
+    padding: 0.5rem 0.85rem;
+    border-radius: 9999px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    opacity: 0.8;
+    transition:
+      opacity 0.2s ease,
+      background-color 0.2s ease;
+  }
+
+  .tone-cyan { --tone: var(--cyan); }
+  .tone-magenta { --tone: var(--magenta); }
+  .tone-purple { --tone: var(--purple); }
+  .tone-neutral { --tone: #e8e6f2; }
+
+  .topnav a:hover,
+  .topnav a:focus-visible {
+    opacity: 1;
+    background: #131120;
+  }
+
+  .topnav a[aria-current="page"] {
+    opacity: 1;
+    color: var(--tone);
+  }
+
+  .topnav a[aria-current="page"]::after {
+    content: "";
+    position: absolute;
+    left: 0.85rem;
+    right: 0.85rem;
+    bottom: 0.15rem;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--tone);
+    box-shadow: 0 0 10px var(--tone);
+  }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .lang-pill {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 0.3rem 0.65rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(232, 230, 242, 0.25);
+    opacity: 0.85;
+    transition:
+      opacity 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .lang-pill:hover,
+  .lang-pill:focus-visible {
+    opacity: 1;
+    border-color: var(--cyan);
+  }
+
+  .menu-btn {
+    display: none;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(232, 230, 242, 0.15);
+    background: #131120;
+    color: inherit;
+    place-items: center;
+    cursor: pointer;
+  }
+
+  .menu-btn svg {
+    width: 1.2rem;
+    height: 1.2rem;
+    overflow: visible;
+  }
+
+  .menu-line {
+    transform-box: fill-box;
+    transform-origin: center;
+    transition:
+      transform 0.3s ease,
+      opacity 0.2s ease;
+  }
+
+  /* Hamburger -> X */
+  .is-open .menu-line-1 { transform: translateY(5px) rotate(45deg); }
+  .is-open .menu-line-2 { opacity: 0; }
+  .is-open .menu-line-3 { transform: translateY(-5px) rotate(-45deg); }
+
+  @media (max-width: 767.98px) {
+    .menu-btn {
+      display: grid;
+    }
+
+    .topnav {
+      display: none;
+    }
+
+    .is-open .topnav {
+      display: grid;
+      position: absolute;
+      top: 4rem;
+      left: 0;
+      right: 0;
+      gap: 0.25rem;
+      padding: 0.75rem 1rem 1rem;
+      background: #0b0a14;
+      border-bottom: 1px solid rgba(232, 230, 242, 0.1);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .is-open .topnav a {
+      padding: 0.8rem 1rem;
+      font-size: 1.05rem;
+    }
+
+    .is-open .topnav a[aria-current="page"]::after {
+      left: 1rem;
+      right: auto;
+      width: 2rem;
+      bottom: 0.4rem;
+    }
+  }
+
+  @media (max-width: 767.98px) and (prefers-reduced-motion: no-preference) {
+    .is-open .topnav {
+      animation: menu-in 0.25s ease-out;
+    }
+  }
+
+  @keyframes menu-in {
+    from { opacity: 0; transform: translateY(-6px); }
+  }
+</style>
+
+<script>
+  function initTopBar() {
+    document.querySelectorAll<HTMLElement>("[data-topbar]").forEach((bar) => {
+      if (bar.dataset.ready) return;
+      bar.dataset.ready = "1";
+      const button = bar.querySelector<HTMLButtonElement>(".menu-btn");
+      const setOpen = (open: boolean) => {
+        bar.classList.toggle("is-open", open);
+        button?.setAttribute("aria-expanded", String(open));
+      };
+      button?.addEventListener("click", () => setOpen(!bar.classList.contains("is-open")));
+      bar.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && bar.classList.contains("is-open")) {
+          setOpen(false);
+          button?.focus();
+        }
+      });
+    });
+  }
+
+  // Close an open menu when tapping anywhere else.
+  document.addEventListener("pointerdown", (event) => {
+    document.querySelectorAll<HTMLElement>("[data-topbar].is-open").forEach((bar) => {
+      if (!bar.contains(event.target as Node)) {
+        bar.classList.remove("is-open");
+        bar.querySelector(".menu-btn")?.setAttribute("aria-expanded", "false");
+      }
+    });
+  });
+
+  initTopBar();
+  document.addEventListener("astro:page-load", initTopBar);
+</script>

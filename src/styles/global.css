@@ -5,14 +5,6 @@ pre {
     overflow-x: auto;
 }
 
-/* The sidebar is an off-canvas drawer below lg, so the home bubble shouldn't
-   morph into a logo that isn't on screen. */
-@media (max-width: 1023.98px) {
-    .sidebar-logo {
-        view-transition-name: none !important;
-    }
-}
-
 /* Safety net for anything that animates without its own reduced-motion guard
    (DaisyUI components, third-party widgets). Components should still use
    motion-safe: / prefers-reduced-motion themselves. */

@@ -1,4 +1,4 @@
-// Site-wide UI strings (sidebar, header, footer, home) and the EN <-> ES path map.
+// Site-wide UI strings (top bar, footer) and the EN <-> ES path map.
 //
 // Spanish pages live under /es/. Not every page has a Spanish twin yet (the blog
 // and PHV Prep UK are English-only), so the language switch only points at a
@@ -9,31 +9,35 @@ export type SiteLang = "en" | "es";
 export const ui = {
   en: {
     nav: {
-      home: "Home",
-      projects: "Projects",
       tools: "Tools",
+      projects: "Projects",
+      who: "Who am I?",
       blog: "Blog",
-      cv: "CV",
-      contact: "Contact",
     },
+    navLabel: "Main",
+    menu: "Menu",
+    home: "Yongchivo — home",
     switchLabel: "Leer en español",
     switchShort: "ES",
     builtWith: "Built with",
-    logoAlt: "Yongchivo logo",
+    contact: "Contact",
+    socials: "Social links",
   },
   es: {
     nav: {
-      home: "Inicio",
-      projects: "Proyectos",
       tools: "Herramientas",
+      projects: "Proyectos",
+      who: "¿Quién soy?",
       blog: "Blog (EN)",
-      cv: "CV",
-      contact: "Contacto",
     },
+    navLabel: "Principal",
+    menu: "Menú",
+    home: "Yongchivo — inicio",
     switchLabel: "Read in English",
     switchShort: "EN",
     builtWith: "Hecho con",
-    logoAlt: "Logo de Yongchivo",
+    contact: "Contacto",
+    socials: "Redes sociales",
   },
 } as const;
 

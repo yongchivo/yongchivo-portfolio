@@ -27,7 +27,7 @@ export interface CvSkillGroup {
  */
 export const lastUpdated = "2026-08-06";
 
-/** Header details for the PDF. The web page gets these from the sidebar instead. */
+/** Header details for the PDF. The web page shows them in the footer instead. */
 export const contact = {
   name: "John Akhis Moreno",
   headline: "Cyber Security Student & Builder",
