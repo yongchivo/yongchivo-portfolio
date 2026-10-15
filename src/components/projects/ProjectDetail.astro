@@ -1,0 +1,290 @@
+---
+// Generated detail page for a project in src/data/projects.ts
+// (/projects/<slug> and /es/projects/<slug>).
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import StatusPill from "./StatusPill.astro";
+import { Image } from "astro:assets";
+import { sectionInfo, type Project, type SiteLang } from "../../data/projects";
+
+interface Props {
+  project: Project;
+  lang: SiteLang;
+}
+
+const { project, lang } = Astro.props;
+const es = lang === "es";
+const tone = sectionInfo[project.section].tone;
+const enPath = `/projects/${project.slug}`;
+const esPath = `/es/projects/${project.slug}`;
+const back = es ? "Volver a proyectos" : "Back to projects";
+const newTab = es ? "(se abre en una pestaña nueva)" : "(opens in a new tab)";
+const links = [
+  ...(project.primary ? [{ ...project.primary, primary: true }] : []),
+  ...(project.secondary ?? []).map((l) => ({ ...l, primary: false })),
+];
+---
+
+<BaseLayout
+  title={`${project.title[lang]} | Yongchivo`}
+  description={project.summary[lang]}
+  image={project.cover}
+  lang={lang}
+  sideBarActiveItemID="projects"
+  alternates={{ en: enPath, es: esPath }}
+>
+  <article class={`detail tone-${tone}`}>
+    <a href={es ? "/es/projects" : "/projects"} class="back">&larr; {back}</a>
+
+    <div class="hero-img">
+      <Image
+        src={project.cover}
+        width={1500}
+        height={844}
+        format="webp"
+        alt=""
+        style={`view-transition-name: project-${project.slug}`}
+      />
+    </div>
+
+    <header class="head">
+      <div class="title-row">
+        <h1 class="title">{project.title[lang]}</h1>
+        <StatusPill status={project.status} lang={lang} />
+      </div>
+      {project.meta && <p class="meta">{project.meta[lang]}</p>}
+    </header>
+
+    <div class="body">
+      {project.body?.[lang].map((paragraph) => <p>{paragraph}</p>)}
+    </div>
+
+    {
+      project.highlights?.[lang].map((block) => (
+        <section class="block">
+          <h2 class="block-title">
+            <span class="dot" aria-hidden="true" />
+            {block.heading}
+          </h2>
+          <ul class="block-list">
+            {block.items.map((item) => (
+              <li>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+
+    {
+      links.length > 0 && (
+        <div class="actions">
+          {links.map((link) => (
+            <a
+              href={link.href[lang]}
+              class={link.primary ? "btn-primary" : "btn-secondary"}
+              target={link.external ? "_blank" : undefined}
+              rel={link.external ? "noopener" : undefined}
+            >
+              {link.label[lang]}
+              {link.external ? (
+                <>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" />
+                  </svg>
+                  <span class="sr-only">{newTab}</span>
+                </>
+              ) : (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+              )}
+            </a>
+          ))}
+        </div>
+      )
+    }
+  </article>
+</BaseLayout>
+
+<style>
+  .detail {
+    --magenta: #d946ef;
+    --purple: #a855f7;
+    --cyan: #22d3ee;
+    max-width: 46rem;
+    margin: 0 auto;
+  }
+
+  .tone-cyan { --tone: var(--cyan); }
+  .tone-magenta { --tone: var(--magenta); }
+  .tone-purple { --tone: var(--purple); }
+
+  .back {
+    display: inline-block;
+    font-size: 0.875rem;
+    opacity: 0.7;
+    margin-bottom: 1.25rem;
+  }
+
+  .back:hover,
+  .back:focus-visible {
+    opacity: 1;
+  }
+
+  .hero-img {
+    border-radius: 1rem;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+    background: #1c1a2e;
+    border: 1px solid rgba(232, 230, 242, 0.08);
+    box-shadow: 0 0 40px -18px var(--tone);
+  }
+
+  .hero-img :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .head {
+    margin: 1.75rem 0 1.25rem;
+  }
+
+  .title-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem 0.9rem;
+  }
+
+  .title {
+    font-size: clamp(1.6rem, 5vw, 2.1rem);
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0;
+  }
+
+  .meta {
+    margin: 0.5rem 0 0;
+    font-size: 0.875rem;
+    opacity: 0.6;
+  }
+
+  .body p {
+    font-size: 1.05rem;
+    line-height: 1.65;
+    opacity: 0.88;
+    margin: 0 0 1rem;
+  }
+
+  .block {
+    margin-top: 2rem;
+    padding: 1.1rem 1.25rem;
+    border-radius: 1rem;
+    background: #131120;
+    border: 1px solid #1c1a2e;
+  }
+
+  .block-title {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0 0 0.75rem;
+  }
+
+  .dot {
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 9999px;
+    background: var(--tone);
+    box-shadow: 0 0 10px var(--tone);
+  }
+
+  .block-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.65rem;
+  }
+
+  .block-list li {
+    position: relative;
+    padding-left: 1.1rem;
+    line-height: 1.55;
+    opacity: 0.85;
+  }
+
+  .block-list li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.62em;
+    width: 0.35rem;
+    height: 0.35rem;
+    border-radius: 9999px;
+    background: var(--tone);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2.25rem;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.2rem;
+    border-radius: 9999px;
+    font-weight: 600;
+    transition:
+      box-shadow 0.25s ease,
+      border-color 0.25s ease,
+      transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .btn-primary svg,
+  .btn-secondary svg {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .btn-primary {
+    color: #0b0a14;
+    background: var(--tone);
+  }
+
+  .btn-primary:hover,
+  .btn-primary:focus-visible {
+    box-shadow: 0 0 24px -4px var(--tone);
+  }
+
+  .btn-secondary {
+    border: 1px solid rgba(232, 230, 242, 0.25);
+  }
+
+  .btn-secondary:hover,
+  .btn-secondary:focus-visible {
+    border-color: var(--tone);
+    box-shadow: 0 0 18px -6px var(--tone);
+  }
+
+  .btn-primary:focus-visible,
+  .btn-secondary:focus-visible {
+    outline: 2px solid var(--tone);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .btn-primary:hover,
+    .btn-secondary:hover {
+      transform: translateY(-2px);
+    }
+  }
+</style>

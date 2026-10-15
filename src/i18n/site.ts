@@ -48,7 +48,7 @@ export function localize(path: string, lang: SiteLang): string {
 }
 
 // Paths (without the /es prefix) that exist in BOTH languages.
-const BILINGUAL = /^\/(?:|projects(?:\/uno)?|cv|tools|convert(?:\/.*)?|analytics(?:\/.*)?)\/?$/;
+const BILINGUAL = /^\/(?:|projects(?:\/[a-z0-9-]+)?|cv|tools|convert(?:\/.*)?|analytics(?:\/.*)?)\/?$/;
 
 /**
  * The same page in the other language, or that language's home page when the

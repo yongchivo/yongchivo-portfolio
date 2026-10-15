@@ -1,0 +1,14 @@
+---
+// Generated project pages. UNO has its own page (projects/uno.astro), which
+// takes precedence; generatedProjects() skips anything with a detailHref.
+import ProjectDetail from "../../components/projects/ProjectDetail.astro";
+import { generatedProjects, type Project } from "../../data/projects";
+
+export function getStaticPaths() {
+  return generatedProjects().map((project) => ({ params: { slug: project.slug }, props: { project } }));
+}
+
+const { project } = Astro.props as { project: Project };
+---
+
+<ProjectDetail project={project} lang="en" />
