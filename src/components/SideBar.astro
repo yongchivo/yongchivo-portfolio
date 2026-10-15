@@ -15,7 +15,7 @@ const logoTransition = sideBarActiveItemID === "home" ? undefined : "brand-logo"
     <div class="w-fit mx-auto mt-5 mb-6">
       <a href={localize("/", lang)}>
         <div class="avatar transition ease-in-out motion-safe:hover:scale-[102%] block m-auto">
-          <div class="w-[8.5rem] rounded-full" transition:name={logoTransition}>
+          <div class="sidebar-logo w-[8.5rem] rounded-full" transition:name={logoTransition}>
             <Image class="mask mask-circle" format="webp" width={300} height={300} src="/profile.webp" alt={ui[lang].logoAlt} />
           </div>
         </div>

@@ -84,13 +84,13 @@ const badgeClass = (to: string) =>
           {group.items.map((c) => (
             <a
               href={`${base}/${c.id}/`}
-              class="group rounded-xl border border-base-300 bg-base-200 p-4 transition hover:border-primary hover:scale-[101%]"
+              class="group rounded-xl border border-base-300 bg-base-200 p-4 transition hover:border-primary motion-safe:hover:scale-[101%]"
             >
               <div class="flex items-center gap-2 font-mono text-sm font-semibold">
                 {c.from && c.to ? (
                   <>
                     <span class="badge badge-ghost">{c.from}</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 opacity-60 group-hover:translate-x-0.5 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 opacity-60 motion-safe:group-hover:translate-x-0.5 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                     </svg>
                     <span class={`badge ${badgeClass(c.to)}`}>{c.to}</span>

@@ -83,6 +83,10 @@ async function loadChart(): Promise<typeof import("chart.js")> {
   return lib;
 }
 
+function prefersReducedMotion(): boolean {
+  return typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
 // Deliberately un-annotated: typing this as ChartConfiguration["options"] drags
 // in the union of every chart type's `scales`, which then refuses to spread into
 // a doughnut config. The inferred structural type spreads into all of them.
@@ -90,7 +94,8 @@ function baseOptions() {
   return {
     responsive: true,
     maintainAspectRatio: false,
-    animation: { duration: 250 },
+    // Visitors who ask for reduced motion get the final chart straight away.
+    animation: prefersReducedMotion() ? false : { duration: 250 },
     plugins: {
       legend: { labels: { color: theme.muted, boxWidth: 10, usePointStyle: true } },
       tooltip: {

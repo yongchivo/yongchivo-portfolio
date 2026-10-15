@@ -172,7 +172,7 @@ const featured = ["heic-to-jpg", "png-to-jpg", "mp4-to-mp3", "merge-pdf", "csv-t
   .filter((c): c is Conversion => Boolean(c));
 
 const cardClass =
-  "group rounded-xl border border-base-300 bg-base-200 p-4 transition hover:border-primary hover:scale-[101%]";
+  "group rounded-xl border border-base-300 bg-base-200 p-4 transition hover:border-primary motion-safe:hover:scale-[101%]";
 ---
 
 <BaseLayout title={title} description={description} lang={lang} sideBarActiveItemID="tools">
@@ -241,7 +241,7 @@ const cardClass =
                   <span class="badge badge-ghost">{c.from}</span>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    class="w-4 h-4 opacity-60 group-hover:translate-x-0.5 transition"
+                    class="w-4 h-4 opacity-60 motion-safe:group-hover:translate-x-0.5 transition"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -285,7 +285,7 @@ const cardClass =
               <span class="font-semibold">{preset.copy[lang].cardTitle}</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                class="w-4 h-4 shrink-0 mt-1 opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 transition"
+                class="w-4 h-4 shrink-0 mt-1 opacity-50 group-hover:opacity-100 motion-safe:group-hover:translate-x-0.5 transition"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
