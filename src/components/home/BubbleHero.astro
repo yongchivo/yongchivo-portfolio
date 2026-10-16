@@ -3,8 +3,9 @@
 // three main sections. CSS-only animation (no library), plus a few lines of JS
 // for the open/close state.
 //
-// - Without JS the links are simply shown (the closed state is only applied
-//   once the script has marked the hero as enhanced).
+// - The hero is rendered already closed (class "enhanced"), so the first paint
+//   is just the bubble — no flash of the three links while the script loads.
+//   Without JS, the <noscript> styles below show the links instead.
 // - prefers-reduced-motion: no float, no halo spin, no draw-on, no springs —
 //   the links just fade in.
 // - Keyboard: Enter/Space toggles, focus moves to the first link when opened
@@ -50,7 +51,7 @@ const spots = [
 ];
 ---
 
-<section class="bubble-hero" data-bubble>
+<section class="bubble-hero enhanced" data-bubble>
   <div class="bubble-stage">
     <button
       type="button"
@@ -82,6 +83,20 @@ const spots = [
     </nav>
     <p class="bubble-hint" aria-hidden="true">{t.hint}</p>
   </div>
+  <noscript>
+    <style is:inline>
+      [data-bubble] .bubble-nav { visibility: visible !important; }
+      [data-bubble] .bubble-nav li { opacity: 1 !important; }
+      [data-bubble] .bubble-hint { display: none !important; }
+      @media (max-width: 767.98px) {
+        [data-bubble] .bubble-nav { grid-template-rows: 1fr !important; margin-top: 4rem !important; }
+        [data-bubble] .bubble-nav li { transform: none !important; }
+      }
+      @media (min-width: 768px) {
+        [data-bubble] .bubble-nav li { transform: translate(var(--x), var(--y)) !important; }
+      }
+    </style>
+  </noscript>
 </section>
 
 <style>
