@@ -9,7 +9,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
   <main class="md:flex md:justify-center">
     <article class="prose prose-lg max-w-[750px]">
       <h1>Privacy Policy</h1>
-      <p><em>Last updated: 7 October 2026</em></p>
+      <p><em>Last updated: 18 October 2026</em></p>
 
       <p>
         This Privacy Policy explains how the <strong>PHV Prep UK</strong> mobile
@@ -41,22 +41,43 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
         </li>
         <li>
           <strong>AI Tutor messages.</strong> When you use the in-app AI Tutor,
-          the messages you type are sent to Anthropic to generate a response.
+          each message you send goes to Anthropic together with the earlier
+          messages in that conversation, so it can generate a reply. The app
+          keeps the conversation only on your device while the AI Tutor screen
+          is open; it is not stored on our systems. Anthropic may keep these
+          messages for a limited period under its own API data-retention terms.
           Please avoid including sensitive personal information in these messages.
+        </li>
+        <li>
+          <strong>AI Tutor ratings and reports.</strong> If you rate or report an
+          AI Tutor answer, we store your rating or report, linked to your account
+          and dated, together with that answer and the message you sent just
+          before it, so we can improve the quality of answers. These are deleted
+          when you delete your account.
         </li>
         <li>
           <strong>Usage and device data.</strong> We use Firebase Analytics to
           collect information about how the app is used, such as the features you
-          open, your device type and operating system version. This helps us
+          open, your device type and operating system version. On iOS, Firebase
+          also uses the identifier for vendor (IDFV), an ID Apple gives to apps
+          from the same developer; it is not the advertising ID. This helps us
           understand how the app is used and improve it. We do not collect crash
-          reports or performance data. From version 1.7.4 of the app, you can
-          turn this off at any time (see "Analytics" under Legal bases below).
+          reports or performance data. You can turn this off at any time (see
+          "Analytics" under Legal bases below).
+        </li>
+        <li>
+          <strong>Server logs.</strong> When the app talks to our backend, our
+          servers record technical details such as your IP address and user agent
+          (the app and device making the request). These logs are kept for 30
+          days.
         </li>
         <li>
           <strong>Purchase data.</strong> If you buy PHV Prep Premium, the
           payment is processed by Apple or Google. We never see or store your
-          card details. We store only a transaction identifier and your premium
-          status so we can unlock and verify your purchase.
+          card details. We store a purchase record (the store, the product, the
+          platform, whether it was a test or a real purchase, the relevant dates
+          and a transaction identifier) and your premium status so we can unlock
+          and verify your purchase.
         </li>
       </ul>
 
@@ -66,6 +87,10 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
         <li>To track your progress and personalise your practice.</li>
         <li>To unlock and verify premium access.</li>
         <li>To generate AI Tutor responses to your questions.</li>
+        <li>
+          To improve the quality of AI Tutor answers, using the answers you rate
+          or report.
+        </li>
         <li>To understand usage and improve the app.</li>
         <li>To respond to your support requests.</li>
       </ul>
@@ -79,30 +104,47 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
         </li>
         <li>
           <strong>Legitimate interests</strong> — to keep the app secure,
-          understand usage, and improve our service.
+          understand usage, and improve our service, including the quality of AI
+          Tutor answers; and to keep purchase records, with no personal data, so
+          we can handle refunds, prevent fraud and let you restore Premium.
         </li>
         <li>
-          <strong>Analytics</strong> — we use Firebase Analytics on the basis of
-          our legitimate interests (UK GDPR Article 6(1)(f)) in understanding
-          how the app is used and improving it. It records basic usage events:
-          those Firebase collects automatically (such as first open, session
-          start and engagement time) and three of our own (when the premium
-          screen is viewed, when a purchase is completed and when a free-tier
-          limit is reached), together with the council you selected and where in
-          the app the event happened. This data is not linked to your account
-          and is not used for advertising: the app does not use your device's
-          advertising ID, and ad personalisation is turned off. Google processes
-          this data on our behalf as our service provider, under the Google Data
-          Processing Terms, and does not use it for its own purposes. From
-          version 1.7.4 of the app, you can turn off analytics at any time: open
-          the dashboard, go to Preferences and switch off "Share anonymous usage
-          data". While it is off, the app sends no analytics data to Google
-          Analytics for Firebase, including the events Firebase would otherwise
-          collect automatically. Your choice is stored on your device, so if you
-          reinstall the app or use a different device you will need to switch it
-          off again. To ask
-          about this data or to object to its use, email
-          <a href="mailto:support@yongchivo.com">support@yongchivo.com</a>.
+          <p>
+            <strong>Analytics</strong> — we use Firebase Analytics on the basis
+            of our legitimate interests (UK GDPR Article 6(1)(f)) in
+            understanding how the app is used and improving it. It records basic
+            usage events: those Firebase collects automatically (such as first
+            open, session start and engagement time) and four of our own (when
+            the premium screen is viewed, when a purchase is completed, when a
+            free-tier limit is reached, and whether the app's security check
+            (Firebase App Check, which confirms that requests come from the
+            genuine app) worked on your device, recorded only as a result and a
+            general error type, with no personal data), together with the
+            council you selected and where in the app the event happened. This
+            data is identified by a random app-instance ID, is not linked to your
+            account and is not used for advertising: the app does not use your
+            device's advertising ID, and ad personalisation is turned off. Google
+            processes this data on our behalf as our service provider, under the
+            Google Data Processing Terms, and does not use it for its own
+            purposes.
+          </p>
+          <p>
+            You can turn off analytics at any time: open the dashboard, go to
+            Preferences and switch off "Usage analytics" (called "Share anonymous
+            usage data" in version 1.7.4 of the app). While it is off, the app
+            sends no analytics data to Google Analytics for Firebase, including
+            the events Firebase would otherwise collect automatically. Your
+            choice is stored on your device, so if you reinstall the app or use a
+            different device you will need to switch it off again.
+          </p>
+          <p>
+            Google Analytics keeps event data for 2 months and user-level data
+            for 14 months; the 14-month period starts again whenever the app is
+            used. Because this data isn't linked to your account, we can't find
+            and delete it on request; it expires on that schedule. To ask about
+            this data or to object to its use, email
+            <a href="mailto:support@yongchivo.com">support@yongchivo.com</a>.
+          </p>
         </li>
       </ul>
 
@@ -114,12 +156,12 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
       <ul>
         <li>
           <strong>Google Firebase</strong> (Authentication, Cloud Firestore,
-          Analytics, App Check, Cloud Functions, and Hosting) — provides our
-          backend, database, analytics, and app verification infrastructure.
+          Analytics, App Check and Cloud Functions) — provides our backend,
+          database, analytics, and app verification infrastructure.
         </li>
         <li>
-          <strong>Anthropic</strong> — processes the messages you send to the AI
-          Tutor in order to generate replies.
+          <strong>Anthropic</strong> — processes your AI Tutor messages, with the
+          earlier messages in that conversation, in order to generate replies.
         </li>
         <li>
           <strong>Apple App Store and Google Play</strong> — process payments for
@@ -141,10 +183,69 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 
       <h2>How long we keep it</h2>
       <p>
-        We keep your account and learning data for as long as your account is
-        active. If you ask us to delete your account, or after a prolonged period
-        of inactivity, we delete or anonymise your personal data, except where we
-        are required to retain certain records by law.
+        We keep your account and learning data until you delete your account.
+        You can do this at any time in the app (Preferences → Delete account) or
+        by asking us (see "Deleting your account" below).
+      </p>
+      <ul>
+        <li>
+          <strong>Server logs</strong> (including IP address and user agent) are
+          kept for 30 days.
+        </li>
+        <li>
+          <strong>Recovery data:</strong> our database keeps a 7-day recovery
+          window, so deleted data can remain in recovery data for up to 7 days
+          before it is gone for good. We don't keep any other backups.
+        </li>
+        <li>
+          <strong>Purchase records</strong> are kept after your account is
+          deleted, with no personal data and no link to your account, for as long
+          as we need them to handle refunds, prevent fraud and let you restore
+          Premium.
+        </li>
+        <li>
+          <strong>Usage analytics</strong> expire on Google's schedule (see
+          "Analytics" above).
+        </li>
+      </ul>
+
+      <h2>Deleting your account</h2>
+      <p>
+        You can delete your account at any time in the app: open the dashboard,
+        go to Preferences, tap "Delete account" and enter your password. Your
+        account is deleted straight away.
+      </p>
+      <p>
+        If you no longer have the app, email
+        <a href="mailto:support@yongchivo.com">support@yongchivo.com</a> from the
+        address you signed up with, or follow the steps at
+        <a href="/phv-prep-uk/support/">https://yongchivo.com/phv-prep-uk/support/</a>,
+        and ask us to delete your account. We'll confirm once it's done, within
+        one month.
+      </p>
+      <p>
+        When your account is deleted, we delete your sign-in details, your
+        progress, your exam history, and your ratings and reports of AI Tutor
+        answers, including the answer and the message each one refers to. Your
+        conversations with the AI Tutor are not stored on our systems, so there
+        is nothing else to delete.
+      </p>
+      <p>
+        If you bought Premium, we keep the purchase record (the store, the
+        product, the platform, whether it was a test or a real purchase, the
+        relevant dates and the transaction identifier), but we remove its link to
+        your account, and it holds no name, email address or account ID. We keep
+        it so we can handle refunds, prevent fraud and let you restore Premium:
+        your purchase stays with your Apple or Google account, so you can restore
+        it on a new account with "Restore purchase".
+      </p>
+      <p>
+        When you delete your account, the app also resets its analytics
+        identifier on your device. Analytics data already collected isn't linked
+        to your account and expires on Google's schedule (see "Analytics" above).
+        Server logs are deleted after 30 days and recovery data after 7 days;
+        after that, nothing linked to your deleted account remains on our
+        systems, apart from the purchase record described above.
       </p>
 
       <h2>Your rights</h2>
@@ -152,7 +253,10 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
       <ul>
         <li>access the personal data we hold about you;</li>
         <li>have inaccurate data corrected;</li>
-        <li>have your data erased;</li>
+        <li>
+          have your data erased (you can delete your account yourself in the app
+          — see "Deleting your account" above);
+        </li>
         <li>restrict or object to how we process your data;</li>
         <li>request a copy of your data in a portable format.</li>
       </ul>
