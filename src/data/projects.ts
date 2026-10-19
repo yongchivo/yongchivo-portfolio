@@ -286,6 +286,7 @@ export const projects: Project[] = [
       href: { en: "/analytics/", es: "/es/analytics/" },
       label: { en: "Open the dashboard", es: "Abrir el panel" },
     },
+    secondary: [post("analytics-dashboard-play-console")],
   },
   {
     slug: "phv-prep-uk",
