@@ -81,6 +81,14 @@ export const academicProjects: CvEntry[] = [
 
 export const experience: CvEntry[] = [
   {
+    title: "Founder & Developer — Yongchivo",
+    subtitle: "[CONFIRMAR] – actualidad - Independiente, yongchivo.com",
+    body: "Proyecto independiente con el que diseño, desarrollo, protejo y publico mi propio software de principio a fin. Publiqué PHV Prep UK en solitario en App Store y Google Play con Flutter y Firebase. Llevé la IA a producción y a mis herramientas: un tutor de IA sobre la API de Anthropic, con la clave guardada en Secret Manager y nunca incluida en el cliente, y UNO, que orquesta agentes de Claude Code en git worktrees aislados tras una compuerta de revisión determinista. Hice de la seguridad parte de cada proyecto: validación de URL segura frente a SSRF en un Cloudflare Worker, cabeceras de seguridad HTTP subidas de una D a una A, una Content-Security-Policy estricta que se mantiene en toda la web y los secretos fuera del código del cliente. Desplegué en Cloudflare Workers y Pages, y usé WebAssembly (libheif, FFmpeg.wasm) para convertir archivos por completo en el navegador. Aprendí a tratar la seguridad como un requisito de diseño desde el primer día, no como un parche al final.",
+  },
+];
+
+export const otherExperience: CvEntry[] = [
+  {
     title: "Door Supervisor en Pavilon Security",
     subtitle: "Jul. 2026 – actualidad, West Midlands, Reino Unido",
     body: "Seguridad de puerta con licencia SIA en West Midlands, sobre todo en pubs y fiestas, además de estrenos de cine y control de CCTV en almacenes (en pausa durante el curso). Me encargo del control de acceso y de aforo, la comprobación de identificación, la gestión de conflictos y el informe de incidentes.",
