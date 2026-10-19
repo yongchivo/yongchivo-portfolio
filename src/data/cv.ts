@@ -25,7 +25,7 @@ export interface CvSkillGroup {
  * committed PDF shows up as modified in git after every run. Bump it when the
  * CV content below actually changes.
  */
-export const lastUpdated = "2026-10-15";
+export const lastUpdated = "2026-10-19";
 
 /** Header details for the PDF. The web page shows them in the footer instead. */
 export const contact = {
@@ -113,7 +113,17 @@ export const academicProjects: CvEntry[] = [
   },
 ];
 
+/** Technical experience, gained through the shipped projects above. */
 export const experience: CvEntry[] = [
+  {
+    title: "Founder & Developer — Yongchivo",
+    subtitle: "Apr 2026 – Present - Independent, yongchivo.com",
+    body: "Independent practice through which I design, build, secure and release my own software end to end. Shipped PHV Prep UK solo to the App Store and Google Play with Flutter and Firebase. Put AI to work in production and in tooling: an AI tutor on the Anthropic API with the key held in Secret Manager and never shipped in the client, and UNO, which orchestrates Claude Code agents in isolated git worktrees behind a deterministic review gate. Made security part of every build: SSRF-safe URL validation on a Cloudflare Worker, HTTP security headers raised from grade D to A, a strict Content-Security-Policy kept intact across the site, and secrets kept out of client code. Deployed on Cloudflare Workers and Pages, and used WebAssembly (libheif, FFmpeg.wasm) to run file conversion entirely in the browser. Learned to treat security as a design constraint from day one rather than a patch at the end.",
+  },
+];
+
+/** Non-technical work, listed near the end of the CV. */
+export const otherExperience: CvEntry[] = [
   {
     title: "Door Supervisor at Pavilon Security",
     subtitle: "Jul 2026 – Present in the West Midlands, UK",

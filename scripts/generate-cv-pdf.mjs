@@ -24,6 +24,7 @@ import {
   projects,
   academicProjects,
   experience,
+  otherExperience,
   certifications,
   skills,
 } from "../src/data/cv.ts";
@@ -294,21 +295,19 @@ async function build() {
   });
   y -= 8;
 
-  heading("Projects", entryHeight(projects[0]));
-  projects.forEach(entry);
-  y -= 1;
-
-  heading("Education", entryHeight(education[0]));
-  education.forEach(entry);
-  y -= 1;
-
-  heading("Academic Projects", entryHeight(academicProjects[0]));
-  academicProjects.forEach(entry);
-  y -= 1;
-
-  heading("Experience", entryHeight(experience[0]));
-  experience.forEach(entry);
-  y -= 1;
+  // Same order as the web page (src/components/cv/CvSections.astro).
+  const sections = [
+    ["Experience", experience],
+    ["Projects", projects],
+    ["Education", education],
+    ["Academic Projects", academicProjects],
+    ["Other Experience", otherExperience],
+  ];
+  for (const [title, items] of sections) {
+    heading(title, entryHeight(items[0]));
+    items.forEach(entry);
+    y -= 1;
+  }
 
   heading("Certifications & Licences", 3 * 12.5);
   certifications.forEach(bullet);
