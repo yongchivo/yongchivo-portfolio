@@ -13,6 +13,15 @@ export const about = {
     es: { before: "Soy ", name: "John Akhis Moreno", after: ", la persona detrás de Yongchivo." },
   },
 
+  // Tech-facing line under the lead. Only facts already published on the site.
+  headline: {
+    en: "I design, build and ship secure software: a paid app live on the App Store and Google Play, AI tools built on Claude, and security-hardened web tools on Cloudflare.",
+    es: "Diseño, desarrollo y publico software seguro: una app de pago en App Store y Google Play, herramientas de IA sobre Claude y herramientas web con la seguridad reforzada en Cloudflare.",
+  },
+
+  // Heading for the personal part, now at the end of the page.
+  storyHeading: { en: "My story", es: "Mi historia" },
+
   story: {
     en: [
       "I was born and raised in Málaga. In 2019 I had to repeat a year at school, and my dad — who was already living in the UK — suggested I come to Birmingham and give it a go. I wasn't sure at all: it was a huge change, and it was. But back then I was lost, and Birmingham turned me around. It helped me discover a lot of things, and above all, myself.",
