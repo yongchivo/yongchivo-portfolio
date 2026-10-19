@@ -90,7 +90,7 @@ const en: AnalyticsStrings = {
     "Upload your platform exports and see what the native dashboards don't show you — 100% in your browser, nothing uploaded.",
   landingNote: "Your files never leave your device",
   landingDescription:
-    "Free analytics dashboard for your platform exports. Drop a Google Search Console or App Store Connect CSV and get the views the native dashboards bury — entirely in your browser.",
+    "Free analytics dashboard for your platform exports. Drop a Google Search Console, App Store Connect or Google Play Console CSV and get the views the native dashboards bury — entirely in your browser.",
   backToAll: "All dashboards",
   comingSoon: "Coming soon",
 
@@ -155,7 +155,7 @@ const en: AnalyticsStrings = {
 
   funnelTitle: "Conversion funnel",
   funnelIntro:
-    "Where people fall out between seeing your app and installing it. This is the view App Store Connect makes hardest to read.",
+    "Where people fall out between seeing your app and installing it. This is the view the store consoles make hardest to read.",
   funnelDropOff: (pct) => `${pct} drop-off`,
   funnelContinued: (pct) => `· ${pct} continued`,
   funnelNote: "Bars are scaled against the first stage, so the narrowing is the real conversion.",
@@ -166,7 +166,7 @@ const en: AnalyticsStrings = {
   weekdayAverage: (average, days) => `${average} per day, across ${days} of them`,
 
   sourceTitle: "Where downloads come from",
-  sourceIntro: "Share by source — App Store search, browsing, web referrals and app referrals.",
+  sourceIntro: "Share by source — store search, browsing, web referrals and app referrals.",
   otherSources: "Other",
 
   chartUnavailable: "This chart couldn't load, but the figures around it are unaffected.",
@@ -179,7 +179,7 @@ const es: AnalyticsStrings = {
     "Sube las exportaciones de tus plataformas y mira lo que los paneles nativos no te enseñan — 100% en tu navegador, sin subir nada.",
   landingNote: "Tus archivos nunca salen de tu dispositivo",
   landingDescription:
-    "Panel de analítica gratuito para las exportaciones de tus plataformas. Suelta un CSV de Google Search Console o de App Store Connect y obtén las vistas que los paneles nativos esconden — todo en tu navegador.",
+    "Panel de analítica gratuito para las exportaciones de tus plataformas. Suelta un CSV de Google Search Console, App Store Connect o Google Play Console y obtén las vistas que los paneles nativos esconden — todo en tu navegador.",
   backToAll: "Todos los paneles",
   comingSoon: "Próximamente",
 
@@ -245,7 +245,7 @@ const es: AnalyticsStrings = {
 
   funnelTitle: "Embudo de conversión",
   funnelIntro:
-    "Dónde se pierde la gente entre ver tu app e instalarla. Esta es la vista que App Store Connect hace más difícil de leer.",
+    "Dónde se pierde la gente entre ver tu app e instalarla. Esta es la vista que las consolas de las tiendas hacen más difícil de leer.",
   funnelDropOff: (pct) => `${pct} de abandono`,
   funnelContinued: (pct) => `· ${pct} continuó`,
   funnelNote:
@@ -258,7 +258,7 @@ const es: AnalyticsStrings = {
 
   sourceTitle: "De dónde vienen las descargas",
   sourceIntro:
-    "Reparto por origen — búsqueda en la App Store, navegación, referencias web y referencias de apps.",
+    "Reparto por origen — búsqueda en la tienda, navegación, referencias web y referencias de apps.",
   otherSources: "Otros",
 
   chartUnavailable: "Este gráfico no ha podido cargarse, pero las cifras de alrededor no se ven afectadas.",

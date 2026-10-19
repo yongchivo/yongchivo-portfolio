@@ -248,8 +248,8 @@ export const projects: Project[] = [
     cover: "/analytics-cover.webp",
     title: { en: "Analytics Dashboard", es: "Panel de analítica" },
     summary: {
-      en: "Drop in your Google Search Console or App Store Connect CSV exports and see what their own dashboards don't show: CTR against position, conversion funnels and side-by-side date ranges. Runs entirely in the browser.",
-      es: "Suelta tus exportaciones CSV de Google Search Console o App Store Connect y mira lo que sus propios paneles no enseñan: CTR frente a posición, embudos de conversión y periodos lado a lado. Todo en el navegador.",
+      en: "Drop in your Google Search Console, App Store Connect or Google Play Console CSV exports and see what their own dashboards don't show: CTR against position, conversion funnels and side-by-side date ranges. Runs entirely in the browser.",
+      es: "Suelta tus exportaciones CSV de Google Search Console, App Store Connect o Google Play Console y mira lo que sus propios paneles no enseñan: CTR frente a posición, embudos de conversión y periodos lado a lado. Todo en el navegador.",
     },
     meta: { en: "TypeScript · Chart.js · Astro", es: "TypeScript · Chart.js · Astro" },
     body: {
@@ -267,6 +267,7 @@ export const projects: Project[] = [
           items: [
             "Google Search Console — a Queries or Pages export: summary totals, a sortable table, a CTR-vs-position scatter and a ranking distribution, plus two-file comparison.",
             "App Store Connect — a Sales and Trends or App Analytics export: downloads and proceeds over time, the conversion funnel, day-of-week performance and source breakdown.",
+            "Google Play Console — an Installs, Store performance or Earnings report: installs and uninstalls over time, the store listing funnel, net earnings and day-of-week performance.",
           ],
         },
       ],
@@ -276,6 +277,7 @@ export const projects: Project[] = [
           items: [
             "Google Search Console — una exportación de Consultas o Páginas: totales, tabla ordenable, dispersión CTR-posición y distribución de posiciones, más comparación de dos archivos.",
             "App Store Connect — una exportación de Ventas y tendencias o de Analíticas: descargas e ingresos en el tiempo, embudo de conversión, rendimiento por día de la semana y reparto por origen.",
+            "Google Play Console — un informe de Instalaciones, Rendimiento de la ficha o Ingresos: instalaciones y desinstalaciones en el tiempo, embudo de la ficha, ingresos netos y rendimiento por día de la semana.",
           ],
         },
       ],
@@ -284,6 +286,7 @@ export const projects: Project[] = [
       href: { en: "/analytics/", es: "/es/analytics/" },
       label: { en: "Open the dashboard", es: "Abrir el panel" },
     },
+    secondary: [post("analytics-dashboard-play-console")],
   },
   {
     slug: "phv-prep-uk",

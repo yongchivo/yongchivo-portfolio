@@ -47,7 +47,7 @@ export const projects: CvEntry[] = [
   {
     title: "Panel de analítica — En el navegador",
     subtitle: "TypeScript / Chart.js / Astro - yongchivo.com/analytics",
-    body: "Desarrollé un panel que lee las exportaciones CSV de Google Search Console y App Store Connect por completo en el navegador y muestra lo que los paneles nativos no enseñan: CTR frente a posición, distribución de posiciones, embudos de conversión, rendimiento por día de la semana y comparación de dos periodos. Los archivos nunca salen del dispositivo del usuario.",
+    body: "Desarrollé un panel que lee las exportaciones CSV de Google Search Console, App Store Connect y Google Play Console por completo en el navegador y muestra lo que los paneles nativos no enseñan: CTR frente a posición, distribución de posiciones, embudos de conversión, rendimiento por día de la semana y comparación de dos periodos. Los archivos nunca salen del dispositivo del usuario.",
   },
   {
     title: "Portfolio personal con hardening de seguridad",

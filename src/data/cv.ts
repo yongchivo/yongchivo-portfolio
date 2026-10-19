@@ -80,7 +80,7 @@ export const projects: CvEntry[] = [
   {
     title: "Analytics Dashboard — In-Browser",
     subtitle: "TypeScript / Chart.js / Astro - yongchivo.com/analytics",
-    body: "Built a dashboard that reads Google Search Console and App Store Connect CSV exports entirely in the browser and shows what the native dashboards don't: CTR against position, ranking distribution, conversion funnels, day-of-week performance and side-by-side comparison of two date ranges. Files never leave the user's device.",
+    body: "Built a dashboard that reads Google Search Console, App Store Connect and Google Play Console CSV exports entirely in the browser and shows what the native dashboards don't: CTR against position, ranking distribution, conversion funnels, day-of-week performance and side-by-side comparison of two date ranges. Files never leave the user's device.",
   },
   {
     title: "Personal Portfolio with Security Hardening",

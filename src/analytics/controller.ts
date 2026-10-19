@@ -25,6 +25,21 @@ export function initDashboard(root: HTMLElement): void {
   new Dashboard(root, preset, lang, strings[lang]);
 }
 
+/**
+ * Decode a dropped file by its byte-order mark. Play Console writes its
+ * statistics CSVs as UTF-16, which `file.text()` would read as UTF-8 noise.
+ */
+async function readText(file: File): Promise<string> {
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  const encoding =
+    bytes[0] === 0xff && bytes[1] === 0xfe
+      ? "utf-16le"
+      : bytes[0] === 0xfe && bytes[1] === 0xff
+        ? "utf-16be"
+        : "utf-8";
+  return new TextDecoder(encoding).decode(bytes);
+}
+
 class Dashboard {
   private datasets: Dataset[] = [];
   /** Bumped on every render so a slow chart import can't paint stale data. */
@@ -94,11 +109,11 @@ class Dashboard {
     this.clearError();
     for (const file of files) {
       try {
-        const text = await file.text();
+        const text = await readText(file);
         const dataset = this.preset.parse(text, file.name, this.lang);
 
         // Both guards below re-read this.datasets rather than a value captured
-        // before the await: `file.text()` yields, so another selection can land
+        // before the await: `readText()` yields, so another selection can land
         // while it is pending, and a stale snapshot would let that one through.
         if (this.datasets.length >= 2) {
           this.showError(this.t.errTooMany);

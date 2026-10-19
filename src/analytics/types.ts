@@ -80,7 +80,7 @@ export interface Metric {
   derive?: (totals: Metrics) => number;
   /** Metric ids this derived metric needs before it can be shown. */
   needs?: string[];
-  /** True when a DECREASE is an improvement — average position, and only that. */
+  /** True when a DECREASE is an improvement — average position, uninstalls. */
   lowerIsBetter?: boolean;
 }
 
@@ -135,7 +135,7 @@ export interface ViewContext {
 
 /**
  * One section of the dashboard. Views are declared by the preset and are
- * reusable across presets — the App Store time series would serve Play Console
+ * reusable across presets — the App Store time series serves Play Console
  * unchanged — so anything platform-specific arrives through the factory's
  * config, never through a check on `preset.id`.
  */
