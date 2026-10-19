@@ -1,5 +1,5 @@
 ---
-// The CV itself (no layout): used at the bottom of the "Who am I?" page.
+// The CV itself (no layout): used on the "Who am I?" page, right after the services.
 // English content comes from src/data/cv.ts (which also feeds the PDF);
 // Spanish from src/data/cv-es.ts.
 import TimeLineElement from "./TimeLine.astro";
@@ -12,7 +12,7 @@ interface Props {
 }
 
 const { lang } = Astro.props;
-const { profile, education, projects, academicProjects, experience, certifications, skills } =
+const { profile, education, projects, academicProjects, experience, otherExperience, certifications, skills } =
   lang === "es" ? es : en;
 
 const t =
@@ -23,6 +23,7 @@ const t =
         projects: "Proyectos",
         education: "Formación",
         academic: "Proyectos académicos",
+        other: "Otra experiencia",
         certifications: "Certificaciones y licencias",
         skills: "Habilidades",
       }
@@ -32,6 +33,7 @@ const t =
         projects: "Projects",
         education: "Education",
         academic: "Academic Projects",
+        other: "Other Experience",
         certifications: "Certifications & Licences",
         skills: "Skills",
       };
@@ -41,6 +43,7 @@ const timelines = [
   { heading: t.projects, items: projects },
   { heading: t.education, items: education },
   { heading: t.academic, items: academicProjects },
+  { heading: t.other, items: otherExperience },
 ];
 ---
 
