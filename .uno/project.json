@@ -1,5 +1,5 @@
 {
-  "context": "yongchivo-portfolio: personal portfolio and small browser tools site (yongchivo.com) built with Astro 4, TypeScript, TailwindCSS and DaisyUI, based on the Astrofy template. Main code in src/: pages (incl. es/ Spanish routes, convert/, analytics/, phv-prep-uk/), components, layouts, content/blog (MDX), convert/ (client-side file converters: pdf-lib, pdfjs, ffmpeg.wasm, libheif, docx-preview), analytics/, data/cv.ts. Package manager: npm (package-lock.json). Build check is `npm run build`; there is no test or lint script. Roles cannot execute commands: a human runs `npm run build` outside Uno and supplies the output as evidence. Keep bilingual (EN/ES) strings consistent. Do not add dependencies, change astro/tailwind config, deployment or CI without human approval. Use bounded tasks with explicit paths.",
+  "context": "yongchivo-portfolio: personal portfolio and small browser tools site (yongchivo.com) built with Astro 4, TypeScript, TailwindCSS and DaisyUI, based on the Astrofy template. Main code in src/: pages (incl. es/ Spanish routes, convert/, analytics/, phv-prep-uk/), components, layouts, content/blog (MDX), convert/ (client-side file converters: pdf-lib, pdfjs, ffmpeg.wasm, libheif, docx-preview), analytics/, data/cv.ts. Package manager: npm (package-lock.json). Build check is `npm run build`; there is no test or lint script. Roles cannot execute commands: Uno itself runs the `build` check (`npm run build`) after each edit step and on the integration branch, and passes the result to reviewers as evidence. Keep bilingual (EN/ES) strings consistent. Do not add dependencies, change astro/tailwind config, deployment or CI without human approval. Use bounded tasks with explicit paths.",
   "protected_paths": [
     ".uno/**",
     ".env*",
@@ -16,5 +16,19 @@
   "truncated": {},
   "references": [
     "README.md"
+  ],
+  "checks": [
+    {
+      "name": "build",
+      "cmd": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "when": "both"
+    }
+  ],
+  "check_copy": [
+    "node_modules"
   ]
 }
