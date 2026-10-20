@@ -14,7 +14,7 @@ export type SiteLang = "en" | "es";
 type Localized<T> = Record<SiteLang, T>;
 
 export type ProjectSection = "security" | "mobile" | "games";
-export type ProjectStatus = "live" | "oss" | "coursework";
+export type ProjectStatus = "live" | "oss" | "dev" | "coursework";
 
 export interface ProjectLink {
   href: Localized<string>;
@@ -61,12 +61,12 @@ export const projects: Project[] = [
   {
     slug: "uno",
     section: "security",
-    status: "oss",
+    status: "dev",
     cover: "/uno-cover.webp",
     title: { en: "UNO — Secure AI Agent Orchestrator", es: "UNO — Orquestador seguro de agentes de IA" },
     summary: {
-      en: "Coordinates several Claude Code agents on one project, treating every agent as an untrusted worker: isolated worktrees, least privilege and a deterministic gate that holds risky changes for my review.",
-      es: "Coordina varios agentes de Claude Code en un mismo proyecto y trata a cada uno como un trabajador no confiable: worktrees aislados, mínimo privilegio y una compuerta determinista que retiene los cambios de riesgo para que yo los revise.",
+      en: "A local orchestrator that turns a request into a plan of role agents (developer, reviewer, tester…) working in isolated git worktrees, verifies their work with deterministic checks and only merges after my approval. Every agent is treated as an untrusted worker.",
+      es: "Un orquestador local que convierte una petición en un plan de agentes con roles (desarrollador, revisor, tester…) que trabajan en git worktrees aislados, verifica su trabajo con comprobaciones deterministas y solo fusiona tras mi aprobación. Cada agente se trata como un trabajador no confiable.",
     },
     meta: {
       en: "Python · Claude Code · Git · Application security",
@@ -388,6 +388,7 @@ export const generatedProjects = (): Project[] => projects.filter((p) => !p.deta
 export const statusLabel: Record<ProjectStatus, Localized<string>> = {
   live: { en: "Live", es: "En línea" },
   oss: { en: "Open source", es: "Código abierto" },
+  dev: { en: "In development", es: "En desarrollo" },
   coursework: { en: "Coursework", es: "Trabajo de clase" },
 };
 

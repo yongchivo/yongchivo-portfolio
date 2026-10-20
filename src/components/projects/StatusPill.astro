@@ -1,5 +1,5 @@
 ---
-// "Live" (green dot that pulses), "Open source" (cyan) or "Coursework".
+// "Live" (green dot that pulses), "Open source" (cyan), "In development" (purple) or "Coursework".
 import { statusLabel, type ProjectStatus, type SiteLang } from "../../data/projects";
 
 interface Props {
@@ -47,6 +47,11 @@ const { status, lang } = Astro.props;
   .status-oss {
     color: #22d3ee;
     border-color: rgba(34, 211, 238, 0.45);
+  }
+
+  .status-dev {
+    color: #c4b5fd;
+    border-color: rgba(196, 181, 253, 0.45);
   }
 
   .status-coursework {
