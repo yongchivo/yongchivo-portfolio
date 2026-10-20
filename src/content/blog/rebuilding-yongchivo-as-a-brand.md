@@ -7,7 +7,7 @@ tags: ["astro", "web-development", "accessibility", "branding", "learning-in-pub
 badge: "WEB DEVELOPMENT"
 ---
 
-This site started life as a template. It did its job — a sidebar, a list of projects, a CV — but it read like what it was: a student portfolio. Meanwhile the things I actually build had grown into something bigger: an app on both stores, a hub of security tools, a private file converter, an open-source orchestrator for AI coding agents.
+This site started life as a template. It did its job — a sidebar, a list of projects, a CV — but it read like what it was: a student portfolio. Meanwhile the things I actually build had grown into something bigger: an app on both stores, a hub of security tools, a private file converter, an orchestrator for AI coding agents.
 
 So I rebuilt it. The goal changed from "show my CV" to "be the **Yongchivo** brand": a place that can win clients and users, not just recruiters. Here's what changed and the decisions behind it.
 

@@ -16,63 +16,111 @@ const t = es
   ? {
       title: "UNO — Orquestador seguro de agentes de IA",
       description:
-        "UNO coordina varios agentes de Claude Code en un mismo proyecto y trata a cada uno como un trabajador no confiable: worktrees aislados, mínimo privilegio y una compuerta de revisión determinista.",
+        "UNO convierte una petición en un plan de agentes de Claude Code con roles, cada uno en su propio git worktree, verifica su trabajo con comprobaciones deterministas y solo fusiona tras la aprobación humana.",
       back: "Volver a proyectos",
-      badge: "CÓDIGO ABIERTO",
+      badge: "EN DESARROLLO",
       meta: "Python · Claude Code · Git · Seguridad de aplicaciones · 2026",
-      lead: "Una herramienta que coordina varios agentes de Claude Code en un mismo proyecto —en paralelo o como una cadena de roles (desarrollador → analista de seguridad → arquitecto)— con una interfaz web local desde la que hablo con el orquestador, veo a los agentes en directo y apruebo cada cambio antes de que llegue a mi código.",
-      github: "Ver en GitHub",
+      lead: "UNO es un orquestador local para repositorios git. Le describo una tarea, un planificador la divide en pasos con roles (desarrollador, revisor de código, tester, revisor de validación…) y yo apruebo el plan antes de que se ejecute nada. Cada agente trabaja aislado, sus cambios se revisan y se comprueban automáticamente, y nada llega a mi código sin mi aprobación final. Lo uso a diario en mis propios proyectos.",
       challengeH: "El reto",
       challenge: ["Dar autonomía a los agentes de IA sin perder el control. El principio de diseño: ", "cada agente es un trabajador no confiable."],
-      controlsH: "Controles de seguridad",
-      controls: [
-        ["Aislamiento:", "un git worktree y una rama por agente."],
-        ["Mínimo privilegio:", "solo leer y editar; sin shell, sin red y sin servidores MCP."],
-        ["Compuerta determinista:", "cada rol declara qué archivos puede tocar; los cambios fuera de su alcance, en rutas protegidas (CI, reglas de Firebase, configuración) o con posibles secretos esperan a mi revisión."],
-        ["Inyección de prompts entre agentes:", "los artefactos viajan como datos etiquetados y el planificador solo recibe resúmenes generados por código."],
-        ["Confianza en la configuración:", "los roles del repo se verifican por hash antes de cada ejecución (protección TOCTOU)."],
-        ["Interfaz solo local:", "token por arranque, validación de Origin/Host (CSRF y DNS rebinding) y una CSP estricta."],
-      ],
-      verificationH: "Verificación",
-      verification: [
-        "141 tests unitarios y un smoke test que ataca el servidor en marcha.",
-        "Ejecuciones adversarias con agentes reales: se bloqueó a un agente fuera de su alcance y un intento de inyección no tuvo efecto.",
-        "Un modelo de amenazas documentado, con los riesgos residuales.",
+      sections: [
+        {
+          h: "Cómo funciona",
+          items: [
+            ["Plan con aprobación:", "el planificador propone pasos con rol, archivos permitidos, dependencias, modelo y esfuerzo, y justifica cada elección. Yo puedo cambiar cualquier cosa antes de aprobar."],
+            ["Ejecución aislada:", "cada paso corre en su propio git worktree y rama; los pasos independientes van en paralelo."],
+            ["Revisión y correcciones:", "los revisores devuelven hallazgos clasificados por severidad y tipo (defecto o evidencia). Los defectos medios o altos vuelven automáticamente al desarrollador, con un límite de rondas."],
+            ["Comprobaciones deterministas:", "UNO ejecuta él mismo los comandos de verificación del proyecto (build, tests) tras cada paso y sobre la rama de integración; el resultado es la evidencia que ven los revisores."],
+            ["Fusión humana:", "todo se integra en una rama aparte. Veo el diff consolidado, los hallazgos y las comprobaciones, y solo yo fusiono."],
+          ],
+        },
+        {
+          h: "Controles de seguridad",
+          items: [
+            ["Mínimo privilegio:", "los agentes solo leen y editan archivos; sin shell, sin red y sin servidores MCP."],
+            ["Compuerta determinista:", "cada paso declara qué archivos puede tocar; los cambios fuera de su alcance, en rutas protegidas (CI, configuración, dependencias) o con posibles secretos esperan a mi revisión."],
+            ["Comandos fuera del alcance del modelo:", "las comprobaciones las define el usuario y las ejecuta UNO como lista de argumentos, sin shell, con un entorno sin claves ni tokens, timeout por grupo de procesos y salida redactada."],
+            ["Inyección de prompts:", "los artefactos entre agentes viajan como datos etiquetados como no fiables, y los roles que propone el planificador nunca pueden ampliar los permisos de los roles confirmados."],
+            ["Confianza en la configuración:", "roles, contexto y comprobaciones se verifican por hash antes de cada ejecución (protección TOCTOU); cualquier cambio exige una nueva confirmación."],
+            ["Interfaz solo local:", "token por arranque, validación de Origin/Host (CSRF y DNS rebinding) y una CSP estricta."],
+          ],
+        },
+        {
+          h: "Funciones",
+          items: [
+            ["Prompt Studio:", "convierte una idea corta en un prompt estructurado (objetivo, alcance, tareas, tests, criterios de aceptación) con un linter determinista y una biblioteca versionada."],
+            ["Roles configurables:", "cada proyecto define sus roles, rutas protegidas y comprobaciones en una carpeta .uno/ revisada como código."],
+            ["Interfaz en español e inglés:", "chat con el orquestador, agentes en directo, panel de revisión y registro de eventos."],
+          ],
+        },
+        {
+          h: "Verificación",
+          items: [
+            ["Tests:", "más de 200 tests unitarios y un smoke test que ataca el servidor en marcha."],
+            ["Pruebas adversarias:", "con agentes reales: se bloqueó a un agente fuera de su alcance y un intento de inyección no tuvo efecto."],
+            ["Uso real:", "pilotos en una aplicación Python/Next.js y en esta web, con cambios fusionados después de pasar las comprobaciones de UNO."],
+            ["Modelo de amenazas:", "documentado, con los riesgos residuales."],
+          ],
+        },
       ],
       processH: "Proceso",
       process:
-        "Diseñé la arquitectura, el modelo de amenazas y los controles, y lo construí dirigiendo a Claude Code mediante PRs revisadas una a una.",
+        "Diseñé la arquitectura, el modelo de amenazas y los controles, y lo construí dirigiendo a Claude Code mediante PRs revisadas una a una. Es un proyecto privado en desarrollo activo.",
       alt: "Logo de UNO by Yongchivo",
     }
   : {
       title: "UNO — Secure AI Agent Orchestrator",
       description:
-        "UNO coordinates several Claude Code agents on one project, treating every agent as an untrusted worker: isolated worktrees, least privilege and a deterministic review gate.",
+        "UNO turns a request into a plan of role-based Claude Code agents, each in its own git worktree, verifies their work with deterministic checks and only merges after human approval.",
       back: "Back to projects",
-      badge: "OPEN SOURCE",
+      badge: "IN DEVELOPMENT",
       meta: "Python · Claude Code · Git · Application security · 2026",
-      lead: "A tool that coordinates several Claude Code agents on one project — in parallel, or as a role pipeline (developer → security analyst → architect) — with a local web interface where I talk to the orchestrator, watch the agents live and approve every change before it reaches my code.",
-      github: "View on GitHub",
+      lead: "UNO is a local orchestrator for git repositories. I describe a task, a planner splits it into steps with roles (developer, code reviewer, tester, validation reviewer…) and I approve the plan before anything runs. Every agent works in isolation, its changes are reviewed and checked automatically, and nothing reaches my code without my final approval. I use it every day on my own projects.",
       challengeH: "The challenge",
       challenge: ["Giving AI agents autonomy without losing control. The design principle: ", "every agent is an untrusted worker."],
-      controlsH: "Security controls",
-      controls: [
-        ["Isolation:", "one git worktree and one branch per agent."],
-        ["Least privilege:", "read/edit only — no shell, network or MCP servers."],
-        ["Deterministic gate:", "each role declares which files it may touch; changes out of scope, on protected paths (CI, Firebase rules, configuration) or with possible secrets wait for my review."],
-        ["Cross-agent prompt injection:", "artifacts travel as labelled data, and the planner only receives code-generated summaries."],
-        ["Configuration trust:", "repo roles are hash-verified before every run (TOCTOU protection)."],
-        ["Local-only interface:", "per-launch token, Origin/Host validation (CSRF and DNS rebinding) and a strict CSP."],
-      ],
-      verificationH: "Verification",
-      verification: [
-        "141 unit tests plus a smoke test that attacks the live server.",
-        "Adversarial runs with real agents: an out-of-scope agent was blocked and an injection attempt had no effect.",
-        "A documented threat model, including residual risks.",
+      sections: [
+        {
+          h: "How it works",
+          items: [
+            ["Approved plan:", "the planner proposes steps with a role, allowed files, dependencies, model and effort, and justifies each choice. I can change anything before approving."],
+            ["Isolated execution:", "each step runs in its own git worktree and branch; independent steps run in parallel."],
+            ["Review and corrections:", "reviewers return findings classified by severity and kind (defect or evidence). Medium and high defects go back to the developer automatically, within a round limit."],
+            ["Deterministic checks:", "UNO itself runs the project's verification commands (build, tests) after each step and on the integration branch; the result is the evidence the reviewers see."],
+            ["Human merge:", "everything is integrated on a separate branch. I see the consolidated diff, the findings and the checks, and only I merge."],
+          ],
+        },
+        {
+          h: "Security controls",
+          items: [
+            ["Least privilege:", "agents can only read and edit files — no shell, network or MCP servers."],
+            ["Deterministic gate:", "each step declares which files it may touch; changes out of scope, on protected paths (CI, configuration, dependencies) or with possible secrets wait for my review."],
+            ["Commands out of the model's reach:", "checks are defined by the user and run by UNO as an argument list, without a shell, in an environment with no keys or tokens, with a process-group timeout and redacted output."],
+            ["Prompt injection:", "artifacts between agents travel as data labelled untrusted, and roles proposed by the planner can never widen the permissions of confirmed roles."],
+            ["Configuration trust:", "roles, context and checks are hash-verified before every run (TOCTOU protection); any change requires a new confirmation."],
+            ["Local-only interface:", "per-launch token, Origin/Host validation (CSRF and DNS rebinding) and a strict CSP."],
+          ],
+        },
+        {
+          h: "Features",
+          items: [
+            ["Prompt Studio:", "turns a short idea into a structured prompt (objective, scope, tasks, tests, acceptance criteria) with a deterministic linter and a versioned library."],
+            ["Configurable roles:", "each project defines its roles, protected paths and checks in a .uno/ folder reviewed like code."],
+            ["Spanish and English interface:", "chat with the orchestrator, live agents, review panel and event log."],
+          ],
+        },
+        {
+          h: "Verification",
+          items: [
+            ["Tests:", "200+ unit tests plus a smoke test that attacks the live server."],
+            ["Adversarial runs:", "with real agents: an out-of-scope agent was blocked and an injection attempt had no effect."],
+            ["Real use:", "pilots on a Python/Next.js application and on this site, with changes merged after passing UNO's checks."],
+            ["Threat model:", "documented, including residual risks."],
+          ],
+        },
       ],
       processH: "Process",
       process:
-        "I designed the architecture, the threat model and the controls, and built it by directing Claude Code through PRs reviewed one by one.",
+        "I designed the architecture, the threat model and the controls, and built it by directing Claude Code through PRs reviewed one by one. It is a private project in active development.",
       alt: "UNO by Yongchivo logo",
     };
 ---
@@ -109,30 +157,19 @@ const t = es
     </div>
   </div>
 
-  <div class="flex flex-wrap gap-3 mt-8">
-    <a class="btn btn-primary" href="https://github.com/yongchivo/uno-orchestra" target="_blank" rel="noopener">
-      {t.github}
-    </a>
-  </div>
-
   <div class="mt-8">
     <h2 class="text-xl font-bold mb-2">{t.challengeH}</h2>
     <p class="opacity-90">{t.challenge[0]}<b>{t.challenge[1]}</b></p>
   </div>
 
-  <div class="mt-8">
-    <h2 class="text-xl font-bold mb-2">{t.controlsH}</h2>
-    <ul class="list-disc list-inside opacity-90 space-y-1">
-      {t.controls.map(([label, text]) => <li><b>{label}</b> {text}</li>)}
-    </ul>
-  </div>
-
-  <div class="mt-8">
-    <h2 class="text-xl font-bold mb-2">{t.verificationH}</h2>
-    <ul class="list-disc list-inside opacity-90 space-y-1">
-      {t.verification.map((item) => <li>{item}</li>)}
-    </ul>
-  </div>
+  {t.sections.map((section) => (
+    <div class="mt-8">
+      <h2 class="text-xl font-bold mb-2">{section.h}</h2>
+      <ul class="list-disc list-inside opacity-90 space-y-1">
+        {section.items.map(([label, text]) => <li><b>{label}</b> {text}</li>)}
+      </ul>
+    </div>
+  ))}
 
   <div class="mt-8">
     <h2 class="text-xl font-bold mb-2">{t.processH}</h2>
