@@ -42,7 +42,8 @@ export type DataFormat = "csv" | "json" | "yaml" | "xml";
 // PDF FORMAT conversions (kind "pdf").
 //  - "images-to-pdf": combine N images into one PDF, in order.
 //  - "pdf-to-images": render each page to an image (one PDF -> N images).
-export type PdfDirection = "images-to-pdf" | "pdf-to-images";
+//  - "pdf-to-word": rebuild the text + images as an editable .docx.
+export type PdfDirection = "images-to-pdf" | "pdf-to-images" | "pdf-to-word";
 
 // PDF TOOLS (kind "operation").
 export type PdfOperation = "merge" | "split" | "rotate" | "compress";
@@ -757,7 +758,7 @@ export const conversions: Conversion[] = [
     sourceMimes: ["application/vnd.openxmlformats-officedocument.wordprocessingml.document"],
     targetMime: "application/pdf",
     targetExt: "pdf",
-    related: ["images-to-pdf", "merge-pdf", "compress-pdf"],
+    related: ["pdf-to-word", "images-to-pdf", "merge-pdf"],
     copy: {
       en: {
         title: "Word to PDF Converter — DOCX to PDF, Free & Private",
@@ -882,6 +883,40 @@ export const conversions: Conversion[] = [
         intro:
           "Combina una o varias imágenes PNG en un único PDF, en el orden que elijas. Rápido, gratis y privado: nada sale de tu dispositivo.",
         card: "Combina imágenes PNG en un PDF",
+      },
+    },
+  },
+  {
+    id: "pdf-to-word",
+    kind: "pdf",
+    from: "PDF",
+    to: "Word",
+    accept: ".pdf,application/pdf",
+    sourceExts: ["pdf"],
+    sourceMimes: ["application/pdf"],
+    targetMime:
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    targetExt: "docx",
+    pdf: { direction: "pdf-to-word" },
+    related: ["word-to-pdf", "pdf-to-jpg", "split-pdf"],
+    copy: {
+      en: {
+        title: "PDF to Word Converter — Editable DOCX, Free & Private",
+        description:
+          "Convert PDF to an editable Word document (.docx) for free. Text and images are rebuilt in your browser — nothing is uploaded.",
+        h1: "PDF to Word converter",
+        intro:
+          "Turn a PDF into an editable Word document: the text comes back as paragraphs with its fonts, bold and italics, and the images in place. Tables and columns become plain paragraphs, and a scanned PDF comes through as page images. Nothing leaves your device.",
+        card: "Turn a PDF into an editable Word file",
+      },
+      es: {
+        title: "Convertir PDF a Word — DOCX Editable, Gratis y Privado",
+        description:
+          "Convierte PDF a un documento Word (.docx) editable gratis. El texto y las imágenes se reconstruyen en tu navegador — nada se sube.",
+        h1: "Convertir PDF a Word",
+        intro:
+          "Convierte un PDF en un documento Word editable: el texto vuelve como párrafos con sus fuentes, negritas y cursivas, y las imágenes en su sitio. Las tablas y columnas quedan como párrafos normales, y un PDF escaneado llega como imágenes de cada página. Nada sale de tu dispositivo.",
+        card: "Convierte un PDF en un Word editable",
       },
     },
   },

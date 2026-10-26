@@ -52,6 +52,7 @@ export interface ConverterStrings {
   pdfDropPdf: string;
   runCreatePdf: string;
   runConvert: string;
+  runConvertWord: string;
   runMerge: string;
   runSplit: string;
   runRotate: string;
@@ -84,6 +85,7 @@ export interface ConverterStrings {
   // PDF errors (thrown as ConvertError from ./pdf).
   pdfPasswordRequired: string;
   pdfInvalid: string;
+  pdfWordEmpty: string;
   rangesEmpty: string;
   /** {tok} is replaced with the offending range. */
   rangeUnreadable: string;
@@ -185,6 +187,7 @@ export const strings: Record<Lang, ConverterStrings> = {
     pdfDropPdf: "Drop a PDF here, or click to choose",
     runCreatePdf: "Create PDF",
     runConvert: "Convert to images",
+    runConvertWord: "Convert to Word",
     runMerge: "Merge PDFs",
     runSplit: "Split PDF",
     runRotate: "Rotate PDF",
@@ -213,6 +216,7 @@ export const strings: Record<Lang, ConverterStrings> = {
     tooManyImages: "Up to {max} images per PDF — extra files skipped",
     pdfPasswordRequired: "This PDF is password-protected. Remove the password and try again.",
     pdfInvalid: "This file isn't a valid PDF, or it's corrupted.",
+    pdfWordEmpty: "No text or images could be found in this PDF.",
     rangesEmpty: "Enter the page ranges to extract, e.g. 1-3, 5, 8-10",
     rangeUnreadable: "Couldn't read \"{tok}\" — use pages like 1-3, 5, 8-10",
     rangeOutOfRange: "\"{tok}\" is out of range — this PDF has {count} page(s)",
@@ -307,6 +311,7 @@ export const strings: Record<Lang, ConverterStrings> = {
     pdfDropPdf: "Suelta un PDF aquí, o haz clic para elegir",
     runCreatePdf: "Crear PDF",
     runConvert: "Convertir a imágenes",
+    runConvertWord: "Convertir a Word",
     runMerge: "Unir PDFs",
     runSplit: "Dividir PDF",
     runRotate: "Rotar PDF",
@@ -335,6 +340,7 @@ export const strings: Record<Lang, ConverterStrings> = {
     tooManyImages: "Máximo {max} imágenes por PDF — se omiten las sobrantes",
     pdfPasswordRequired: "Este PDF está protegido con contraseña. Quítala e inténtalo de nuevo.",
     pdfInvalid: "Este archivo no es un PDF válido o está dañado.",
+    pdfWordEmpty: "No se encontró texto ni imágenes en este PDF.",
     rangesEmpty: "Indica los rangos de páginas a extraer, p. ej. 1-3, 5, 8-10",
     rangeUnreadable: "No se pudo leer «{tok}» — usa páginas como 1-3, 5, 8-10",
     rangeOutOfRange: "«{tok}» está fuera de rango — este PDF tiene {count} página(s)",
