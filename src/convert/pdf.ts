@@ -12,6 +12,7 @@
 //
 // pdf-lib is loaded by every tool; pdf.js only by the ones that rasterise
 // (pdf-to-images, compress), so image->pdf / merge / split / rotate stay light.
+// PDF -> Word lives in ./pdfword.ts (pdf.js + JSZip), loaded only on that page.
 
 import { decodeSource, sniffImage, type ConversionResult } from "./engine";
 import { ConvertError } from "./errors";
@@ -19,7 +20,7 @@ import { ConvertError } from "./errors";
 // --- lazy library loaders -------------------------------------------------
 
 let pdfjsPromise: Promise<typeof import("pdfjs-dist")> | undefined;
-async function loadPdfjs() {
+export async function loadPdfjs() {
   if (!pdfjsPromise) {
     pdfjsPromise = (async () => {
       const pdfjs = await import("pdfjs-dist");
@@ -43,7 +44,7 @@ async function loadPdfLib() {
 
 // --- small helpers --------------------------------------------------------
 
-function stripExt(name: string): string {
+export function stripExt(name: string): string {
   const dot = name.lastIndexOf(".");
   return dot > 0 ? name.slice(0, dot) : name;
 }
@@ -52,7 +53,7 @@ function pdfBlob(bytes: Uint8Array, name: string): ConversionResult {
   return { blob: new Blob([bytes], { type: "application/pdf" }), filename: name };
 }
 
-function canvasToBlob(
+export function canvasToBlob(
   canvas: HTMLCanvasElement,
   type: string,
   quality?: number
@@ -73,7 +74,7 @@ function canvasToBlob(
  * both throw low-level parser messages ("Failed to parse number …") that would
  * only confuse the user.
  */
-function friendlyPdfError(err: unknown): ConvertError {
+export function friendlyPdfError(err: unknown): ConvertError {
   const name = (err as { name?: string })?.name ?? "";
   const msg = (err as { message?: string })?.message ?? "";
   if (name === "PasswordException" || /password|encrypted/i.test(msg)) {
@@ -443,7 +444,8 @@ export type PdfMode =
   | "merge"
   | "split"
   | "rotate"
-  | "compress";
+  | "compress"
+  | "pdf-to-word";
 
 export interface PdfToolOptions extends ImagesToPdfOptions {
   format?: "image/jpeg" | "image/png";
@@ -473,6 +475,10 @@ export async function runPdfTool(
       return [await rotatePdf(files[0], opts)];
     case "compress":
       return [await compressPdf(files[0], opts)];
+    case "pdf-to-word": {
+      const { pdfToWord } = await import("./pdfword");
+      return [await pdfToWord(files[0])];
+    }
     default:
       throw new Error(`Unknown PDF tool: ${mode}`);
   }
