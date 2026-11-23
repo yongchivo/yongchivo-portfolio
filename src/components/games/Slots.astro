@@ -1,0 +1,296 @@
+---
+// Cascade slot on a 5x5 grid. Seven or more of a symbol anywhere pays, the
+// winners pop, the rest falls and new symbols drop in — with a multiplier that
+// climbs on every cascade. A straight line of five Ys is the jackpot. The whole
+// spin is decided up front by slotSpin(); the script only plays it back.
+import ChipRow from "./ChipRow.astro";
+import { SLOT_COLS, SLOT_JACKPOT, SLOT_MAX_MULT, SLOT_MIN, SLOT_ROWS, SLOT_SYMBOLS } from "../../games/logic";
+import type { Lang } from "../../games/registry";
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+
+const t =
+  lang === "es"
+    ? {
+        bet: "Apuesta",
+        spin: "Girar",
+        won: "Premio",
+        ready: `${SLOT_MIN} o más símbolos iguales en cualquier sitio dan premio`,
+        nothing: "Nada esta vez",
+        back: "Recuperas",
+        prize: "¡Premio!",
+        jackpot: "¡PREMIO MÁXIMO!",
+        line: "Línea de 5",
+        lineHint: "horizontal, vertical o diagonal",
+        noChips: "No tienes fichas suficientes",
+        pays: "Tabla de pagos (por ficha apostada)",
+        cascade: `Cada cascada sube el multiplicador, hasta ×${SLOT_MAX_MULT}.`,
+      }
+    : {
+        bet: "Bet",
+        spin: "Spin",
+        won: "Win",
+        ready: `${SLOT_MIN} or more matching symbols anywhere pay`,
+        nothing: "Nothing this time",
+        back: "You get back",
+        prize: "Winner!",
+        jackpot: "JACKPOT!",
+        line: "Line of 5",
+        lineHint: "across, down or diagonal",
+        noChips: "Not enough chips",
+        pays: "Paytable (per chip staked)",
+        cascade: `Each cascade raises the multiplier, up to ×${SLOT_MAX_MULT}.`,
+      };
+
+// One glyph per symbol id, commonest first. The top symbol has none: it is the
+// Yongchivo Y, drawn by CSS from the logo's own path.
+const glyphs = ["●", "◆", "▲", "■", "★", "♥", ""];
+const tiers = [SLOT_MIN, SLOT_MIN + 2, SLOT_MIN + 4];
+const cells = Array.from({ length: SLOT_ROWS * SLOT_COLS }, (_, i) => i);
+// Best symbols first in the paytable.
+const paytable = SLOT_SYMBOLS.map((symbol, id) => ({ id, pays: symbol.pays })).reverse();
+---
+
+<div class="game-table sl" data-game="slots" data-t={JSON.stringify(t)} data-glyphs={glyphs.join(",")}>
+  <div class="sl-top">
+    <span>{t.won} <b data-won>0</b></span>
+    <span class="sl-mult" data-mult aria-hidden="true"></span>
+  </div>
+
+  {/* Decorative for screen readers: the result line below says what happened. */}
+  <div class="sl-grid" data-grid aria-hidden="true" style={`--cols:${SLOT_COLS}`}>
+    {cells.map((i) => <span class="sl-cell" style={`--col:${i % SLOT_COLS}`}><i class="sl-sym"></i></span>)}
+  </div>
+
+  <p class="result" data-result aria-live="polite">{t.ready}</p>
+
+  <ChipRow label={t.bet} />
+  <div class="game-actions">
+    <button type="button" class="game-btn main" data-spin>{t.spin}</button>
+  </div>
+
+  <section class="sl-pays">
+    <h2>{t.pays}</h2>
+    <p class="sl-jackpot">
+      <span class="sl-jackpot-line" aria-hidden="true">{[0, 1, 2, 3, 4].map(() => <i class="sl-sym s6"></i>)}</span>
+      <span>{t.line} <small>({t.lineHint})</small></span>
+      <b>×{SLOT_JACKPOT}</b>
+    </p>
+    <ul>
+      {
+        paytable.map(({ id, pays }) => (
+          <li>
+            <i class={`sl-sym s${id}`} aria-hidden="true">{glyphs[id]}</i>
+            {tiers.map((count, i) => <span>{count}+ <b>×{pays[i]}</b></span>)}
+          </li>
+        ))
+      }
+    </ul>
+    <p>{t.cascade}</p>
+  </section>
+</div>
+
+<style is:global>
+.sl-top { display: flex; align-items: center; justify-content: space-between; max-width: 22rem; margin: 0 auto 0.6rem; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; }
+.sl-top b { margin-left: 0.4rem; font-size: 1.2rem; font-variant-numeric: tabular-nums; color: var(--amber); display: inline-block; }
+.sl-top b.bump, .sl-mult.bump { animation: sl-bump 0.4s var(--spring); }
+.sl-mult { font-size: 1.3rem; font-weight: 800; color: var(--tone); min-height: 1.6rem; }
+@keyframes sl-bump { 40% { transform: scale(1.5); } }
+
+.sl-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--cols), 1fr);
+  gap: 0.35rem;
+  max-width: 22rem;
+  margin: 0 auto;
+  padding: 0.5rem;
+  border-radius: 1rem;
+  background: #0b0a14;
+  border: 1px solid var(--surface-2);
+  box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.6);
+  overflow: hidden; /* symbols fall in from above the frame */
+}
+.sl-cell { border-radius: 30%; }
+
+.sl-sym {
+  --c: #94a3b8;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 30%;
+  font-style: normal;
+  font-weight: 800;
+  font-size: clamp(1rem, 5vw, 1.4rem);
+  line-height: 1;
+  color: #0b0a14;
+  background:
+    radial-gradient(circle at 30% 24%, rgba(255, 255, 255, 0.65), rgba(255, 255, 255, 0) 34%),
+    var(--c);
+  box-shadow: inset 0 -5px 10px rgba(0, 0, 0, 0.3);
+}
+.sl-sym.s0 { --c: #22d3ee; }
+.sl-sym.s1 { --c: #d946ef; }
+.sl-sym.s2 { --c: #a855f7; }
+.sl-sym.s3 { --c: #34d399; }
+.sl-sym.s4 { --c: #fbbf24; }
+.sl-sym.s5 { --c: #fb7185; }
+/* The Yongchivo Y — same path as the logo (public/favicon.svg) — on the brand
+   gradient: the rarest and best-paying symbol. */
+.sl-sym.s6 {
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='4 4.5 24 24' fill='none' stroke='%23f4f2fb' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 9l8 9 8-9M16 18v6'/%3E%3C/svg%3E") center / 62% no-repeat,
+    radial-gradient(circle at 30% 24%, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0) 34%),
+    linear-gradient(160deg, #d946ef, #a855f7 55%, #22d3ee);
+  box-shadow: inset 0 -5px 10px rgba(0, 0, 0, 0.3), 0 0 12px -2px #a855f7;
+}
+
+/* Falls --fall rows into place; columns land one after another. */
+.sl-sym.drop {
+  animation: sl-drop calc(0.26s + var(--fall) * 0.04s) cubic-bezier(0.3, 1.25, 0.6, 1) backwards;
+  animation-delay: calc(var(--col) * 45ms);
+}
+.sl-cell.win { box-shadow: 0 0 0 2px #f4f2fb, 0 0 18px var(--amber); }
+.sl-cell.jackpot { box-shadow: 0 0 0 3px var(--amber), 0 0 28px 4px var(--amber); }
+.sl.is-jackpot .sl-grid { animation: sl-jackpot 0.5s ease-in-out 4 alternate; }
+@keyframes sl-jackpot { to { box-shadow: 0 0 60px 6px var(--amber); border-color: var(--amber); } }
+.sl-cell.win .sl-sym { animation: sl-win 0.35s ease-in-out infinite alternate; }
+.sl-cell .sl-sym.gone { animation: sl-gone 0.25s ease-out forwards; }
+@keyframes sl-drop { from { transform: translateY(calc(var(--fall) * -112%)); } }
+@keyframes sl-win { to { transform: scale(1.14); filter: brightness(1.25); } }
+@keyframes sl-gone { to { transform: scale(1.7); opacity: 0; } }
+
+.sl-pays { max-width: 22rem; margin: 1.5rem auto 0; font-size: 0.8rem; }
+.sl-jackpot { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 0.6rem; margin: 0 0 0.4rem !important; padding: 0.45rem 0.6rem; border-radius: 0.6rem; text-align: left !important; opacity: 1 !important; background: color-mix(in srgb, var(--amber) 12%, transparent); border: 1px solid var(--amber); }
+.sl-jackpot-line { display: grid; grid-template-columns: repeat(5, 1.05rem); gap: 2px; }
+.sl-jackpot small { opacity: 0.65; }
+.sl-jackpot b { font-size: 1rem; }
+.sl-pays h2 { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.12em; opacity: 0.6; margin: 0 0 0.5rem; text-align: center; }
+.sl-pays ul { display: grid; gap: 0.3rem; list-style: none; padding: 0; margin: 0; }
+.sl-pays li { display: grid; grid-template-columns: 1.7rem repeat(3, 1fr); align-items: center; gap: 0.5rem; padding: 0.25rem 0.5rem; border-radius: 0.5rem; background: rgba(232, 230, 242, 0.05); }
+.sl-pays .sl-sym { font-size: 0.8rem; }
+.sl-pays span { opacity: 0.8; }
+.sl-pays b { color: var(--amber); }
+.sl-pays p { margin: 0.6rem 0 0; text-align: center; opacity: 0.65; }
+</style>
+
+<script>
+  import { slotSpin, slotStepReturn, slotSymbol, slotWins, SLOT_COLS, SLOT_ROWS, type SlotStep } from "../../games/logic";
+  import { addChips, burst, fmt, getChips, initBet, reducedMotion, say, setRound, sleep } from "../../games/ui";
+
+  function init(root: HTMLElement) {
+    const t = JSON.parse(root.dataset.t!);
+    const glyphs = root.dataset.glyphs!.split(",");
+    const $ = <T extends HTMLElement>(sel: string) => root.querySelector<T>(sel)!;
+    const cells = [...root.querySelectorAll<HTMLElement>(".sl-cell")];
+    const syms = cells.map((cell) => cell.firstElementChild as HTMLElement);
+    const result = $("[data-result]");
+    const wonEl = $("[data-won]");
+    const multEl = $("[data-mult]");
+    const spinBtn = $<HTMLButtonElement>("[data-spin]");
+    const bet = initBet(root);
+    let busy = false;
+
+    const bump = (el: HTMLElement) => {
+      el.classList.remove("bump");
+      void el.offsetWidth; // restart the animation
+      el.classList.add("bump");
+    };
+
+    /** Shows a grid; cells with fall > 0 drop into place. */
+    function render(grid: number[], fall?: number[]) {
+      grid.forEach((id, i) => {
+        const sym = syms[i];
+        cells[i].classList.remove("win", "jackpot");
+        sym.className = `sl-sym s${id}`;
+        sym.textContent = glyphs[id];
+        if (!fall?.[i]) return;
+        sym.style.setProperty("--fall", String(fall[i]));
+        void sym.offsetWidth;
+        sym.classList.add("drop");
+      });
+    }
+
+    // Something to look at before the first spin: a grid that pays nothing.
+    let idle: number[];
+    do idle = Array.from({ length: SLOT_ROWS * SLOT_COLS }, slotSymbol);
+    while (slotWins(idle).length);
+    render(idle);
+
+    async function play(steps: SlotStep[], stake: number) {
+      const quick = reducedMotion();
+      let won = 0;
+      let jackpot = false;
+      for (const step of steps) {
+        render(step.grid, step.fall);
+        await sleep(quick ? 150 : 650);
+        if (!step.wins.length) break;
+
+        const gain = Math.round(stake * slotStepReturn(step));
+        won += gain;
+        const hit = step.wins.some((win) => win.jackpot);
+        jackpot ||= hit;
+        for (const win of step.wins) for (const i of win.cells) cells[i].classList.add(win.jackpot ? "jackpot" : "win");
+        multEl.textContent = step.mult > 1 ? `×${step.mult}` : "";
+        if (step.mult > 1) bump(multEl);
+        wonEl.textContent = fmt(won);
+        bump(wonEl);
+        say(result, hit ? `${t.jackpot} +${fmt(gain)}` : `+${fmt(gain)}`, "win");
+        if (hit) {
+          root.classList.add("is-jackpot");
+          burst($("[data-grid]"), 80);
+        }
+        // The jackpot gets a longer look before the line pops.
+        await sleep(quick ? 300 : hit ? 2200 : 750);
+        root.classList.remove("is-jackpot");
+
+        for (const win of step.wins) for (const i of win.cells) syms[i].classList.add("gone");
+        await sleep(quick ? 0 : 260);
+      }
+      return { won, jackpot };
+    }
+
+    spinBtn.addEventListener("click", async () => {
+      if (busy) return;
+      const stake = bet();
+      if (stake > getChips()) return say(result, t.noChips, "lose");
+      busy = true;
+      spinBtn.disabled = true;
+      addChips(-stake);
+      setRound(root, true);
+      wonEl.textContent = "0";
+      multEl.textContent = "";
+      say(result, "");
+
+      const steps = slotSpin();
+      const { won, jackpot } = await play(steps, stake);
+      if (!root.isConnected) return; // navigated away mid-spin
+
+      if (won) addChips(won);
+      if (won > stake) {
+        say(result, `${jackpot ? t.jackpot : t.prize} +${fmt(won)}`, "win");
+        // A big one (10x the stake or more) gets a bigger party.
+        burst($("[data-grid]"), won >= stake * 10 ? 60 : 24);
+      } else if (won) say(result, `${t.back} ${fmt(won)}`);
+      else say(result, t.nothing, "lose");
+
+      busy = false;
+      spinBtn.disabled = false;
+      setRound(root, false);
+    });
+  }
+
+  function initAll() {
+    document.querySelectorAll<HTMLElement>('[data-game="slots"]').forEach((root) => {
+      if (root.dataset.ready) return;
+      root.dataset.ready = "1";
+      init(root);
+    });
+  }
+
+  initAll();
+  document.addEventListener("astro:page-load", initAll);
+</script>

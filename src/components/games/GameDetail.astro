@@ -5,11 +5,14 @@
 // Astro's scoping attribute.
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Blackjack from "./Blackjack.astro";
+import Packs from "./Packs.astro";
+import GamesLogo from "./GamesLogo.astro";
 import Bubbles from "./Bubbles.astro";
 import Poker from "./Poker.astro";
 import Roulette from "./Roulette.astro";
+import Slots from "./Slots.astro";
 import { localize } from "../../i18n/site";
-import type { Game, Lang } from "../../games/registry";
+import { games, usesChips, type Game, type Lang } from "../../games/registry";
 
 interface Props {
   game: Game;
@@ -19,6 +22,9 @@ interface Props {
 const { game, lang } = Astro.props;
 const copy = game.copy[lang];
 const path = `/games/${game.id}/`;
+// Shows the chip balance, the refill offer and the play-money note.
+const casino = usesChips(game);
+const others = games.filter((other) => other.id !== game.id);
 
 const t =
   lang === "es"
@@ -26,29 +32,37 @@ const t =
         all: "Todos los juegos",
         chips: "Fichas",
         refill: "Recargar fichas",
+        broke: "Te has quedado sin fichas.",
         how: "Cómo se juega",
+        more: "Más juegos",
         playMoney: "Fichas ficticias: no hay dinero real, ni premios, ni forma de comprarlas. Solo para divertirse.",
       }
     : {
         all: "All games",
         chips: "Chips",
         refill: "Refill chips",
+        broke: "You're out of chips.",
         how: "How to play",
+        more: "More games",
         playMoney: "Play-money chips: no real money, no prizes and no way to buy them. Just for fun.",
       };
 ---
 
 <BaseLayout title={copy.title} description={copy.description} lang={lang} sideBarActiveItemID="games" alternates={{ en: path, es: `/es${path}` }}>
   <div class={`game tone-${game.tone}`} data-game-shell>
-    <a href={localize("/games/", lang)} class="game-back">← {t.all}</a>
+    <a href={localize("/games/", lang)} class="game-back">
+      <span aria-hidden="true">←</span>
+      <GamesLogo size="sm" />
+      <span class="sr-only">— {t.all}</span>
+    </a>
     <div class="game-head">
       <h1 class="game-title">{copy.name}</h1>
       {
-        game.casino && (
+        casino && (
           <div class="bank">
             <span class="bank-label">{t.chips}</span>
             <strong class="bank-value" data-chips>1,000</strong>
-            <button type="button" class="bank-refill" data-refill hidden>{t.refill}</button>
+            <button type="button" class="bank-refill" data-refill data-broke hidden>{t.refill}</button>
           </div>
         )
       }
@@ -59,12 +73,41 @@ const t =
     {game.id === "blackjack" && <Blackjack lang={lang} />}
     {game.id === "poker" && <Poker lang={lang} />}
     {game.id === "roulette" && <Roulette lang={lang} />}
+    {game.id === "slots" && <Slots lang={lang} />}
+    {game.id === "packs" && <Packs lang={lang} />}
+
+    {/* Right under the table, where the player is looking when the chips run out. */}
+    {
+      casino && (
+        <p class="game-broke" data-broke hidden>
+          {t.broke}
+          <button type="button" class="game-btn main" data-refill>{t.refill}</button>
+        </p>
+      )
+    }
 
     <section class="game-how">
       <h2>{t.how}</h2>
       <ul>{copy.how.map((line) => <li>{line}</li>)}</ul>
-      {game.casino && <p class="game-fine">{t.playMoney}</p>}
+      {casino && <p class="game-fine">{t.playMoney}</p>}
     </section>
+
+    {/* The way to the next game without going back through the hub. */}
+    <nav class="game-more" aria-label={t.more}>
+      <h2>{t.more}</h2>
+      <ul>
+        {
+          others.map((other) => (
+            <li>
+              <a href={localize(`/games/${other.id}/`, lang)} class={`tone-${other.tone}`}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={other.icon} />
+                {other.copy[lang].name}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
   </div>
 </BaseLayout>
 
@@ -80,13 +123,15 @@ const t =
   --surface-2: #1c1a2e;
   --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-.game.tone-cyan { --tone: var(--cyan); }
-.game.tone-magenta { --tone: var(--magenta); }
-.game.tone-purple { --tone: var(--purple); }
-.game.tone-amber { --tone: var(--amber); }
+.game.tone-cyan, .game .tone-cyan { --tone: var(--cyan); }
+.game.tone-magenta, .game .tone-magenta { --tone: var(--magenta); }
+.game.tone-purple, .game .tone-purple { --tone: var(--purple); }
+.game.tone-amber, .game .tone-amber { --tone: var(--amber); }
+.game.tone-green, .game .tone-green { --tone: var(--win); }
+.game.tone-rose, .game .tone-rose { --tone: var(--lose); }
 
-.game-back { font-size: 0.875rem; opacity: 0.7; }
-.game-back:hover, .game-back:focus-visible { opacity: 1; color: var(--tone); }
+.game-back { display: inline-flex; align-items: center; gap: 0.6rem; opacity: 0.8; transition: opacity 0.2s ease; }
+.game-back:hover, .game-back:focus-visible { opacity: 1; }
 .game-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem; margin-top: 0.75rem; }
 .game-title { font-size: clamp(1.6rem, 6vw, 2.25rem); font-weight: 700; margin: 0; color: var(--tone); }
 .game-intro { opacity: 0.7; margin: 0.4rem 0 1.5rem; max-width: 40rem; }
@@ -170,6 +215,8 @@ const t =
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45);
   animation: card-in 0.4s var(--spring) backwards;
 }
+.hand-label { text-align: center; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.12em; opacity: 0.7; margin: 0.5rem 0; }
+.hand-label b { margin-left: 0.4rem; font-size: 0.95rem; color: var(--tone); }
 .pcard b { font-size: 1.5rem; }
 .pcard span { font-size: 1.6rem; }
 .pcard.red { color: #e11d48; }
@@ -193,16 +240,38 @@ const t =
   to { transform: translate(var(--dx), calc(var(--dy) + 180px)) rotate(var(--rot)); opacity: 0; }
 }
 
+.game-broke { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.75rem; margin: 1rem 0 0; padding: 0.9rem 1rem; border-radius: 1rem; font-weight: 600; background: color-mix(in srgb, var(--amber) 12%, var(--surface)); border: 1px solid var(--amber); animation: result-pop 0.5s var(--spring); }
+
 /* ---------- how to play ---------- */
 .game-how { margin-top: 2.5rem; }
 .game-how h2 { font-size: 1.1rem; font-weight: 700; margin: 0 0 0.5rem; }
 .game-how ul { list-style: disc; padding-left: 1.25rem; opacity: 0.8; font-size: 0.925rem; display: grid; gap: 0.3rem; }
 .game-fine { margin-top: 1rem; font-size: 0.8rem; opacity: 0.55; }
 
+/* ---------- more games ---------- */
+.game-more { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--surface-2); }
+.game-more h2 { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; opacity: 0.55; margin: 0 0 0.7rem; }
+.game-more ul { display: flex; flex-wrap: wrap; gap: 0.6rem; list-style: none; padding: 0; margin: 0; }
+.game-more a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.95rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  background: var(--surface);
+  border: 1px solid var(--surface-2);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.game-more svg { width: 1.1rem; height: 1.1rem; color: var(--tone); }
+.game-more a:hover, .game-more a:focus-visible { border-color: var(--tone); box-shadow: 0 0 20px -6px var(--tone); }
+.game-more a:focus-visible { outline: 2px solid var(--tone); outline-offset: 3px; }
+
 /* Not the bubble game: there the motion is the game, and its bubbles are
    removed on animationend. */
 @media (prefers-reduced-motion: reduce) {
-  .game-table *, .bank *, .fx-bit { animation: none !important; }
+  .game-table *, .bank *, .game-broke, .fx-bit { animation: none !important; }
 }
 </style>
 
@@ -215,7 +284,9 @@ const t =
   function showBalance(shell: HTMLElement, to: number) {
     const el = shell.querySelector<HTMLElement>("[data-chips]");
     if (!el) return;
-    shell.querySelector<HTMLElement>("[data-refill]")!.hidden = to >= MIN_BET;
+    // Out of chips, and not in the middle of a round whose result is still to come.
+    const broke = to < MIN_BET && !shell.querySelector(".in-round");
+    shell.querySelectorAll<HTMLElement>("[data-broke]").forEach((node) => (node.hidden = !broke));
     const from = Number(el.dataset.v ?? to);
     el.dataset.v = String(to);
     if (from === to || reducedMotion()) {
@@ -241,7 +312,9 @@ const t =
       if (shell.dataset.ready) return;
       shell.dataset.ready = "1";
       showBalance(shell, getChips());
-      shell.querySelector("[data-refill]")?.addEventListener("click", () => setChips(START_CHIPS));
+      shell.querySelectorAll("[data-refill]").forEach((button) =>
+        button.addEventListener("click", () => setChips(START_CHIPS)),
+      );
     });
   }
 

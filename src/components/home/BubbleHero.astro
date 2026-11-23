@@ -1,6 +1,6 @@
 ---
 // Home hero: the Yongchivo "Y" floats in a bubble; clicking it pops open the
-// three main sections. CSS-only animation (no library), plus a few lines of JS
+// four main sections. CSS-only animation (no library), plus a few lines of JS
 // for the open/close state.
 //
 // - Without JS the links are simply shown (the closed state is only applied
@@ -21,32 +21,35 @@ const es = lang === "es";
 
 const t = es
   ? {
-      label: "Explorar: herramientas, proyectos y quién soy",
+      label: "Explorar: herramientas, proyectos, juegos y quién soy",
       nav: "Secciones principales",
       hint: "Toca la burbuja",
       items: [
         { label: "Herramientas", href: localize("/tools/", lang), tone: "cyan" },
         { label: "Proyectos", href: localize("/projects", lang), tone: "magenta" },
+        { label: "Juegos", href: localize("/games/", lang), tone: "amber" },
         { label: "¿Quién soy?", href: localize("/cv", lang), tone: "purple" },
       ],
     }
   : {
-      label: "Explore: tools, projects and who I am",
+      label: "Explore: tools, projects, games and who I am",
       nav: "Main sections",
       hint: "Tap the bubble",
       items: [
         { label: "Tools", href: "/tools/", tone: "cyan" },
         { label: "Projects", href: "/projects", tone: "magenta" },
+        { label: "Games", href: "/games/", tone: "amber" },
         { label: "Who am I?", href: "/cv", tone: "purple" },
       ],
     };
 
 // Where each satellite lands on wide screens (relative to the bubble's centre):
-// top, bottom-left, bottom-right.
+// the four corners — top-left, top-right, bottom-left, bottom-right.
 const spots = [
-  { x: "0px", y: "-12.5rem" },
-  { x: "-13rem", y: "7.5rem" },
-  { x: "13rem", y: "7.5rem" },
+  { x: "-13rem", y: "-7rem" },
+  { x: "13rem", y: "-7rem" },
+  { x: "-13rem", y: "7rem" },
+  { x: "13rem", y: "7rem" },
 ];
 ---
 
@@ -229,7 +232,7 @@ const spots = [
     opacity: 0;
   }
 
-  /* ---------- the three sections ---------- */
+  /* ---------- the four sections ---------- */
 
   .bubble-nav ul {
     list-style: none;
@@ -254,6 +257,7 @@ const spots = [
   .tone-cyan { --tone: var(--cyan); }
   .tone-magenta { --tone: var(--magenta); }
   .tone-purple { --tone: var(--purple); }
+  .tone-amber { --tone: #fbbf24; }
 
   .bubble-link:hover,
   .bubble-link:focus-visible {
