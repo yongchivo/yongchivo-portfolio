@@ -201,26 +201,26 @@ export const games: Game[] = [
     copy: {
       en: {
         name: "Cascade Slot",
-        desc: "A 5×5 grid. Seven or more matching symbols anywhere pay, pop and let new ones fall. Line up five Ys for the jackpot.",
+        desc: "Five reels that spin down and stop one by one. Line up three or more on the centre payline — five Ys there is the jackpot.",
         title: "Cascade Slot — Free Play-Money Slot Game | Yongchivo",
         description:
-          "A 5×5 cascade slot in your browser with play-money chips: 7 or more matching symbols anywhere pay, winners pop, new symbols fall, and a line of five Ys hits the ×500 jackpot. Free, no real money.",
+          "A five-reel cascade slot in your browser with play-money chips: 3 or more in a row on the centre payline pay, as do 7 or more anywhere; winners pop, reels respin, and five Ys on the line hit the ×500 jackpot. Free, no real money.",
         how: [
-          "Pick a bet and spin. Symbols don't need to line up: 7 or more of the same anywhere on the grid pay.",
-          "Winning symbols pop, the rest fall and new ones drop in — which can win again in the same spin. Each cascade raises the multiplier by one, up to ×5.",
-          "Five Yongchivo Ys in a straight line — across, down or diagonal — pay the top prize: ×500 your bet.",
+          "Pick a bet and spin. The reels spin down and stop one by one, left to right.",
+          "Two ways to win: 3 or more of the same symbol in a row on the marked centre line, starting from the left — or 7 or more of the same anywhere.",
+          "Winning symbols pop and their reels spin again, which can win again; each cascade raises the multiplier by one, up to ×5. Five Yongchivo Ys on the centre line pay the top prize: ×500 your bet.",
         ],
       },
       es: {
         name: "Slot de cascadas",
-        desc: "Cuadrícula de 5×5. Siete o más símbolos iguales en cualquier sitio dan premio, explotan y caen nuevos. Cinco Y en línea: premio máximo.",
+        desc: "Cinco rodillos que giran hacia abajo y se paran uno a uno. Haz línea de tres o más en la línea central: cinco Y ahí es el premio máximo.",
         title: "Slot de cascadas — Tragaperras gratis con fichas ficticias | Yongchivo",
         description:
-          "Un slot de cascadas 5×5 en tu navegador con fichas ficticias: 7 o más símbolos iguales en cualquier sitio dan premio, explotan, caen nuevos, y cinco Y en línea dan el premio máximo de ×500. Gratis, sin dinero real.",
+          "Un slot de cinco rodillos con cascadas en tu navegador y fichas ficticias: 3 o más iguales seguidos en la línea central dan premio, igual que 7 o más en cualquier sitio; los premios explotan, los rodillos vuelven a girar y cinco Y en la línea dan el premio máximo de ×500. Gratis, sin dinero real.",
         how: [
-          "Elige apuesta y gira. Los símbolos no tienen que estar en línea: 7 o más iguales en cualquier parte de la cuadrícula dan premio.",
-          "Los símbolos premiados explotan, el resto cae y entran nuevos, que pueden volver a premiar en la misma tirada. Cada cascada sube el multiplicador en uno, hasta ×5.",
-          "Cinco Y de Yongchivo en línea recta — horizontal, vertical o diagonal — dan el premio máximo: ×500 tu apuesta.",
+          "Elige apuesta y gira. Los rodillos giran hacia abajo y se van parando uno a uno, de izquierda a derecha.",
+          "Dos formas de ganar: 3 o más símbolos iguales seguidos en la línea central marcada, empezando por la izquierda — o 7 o más iguales en cualquier sitio.",
+          "Los símbolos premiados explotan y sus rodillos vuelven a girar, lo que puede premiar otra vez; cada cascada sube el multiplicador en uno, hasta ×5. Cinco Y de Yongchivo en la línea central dan el premio máximo: ×500 tu apuesta.",
         ],
       },
     },

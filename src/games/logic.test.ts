@@ -14,6 +14,7 @@ import {
   score5,
   SLOT_COLS,
   SLOT_JACKPOT,
+  SLOT_LINE,
   SLOT_ROWS,
   SLOT_TOP,
   slotDrop,
@@ -86,45 +87,53 @@ assert.equal(bestHand(h("2S 3S 9S KS JS AH AD")).name, "flush"); // flush over t
 // slot: SLOT_MIN (7) or more of a symbol anywhere pays
 const cells = SLOT_ROWS * SLOT_COLS;
 assert.equal(cells, 25);
-// Rows of 0 1 2 3 4, then symbol 5 dropped onto the first `count` cells.
-const gridWith = (count: number, symbol = 5) => Array.from({ length: cells }, (_, i) => (i < count ? symbol : i % 5));
-assert.deepEqual(slotWins(gridWith(6)), []);
-assert.deepEqual(slotWins(gridWith(7)), [{ symbol: 5, cells: [0, 1, 2, 3, 4, 5, 6], pays: 0.5 }]);
-assert.equal(slotWins(gridWith(9))[0].pays, 1.5);
-assert.equal(slotWins(gridWith(11))[0].pays, 8);
+assert.deepEqual(SLOT_LINE, [10, 11, 12, 13, 14]); // the middle row
+// A grid with no win: every row reads 0 1 2 3 4. Then `symbol` goes on `where`.
+const gridWith = (where: number[], symbol = 5) => Array.from({ length: cells }, (_, i) => (where.includes(i) ? symbol : i % 5));
+const first = (count: number) => Array.from({ length: count }, (_, i) => i); // top rows, off the payline
+assert.deepEqual(slotWins(gridWith([])), []);
+assert.deepEqual(slotWins(gridWith(first(6))), []);
+assert.deepEqual(slotWins(gridWith(first(7))), [{ symbol: 5, cells: first(7), pays: 0.5 }]);
+assert.equal(slotWins(gridWith(first(9)))[0].pays, 1.5);
+assert.equal(slotWins(gridWith([...first(10), 24]))[0].pays, 8); // 11 of them
 
-// slot: a straight line of five Ys is the jackpot, whatever else is on the grid
-const withY = (line: number[]) => Array.from({ length: cells }, (_, i) => (line.includes(i) ? SLOT_TOP : i % 5));
-const jackpot = (line: number[]) => [{ symbol: SLOT_TOP, cells: line, pays: SLOT_JACKPOT, jackpot: true }];
-assert.deepEqual(slotWins(withY([5, 6, 7, 8, 9])), jackpot([5, 6, 7, 8, 9])); // row
-assert.deepEqual(slotWins(withY([2, 7, 12, 17, 22])), jackpot([2, 7, 12, 17, 22])); // column
-assert.deepEqual(slotWins(withY([0, 6, 12, 18, 24])), jackpot([0, 6, 12, 18, 24])); // diagonal
-assert.deepEqual(slotWins(withY([4, 8, 12, 16, 20])), jackpot([4, 8, 12, 16, 20])); // other diagonal
-assert.deepEqual(slotWins(withY([5, 6, 7, 8, 14])), []); // five Ys, but not in a line
-// The jackpot is flat: the cascade multiplier only applies to the counted wins.
-assert.equal(slotStepReturn({ grid: [], fall: [], mult: 3, wins: [...jackpot([0, 1, 2, 3, 4]), { symbol: 5, cells: [], pays: 8 }] }), SLOT_JACKPOT + 24);
+// slot: three or more in a row on the payline, from the left
+const lineWin = (run: number, symbol: number, pays: number) => ({ symbol, cells: SLOT_LINE.slice(0, run), pays, line: true });
+assert.deepEqual(slotWins(gridWith([10, 11])), []); // two is not a line
+assert.deepEqual(slotWins(gridWith([10, 11, 12])), [lineWin(3, 5, 3)]);
+assert.deepEqual(slotWins(gridWith([10, 11, 12, 13])), [lineWin(4, 5, 10)]);
+assert.deepEqual(slotWins(gridWith([10, 11, 12, 13, 14])), [lineWin(5, 5, 50)]);
+assert.deepEqual(slotWins(gridWith([11, 12, 13, 14])), []); // must start at the left
+assert.deepEqual(slotWins(gridWith([10, 11, 13, 14])), []); // must be unbroken
+assert.deepEqual(slotWins(gridWith([5, 6, 7, 8, 9])), []); // a full row, but not the payline
 
-// slot: removed cells let the column fall and refill from the top
-const before = Array.from({ length: cells }, (_, i) => i % 5); // every column is one symbol
-const dropped = slotDrop(before, [20, 15], () => 6); // bottom two cells of column 0
-assert.deepEqual([0, 5, 10, 15, 20].map((i) => dropped.grid[i]), [6, 6, 0, 0, 0]);
-assert.deepEqual([0, 5, 10, 15, 20].map((i) => dropped.fall[i]), [2, 2, 2, 2, 2]);
-assert.deepEqual([1, 6, 11, 16, 21].map((i) => dropped.fall[i]), [0, 0, 0, 0, 0]); // untouched column
+// slot: five Ys on the payline is the jackpot, and it is flat
+assert.deepEqual(slotWins(gridWith(SLOT_LINE, SLOT_TOP)), [{ ...lineWin(5, SLOT_TOP, SLOT_JACKPOT), jackpot: true }]);
+assert.equal(slotWins(gridWith([10, 11, 12, 13], SLOT_TOP))[0].jackpot, undefined); // four Ys pay, but are no jackpot
+assert.equal(SLOT_JACKPOT, 500);
+const jackpotStep = { grid: [], mult: 3, wins: [...slotWins(gridWith(SLOT_LINE, SLOT_TOP)), { symbol: 5, cells: [], pays: 8 }] };
+assert.equal(slotStepReturn(jackpotStep), SLOT_JACKPOT + 24); // the multiplier only touches the other win
+
+// slot: removed cells let the reel settle and refill from the top
+const before = Array.from({ length: cells }, (_, i) => Math.floor(i / 5)); // every row is one symbol: 0 on top, 4 at the bottom
+const dropped = slotDrop(before, [20, 10], () => 6); // column 0 loses its bottom cell and its middle one
+assert.deepEqual([0, 5, 10, 15, 20].map((i) => dropped[i]), [6, 6, 0, 1, 3]);
+assert.deepEqual([1, 6, 11, 16, 21].map((i) => dropped[i]), [0, 1, 2, 3, 4]); // untouched reel
 
 // slot: a spin ends on a grid with no win, and the multiplier climbs per cascade
 let chain = 0;
-const spin = slotSpin(() => (chain++ < cells ? 5 : chain % 5)); // opens full of 5s, refills with junk
+// Opens full of 5s; the refill cycles all seven symbols, so nothing lines up or reaches seven.
+const spin = slotSpin(() => (chain++ < cells ? 5 : chain % 7));
 assert.equal(spin.length, 2);
 assert.deepEqual(spin.map((step) => step.mult), [1, 2]);
 assert.equal(spin.at(-1)!.wins.length, 0);
-assert.equal(slotReturn(spin), 8);
+assert.equal(slotReturn(spin), 8 + 50); // 25 of them anywhere, plus five on the payline
 
-// slot: the paytable keeps its long-run return in a sane band (tuned to ~96%;
-// the band is wide because the rare jackpot swings a short run)
+// slot: the paytable keeps its long-run return in a sane band (tuned to ~94%)
 let paid = 0;
 const SPINS = 100000;
 for (let i = 0; i < SPINS; i++) paid += slotReturn(slotSpin());
-assert.ok(paid / SPINS > 0.8 && paid / SPINS < 1.12, `slot returns ${(paid / SPINS).toFixed(3)} per chip`);
+assert.ok(paid / SPINS > 0.82 && paid / SPINS < 1.06, `slot returns ${(paid / SPINS).toFixed(3)} per chip`);
 
 // roulette
 assert.equal(WHEEL.length, 37);

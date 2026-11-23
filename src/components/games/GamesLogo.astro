@@ -1,7 +1,7 @@
 ---
-// The section's lockup, following "Yongchivo Tools": the Y, then the brand in
-// white and the product word in its own colour (amber for Games). The Y sits
-// in a bubble ringed like a casino chip. Not translated — it's a name.
+// The section's lockup: the Y in a bubble ringed like a casino chip, then
+// "YCGames" — YC (Yongchivo) in white, Games in the section's amber. Not
+// translated — it's a name.
 import YMark from "../brand/YMark.astro";
 
 interface Props {
@@ -13,7 +13,7 @@ const { size = "lg" } = Astro.props;
 
 <span class={`glogo glogo-${size}`}>
   <span class="glogo-mark" aria-hidden="true"><YMark strokeWidth={2.8} /></span>
-  <span class="glogo-word">Yongchivo <b>Games</b></span>
+  <span class="glogo-word">YC<b>Games</b></span>
 </span>
 
 <style>

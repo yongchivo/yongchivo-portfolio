@@ -4,6 +4,7 @@
 // game (or category) appears here without this file being touched.
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import GamesLogo from "./GamesLogo.astro";
+import GamesScene from "./GamesScene.astro";
 import { localize } from "../../i18n/site";
 import { categories, games, type Lang } from "../../games/registry";
 
@@ -15,7 +16,7 @@ const { lang } = Astro.props;
 const t =
   lang === "es"
     ? {
-        title: "Yongchivo Games — Blackjack, Póker, Ruleta, Slot y Sobres gratis",
+        title: "YCGames — Blackjack, Póker, Ruleta, Slot y Sobres gratis | Yongchivo",
         description:
           "Juegos rápidos para el navegador: explota burbujas, blackjack, Texas Hold'em, ruleta, slot y sobres de cartas coleccionables con fichas ficticias. Gratis, sin registro y sin dinero real.",
         intro: "Partidas rápidas en el navegador. Gratis, sin registro y sin dinero real.",
@@ -23,7 +24,7 @@ const t =
         play: "Jugar",
       }
     : {
-        title: "Yongchivo Games — Free Blackjack, Poker, Roulette & Slots",
+        title: "YCGames — Free Blackjack, Poker, Roulette & Slots | Yongchivo",
         description:
           "Quick browser games: bubble pop, blackjack, Texas hold'em, roulette, a cascade slot and collectible card packs with play-money chips. Free, no sign-up and no real money.",
         intro: "Quick games in your browser. Free, no sign-up and no real money.",
@@ -38,8 +39,12 @@ const sections = categories
 
 <BaseLayout title={t.title} description={t.description} lang={lang} sideBarActiveItemID="games" alternates={{ en: "/games/", es: "/es/games/" }}>
   <div class="games">
-    <h1 class="games-brand"><GamesLogo /></h1>
-    <p class="games-intro">{t.intro}</p>
+    {/* Title over the section's landscape. */}
+    <header class="games-hero">
+      <GamesScene />
+      <h1 class="games-brand"><GamesLogo /></h1>
+      <p class="games-intro">{t.intro}</p>
+    </header>
 
     <nav aria-label={t.menu}>
       <ul class="games-menu">
@@ -100,8 +105,22 @@ const sections = categories
 .tone-green { --tone: #34d399; }
 .tone-rose { --tone: #fb7185; }
 
+.games-hero {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  align-content: center;
+  min-height: clamp(11rem, 34vw, 15rem);
+  margin-bottom: 1.5rem;
+  padding: 1.5rem 1rem;
+  border-radius: 1.25rem;
+  border: 1px solid var(--surface-2);
+}
+/* A veil over the landscape so the title and intro stay readable. */
+.games-hero::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 45%, rgba(11, 10, 20, 0.72), rgba(11, 10, 20, 0.3) 75%); }
+.games-brand, .games-intro { position: relative; z-index: 1; text-shadow: 0 2px 12px #0b0a14; }
 .games-brand { text-align: center; margin: 0; }
-.games-intro { text-align: center; opacity: 0.7; margin: 0.9rem auto 1.75rem; max-width: 32rem; }
+.games-intro { text-align: center; opacity: 0.9; margin: 0.9rem auto 0; max-width: 32rem; }
 
 /* ---------- category menu ---------- */
 .games-menu { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem; list-style: none; padding: 0; margin: 0 0 2.75rem; }

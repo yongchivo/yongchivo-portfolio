@@ -1,10 +1,13 @@
 ---
-// Cascade slot on a 5x5 grid. Seven or more of a symbol anywhere pays, the
-// winners pop, the rest falls and new symbols drop in — with a multiplier that
-// climbs on every cascade. A straight line of five Ys is the jackpot. The whole
-// spin is decided up front by slotSpin(); the script only plays it back.
+// Slot machine: five reels of five symbols that spin downwards and stop one
+// after another, over a landscape backdrop. Two ways to win: three or more of
+// a symbol in a row on the marked centre payline (five Ys there is the
+// jackpot), or seven or more of a symbol anywhere. Winners pop and their reels
+// spin again, with a multiplier that climbs on every cascade. The whole spin
+// is decided up front by slotSpin(); the script only plays it back.
 import ChipRow from "./ChipRow.astro";
-import { SLOT_COLS, SLOT_JACKPOT, SLOT_MAX_MULT, SLOT_MIN, SLOT_ROWS, SLOT_SYMBOLS } from "../../games/logic";
+import GamesScene from "./GamesScene.astro";
+import { SLOT_COLS, SLOT_JACKPOT, SLOT_LINE_MIN, SLOT_MAX_MULT, SLOT_MIN, SLOT_SYMBOLS } from "../../games/logic";
 import type { Lang } from "../../games/registry";
 
 interface Props {
@@ -18,51 +21,60 @@ const t =
         bet: "Apuesta",
         spin: "Girar",
         won: "Premio",
-        ready: `${SLOT_MIN} o más símbolos iguales en cualquier sitio dan premio`,
+        payline: "Línea",
+        ready: `${SLOT_LINE_MIN} iguales seguidos en la línea central, o ${SLOT_MIN} en cualquier sitio`,
         nothing: "Nada esta vez",
         back: "Recuperas",
         prize: "¡Premio!",
+        line: "¡Línea!",
         jackpot: "¡PREMIO MÁXIMO!",
-        line: "Línea de 5",
-        lineHint: "horizontal, vertical o diagonal",
         noChips: "No tienes fichas suficientes",
         pays: "Tabla de pagos (por ficha apostada)",
-        cascade: `Cada cascada sube el multiplicador, hasta ×${SLOT_MAX_MULT}.`,
+        onLine: "En la línea central, desde la izquierda",
+        anywhere: "En cualquier sitio",
+        top: "5 en la línea central",
+        cascade: `Los premios explotan y sus rodillos vuelven a girar: cada cascada sube el multiplicador, hasta ×${SLOT_MAX_MULT}.`,
       }
     : {
         bet: "Bet",
         spin: "Spin",
         won: "Win",
-        ready: `${SLOT_MIN} or more matching symbols anywhere pay`,
+        payline: "Line",
+        ready: `${SLOT_LINE_MIN} in a row on the centre line, or ${SLOT_MIN} anywhere`,
         nothing: "Nothing this time",
         back: "You get back",
         prize: "Winner!",
+        line: "Line!",
         jackpot: "JACKPOT!",
-        line: "Line of 5",
-        lineHint: "across, down or diagonal",
         noChips: "Not enough chips",
         pays: "Paytable (per chip staked)",
-        cascade: `Each cascade raises the multiplier, up to ×${SLOT_MAX_MULT}.`,
+        onLine: "On the centre line, from the left",
+        anywhere: "Anywhere",
+        top: "5 on the centre line",
+        cascade: `Wins pop and their reels spin again: each cascade raises the multiplier, up to ×${SLOT_MAX_MULT}.`,
       };
 
-// One glyph per symbol id, commonest first. The top symbol has none: it is the
-// Yongchivo Y, drawn by CSS from the logo's own path.
-const glyphs = ["●", "◆", "▲", "■", "★", "♥", ""];
-const tiers = [SLOT_MIN, SLOT_MIN + 2, SLOT_MIN + 4];
-const cells = Array.from({ length: SLOT_ROWS * SLOT_COLS }, (_, i) => i);
+const reels = Array.from({ length: SLOT_COLS }, (_, col) => col);
+const counts = [SLOT_MIN, SLOT_MIN + 2, SLOT_MIN + 4];
+const runs = [SLOT_LINE_MIN, SLOT_LINE_MIN + 1, SLOT_LINE_MIN + 2];
 // Best symbols first in the paytable.
-const paytable = SLOT_SYMBOLS.map((symbol, id) => ({ id, pays: symbol.pays })).reverse();
+const paytable = SLOT_SYMBOLS.map((symbol, id) => ({ id, ...symbol })).reverse();
 ---
 
-<div class="game-table sl" data-game="slots" data-t={JSON.stringify(t)} data-glyphs={glyphs.join(",")}>
+<div class="game-table sl" data-game="slots" data-t={JSON.stringify(t)}>
+  <GamesScene />
+
   <div class="sl-top">
     <span>{t.won} <b data-won>0</b></span>
     <span class="sl-mult" data-mult aria-hidden="true"></span>
   </div>
 
   {/* Decorative for screen readers: the result line below says what happened. */}
-  <div class="sl-grid" data-grid aria-hidden="true" style={`--cols:${SLOT_COLS}`}>
-    {cells.map((i) => <span class="sl-cell" style={`--col:${i % SLOT_COLS}`}><i class="sl-sym"></i></span>)}
+  <div class="sl-machine" data-machine aria-hidden="true">
+    <div class="sl-reels">
+      {reels.map(() => <div class="sl-reel"><div class="sl-strip" data-strip></div></div>)}
+    </div>
+    <div class="sl-payline"><span>{t.payline}</span></div>
   </div>
 
   <p class="result" data-result aria-live="polite">{t.ready}</p>
@@ -75,118 +87,171 @@ const paytable = SLOT_SYMBOLS.map((symbol, id) => ({ id, pays: symbol.pays })).r
   <section class="sl-pays">
     <h2>{t.pays}</h2>
     <p class="sl-jackpot">
-      <span class="sl-jackpot-line" aria-hidden="true">{[0, 1, 2, 3, 4].map(() => <i class="sl-sym s6"></i>)}</span>
-      <span>{t.line} <small>({t.lineHint})</small></span>
+      <span class="sl-jackpot-line" aria-hidden="true">{reels.map(() => <i class="sl-sym s6"></i>)}</span>
+      <span>{t.top}</span>
       <b>×{SLOT_JACKPOT}</b>
     </p>
-    <ul>
-      {
-        paytable.map(({ id, pays }) => (
-          <li>
-            <i class={`sl-sym s${id}`} aria-hidden="true">{glyphs[id]}</i>
-            {tiers.map((count, i) => <span>{count}+ <b>×{pays[i]}</b></span>)}
-          </li>
-        ))
-      }
-    </ul>
+    <table>
+      <thead>
+        <tr>
+          <td></td>
+          <th colspan="3" scope="colgroup">{t.onLine}</th>
+          <th colspan="3" scope="colgroup">{t.anywhere}</th>
+        </tr>
+        <tr>
+          <td></td>
+          {runs.map((n) => <th scope="col">{n}</th>)}
+          {counts.map((n) => <th scope="col">{n}+</th>)}
+        </tr>
+      </thead>
+      <tbody>
+        {
+          paytable.map(({ id, pays, line }) => (
+            <tr>
+              <td><i class={`sl-sym s${id}`} aria-hidden="true"></i></td>
+              {line.map((x) => <td class="on-line">×{x}</td>)}
+              {pays.map((x) => <td>×{x}</td>)}
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
     <p>{t.cascade}</p>
   </section>
 </div>
 
 <style is:global>
-.sl-top { display: flex; align-items: center; justify-content: space-between; max-width: 22rem; margin: 0 auto 0.6rem; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; }
+/* The landscape sits behind everything; a veil keeps the text readable. */
+.sl { overflow: hidden; background: #0b0a14; }
+.sl::before { content: ""; position: absolute; inset: 0; z-index: 1; border-radius: inherit; background: linear-gradient(to bottom, rgba(11, 10, 20, 0.35), rgba(11, 10, 20, 0.2) 35%, rgba(11, 10, 20, 0.86) 72%); pointer-events: none; }
+.sl > :not(.games-scene) { position: relative; z-index: 2; }
+
+.sl-top { display: flex; align-items: center; justify-content: space-between; max-width: 21rem; margin: 0 auto 0.6rem; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; text-shadow: 0 1px 6px #0b0a14; }
 .sl-top b { margin-left: 0.4rem; font-size: 1.2rem; font-variant-numeric: tabular-nums; color: var(--amber); display: inline-block; }
 .sl-top b.bump, .sl-mult.bump { animation: sl-bump 0.4s var(--spring); }
 .sl-mult { font-size: 1.3rem; font-weight: 800; color: var(--tone); min-height: 1.6rem; }
 @keyframes sl-bump { 40% { transform: scale(1.5); } }
 
-.sl-grid {
-  display: grid;
-  grid-template-columns: repeat(var(--cols), 1fr);
-  gap: 0.35rem;
-  max-width: 22rem;
+/* ---------- the machine ---------- */
+.sl-machine {
+  max-width: 21rem;
   margin: 0 auto;
-  padding: 0.5rem;
-  border-radius: 1rem;
-  background: #0b0a14;
-  border: 1px solid var(--surface-2);
-  box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.6);
-  overflow: hidden; /* symbols fall in from above the frame */
+  padding: 0.55rem;
+  border-radius: 1.1rem;
+  background: linear-gradient(160deg, #2a2440, #131120);
+  border: 2px solid var(--amber);
+  box-shadow: 0 0 34px -8px var(--amber), 0 18px 40px -18px #000, inset 0 0 0 1px rgba(255, 255, 255, 0.08);
 }
-.sl-cell { border-radius: 30%; }
+.sl-reels { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.3rem; }
+/* A reel is a window five symbols tall onto a longer strip. */
+.sl-reel {
+  aspect-ratio: 1 / 5;
+  overflow: hidden;
+  border-radius: 0.55rem;
+  background: linear-gradient(to bottom, #05040a, #17142a 18%, #17142a 82%, #05040a);
+  box-shadow: inset 0 10px 14px -8px #000, inset 0 -10px 14px -8px #000;
+}
+.sl-cell { display: block; aspect-ratio: 1; padding: 9%; border-radius: 9999px; }
 
+/* The payline: a band across the middle row, flagged at both ends. */
+.sl-payline {
+  position: absolute;
+  z-index: 3;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: calc((100% - 1.1rem) / 5);
+  translate: 0 -50%;
+  border-block: 2px solid color-mix(in srgb, var(--amber) 80%, transparent);
+  background: color-mix(in srgb, var(--amber) 9%, transparent);
+  box-shadow: 0 0 16px -4px var(--amber);
+  pointer-events: none;
+}
+.sl-payline::before, .sl-payline::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  translate: 0 -50%;
+  border: 0.5rem solid transparent;
+}
+.sl-payline::before { left: -0.55rem; border-left-color: var(--amber); border-right: 0; }
+.sl-payline::after { right: -0.55rem; border-right-color: var(--amber); border-left: 0; }
+.sl-payline span { position: absolute; left: 50%; top: -0.62rem; translate: -50% 0; padding: 0 0.4rem; border-radius: 9999px; font-size: 0.55rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.14em; color: #0b0a14; background: var(--amber); }
+.sl.is-jackpot .sl-machine { animation: sl-jackpot 0.5s ease-in-out 4 alternate; }
+@keyframes sl-jackpot { to { box-shadow: 0 0 70px 8px var(--amber); } }
+
+/* ---------- symbols: glossy bubbles with a line icon ---------- */
 .sl-sym {
   --c: #94a3b8;
-  display: grid;
-  place-items: center;
+  --icon: none;
+  display: block;
   width: 100%;
   aspect-ratio: 1;
-  border-radius: 30%;
-  font-style: normal;
-  font-weight: 800;
-  font-size: clamp(1rem, 5vw, 1.4rem);
-  line-height: 1;
-  color: #0b0a14;
+  border-radius: 9999px;
   background:
-    radial-gradient(circle at 30% 24%, rgba(255, 255, 255, 0.65), rgba(255, 255, 255, 0) 34%),
-    var(--c);
-  box-shadow: inset 0 -5px 10px rgba(0, 0, 0, 0.3);
+    var(--icon) center / 56% no-repeat,
+    radial-gradient(circle at 32% 24%, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0) 30%),
+    radial-gradient(circle at 62% 74%, color-mix(in srgb, var(--c) 60%, #000), var(--c) 62%);
+  box-shadow: inset 0 -4px 8px rgba(0, 0, 0, 0.35), 0 0 10px -3px var(--c);
 }
-.sl-sym.s0 { --c: #22d3ee; }
-.sl-sym.s1 { --c: #d946ef; }
-.sl-sym.s2 { --c: #a855f7; }
-.sl-sym.s3 { --c: #34d399; }
-.sl-sym.s4 { --c: #fbbf24; }
-.sl-sym.s5 { --c: #fb7185; }
-/* The Yongchivo Y — same path as the logo (public/favicon.svg) — on the brand
-   gradient: the rarest and best-paying symbol. */
+/* Signal, key, lock, bug, bolt, shield — and the Yongchivo Y on top. */
+.sl-sym.s0 { --c: #22d3ee; --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230b0a14' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 10a12 12 0 0 1 16 0M7.5 13.5a7 7 0 0 1 9 0'/%3E%3Ccircle cx='12' cy='17.5' r='1.3' fill='%230b0a14'/%3E%3C/svg%3E"); }
+.sl-sym.s1 { --c: #d946ef; --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230b0a14' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='8' cy='15' r='4'/%3E%3Cpath d='M11 12l9-9M17 6l3 3M15 8l2 2'/%3E%3C/svg%3E"); }
+.sl-sym.s2 { --c: #a855f7; --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230b0a14' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='5' y='11' width='14' height='10' rx='2'/%3E%3Cpath d='M8 11V7a4 4 0 0 1 8 0v4'/%3E%3C/svg%3E"); }
+.sl-sym.s3 { --c: #34d399; --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230b0a14' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cellipse cx='12' cy='14' rx='4' ry='5'/%3E%3Cpath d='M12 9V6M9.5 6.5l-2-2M14.5 6.5l2-2M8 13H4.5M19.5 13H16M8.5 17l-3 2M15.5 17l3 2'/%3E%3C/svg%3E"); }
+.sl-sym.s4 { --c: #fbbf24; --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230b0a14' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M13 2L5 14h6l-1 8 8-12h-6z'/%3E%3C/svg%3E"); }
+.sl-sym.s5 { --c: #fb7185; --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230b0a14' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6l7-3z'/%3E%3Cpath d='M9 12l2 2 4-4'/%3E%3C/svg%3E"); }
+/* Same path as the logo (public/favicon.svg), on the brand gradient. */
 .sl-sym.s6 {
   background:
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='4 4.5 24 24' fill='none' stroke='%23f4f2fb' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 9l8 9 8-9M16 18v6'/%3E%3C/svg%3E") center / 62% no-repeat,
-    radial-gradient(circle at 30% 24%, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0) 34%),
+    radial-gradient(circle at 32% 24%, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0) 30%),
     linear-gradient(160deg, #d946ef, #a855f7 55%, #22d3ee);
-  box-shadow: inset 0 -5px 10px rgba(0, 0, 0, 0.3), 0 0 12px -2px #a855f7;
+  box-shadow: inset 0 -4px 8px rgba(0, 0, 0, 0.3), 0 0 14px -1px #a855f7;
 }
 
-/* Falls --fall rows into place; columns land one after another. */
-.sl-sym.drop {
-  animation: sl-drop calc(0.26s + var(--fall) * 0.04s) cubic-bezier(0.3, 1.25, 0.6, 1) backwards;
-  animation-delay: calc(var(--col) * 45ms);
-}
-.sl-cell.win { box-shadow: 0 0 0 2px #f4f2fb, 0 0 18px var(--amber); }
-.sl-cell.jackpot { box-shadow: 0 0 0 3px var(--amber), 0 0 28px 4px var(--amber); }
-.sl.is-jackpot .sl-grid { animation: sl-jackpot 0.5s ease-in-out 4 alternate; }
-@keyframes sl-jackpot { to { box-shadow: 0 0 60px 6px var(--amber); border-color: var(--amber); } }
+.sl-cell.win { box-shadow: inset 0 0 0 2px #f4f2fb, 0 0 14px var(--amber); }
 .sl-cell.win .sl-sym { animation: sl-win 0.35s ease-in-out infinite alternate; }
-.sl-cell .sl-sym.gone { animation: sl-gone 0.25s ease-out forwards; }
-@keyframes sl-drop { from { transform: translateY(calc(var(--fall) * -112%)); } }
-@keyframes sl-win { to { transform: scale(1.14); filter: brightness(1.25); } }
+.sl-cell.jackpot { box-shadow: inset 0 0 0 3px var(--amber), 0 0 22px 3px var(--amber); }
+.sl-cell.gone .sl-sym { animation: sl-gone 0.25s ease-out forwards; }
+@keyframes sl-win { to { transform: scale(1.16); filter: brightness(1.25); } }
 @keyframes sl-gone { to { transform: scale(1.7); opacity: 0; } }
 
-.sl-pays { max-width: 22rem; margin: 1.5rem auto 0; font-size: 0.8rem; }
-.sl-jackpot { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 0.6rem; margin: 0 0 0.4rem !important; padding: 0.45rem 0.6rem; border-radius: 0.6rem; text-align: left !important; opacity: 1 !important; background: color-mix(in srgb, var(--amber) 12%, transparent); border: 1px solid var(--amber); }
-.sl-jackpot-line { display: grid; grid-template-columns: repeat(5, 1.05rem); gap: 2px; }
-.sl-jackpot small { opacity: 0.65; }
-.sl-jackpot b { font-size: 1rem; }
+/* ---------- paytable ---------- */
+.sl-pays { max-width: 24rem; margin: 1.5rem auto 0; padding: 0.8rem; border-radius: 0.9rem; font-size: 0.78rem; background: rgba(11, 10, 20, 0.78); border: 1px solid var(--surface-2); }
 .sl-pays h2 { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.12em; opacity: 0.6; margin: 0 0 0.5rem; text-align: center; }
-.sl-pays ul { display: grid; gap: 0.3rem; list-style: none; padding: 0; margin: 0; }
-.sl-pays li { display: grid; grid-template-columns: 1.7rem repeat(3, 1fr); align-items: center; gap: 0.5rem; padding: 0.25rem 0.5rem; border-radius: 0.5rem; background: rgba(232, 230, 242, 0.05); }
-.sl-pays .sl-sym { font-size: 0.8rem; }
-.sl-pays span { opacity: 0.8; }
-.sl-pays b { color: var(--amber); }
-.sl-pays p { margin: 0.6rem 0 0; text-align: center; opacity: 0.65; }
+.sl-pays > p:last-child { margin: 0.6rem 0 0; text-align: center; opacity: 0.65; }
+.sl-jackpot { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 0.6rem; margin: 0 0 0.5rem; padding: 0.45rem 0.6rem; border-radius: 0.6rem; background: color-mix(in srgb, var(--amber) 12%, transparent); border: 1px solid var(--amber); }
+.sl-jackpot-line { display: grid; grid-template-columns: repeat(5, 1.05rem); gap: 2px; }
+.sl-jackpot b { font-size: 1rem; color: var(--amber); }
+.sl-pays table { width: 100%; border-collapse: separate; border-spacing: 0 0.25rem; text-align: center; font-variant-numeric: tabular-nums; }
+.sl-pays th { font-size: 0.62rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; opacity: 0.6; padding: 0 0.2rem; }
+.sl-pays tbody td { padding: 0.25rem 0.2rem; background: rgba(232, 230, 242, 0.05); color: var(--amber); font-weight: 700; }
+.sl-pays tbody td.on-line { background: color-mix(in srgb, var(--amber) 10%, transparent); }
+.sl-pays tbody td:first-child { width: 1.9rem; border-radius: 0.5rem 0 0 0.5rem; }
+.sl-pays tbody td:last-child { border-radius: 0 0.5rem 0.5rem 0; }
+.sl-pays td .sl-sym { width: 1.5rem; margin: 0 auto; }
 </style>
 
 <script>
   import { slotSpin, slotStepReturn, slotSymbol, slotWins, SLOT_COLS, SLOT_ROWS, type SlotStep } from "../../games/logic";
   import { addChips, burst, fmt, getChips, initBet, reducedMotion, say, setRound, sleep } from "../../games/ui";
 
+  const column = (grid: number[], col: number) => Array.from({ length: SLOT_ROWS }, (_, row) => grid[row * SLOT_COLS + col]);
+
+  function cellEl(id: number) {
+    const cell = document.createElement("span");
+    cell.className = "sl-cell";
+    const sym = document.createElement("i");
+    sym.className = `sl-sym s${id}`;
+    cell.append(sym);
+    return cell;
+  }
+
   function init(root: HTMLElement) {
     const t = JSON.parse(root.dataset.t!);
-    const glyphs = root.dataset.glyphs!.split(",");
     const $ = <T extends HTMLElement>(sel: string) => root.querySelector<T>(sel)!;
-    const cells = [...root.querySelectorAll<HTMLElement>(".sl-cell")];
-    const syms = cells.map((cell) => cell.firstElementChild as HTMLElement);
+    const strips = [...root.querySelectorAll<HTMLElement>("[data-strip]")];
     const result = $("[data-result]");
     const wonEl = $("[data-won]");
     const multEl = $("[data-mult]");
@@ -200,55 +265,83 @@ const paytable = SLOT_SYMBOLS.map((symbol, id) => ({ id, pays: symbol.pays })).r
       el.classList.add("bump");
     };
 
-    /** Shows a grid; cells with fall > 0 drop into place. */
-    function render(grid: number[], fall?: number[]) {
-      grid.forEach((id, i) => {
-        const sym = syms[i];
-        cells[i].classList.remove("win", "jackpot");
-        sym.className = `sl-sym s${id}`;
-        sym.textContent = glyphs[id];
-        if (!fall?.[i]) return;
-        sym.style.setProperty("--fall", String(fall[i]));
-        void sym.offsetWidth;
-        sym.classList.add("drop");
-      });
+    /** The cell showing grid index `i`. Only valid while no reel is spinning. */
+    const cellAt = (i: number) => strips[i % SLOT_COLS].children[Math.floor(i / SLOT_COLS)];
+
+    /**
+     * Spins one reel downwards onto `next` (its five symbols, top to bottom).
+     * The strip gets the new symbols on top, `extra` passing symbols in
+     * between and what was showing at the bottom, then slides down to rest.
+     */
+    async function spinReel(col: number, next: number[], extra: number, duration: number) {
+      const strip = strips[col];
+      const old = [...strip.children];
+      if (reducedMotion()) {
+        strip.replaceChildren(...next.map(cellEl));
+        return;
+      }
+      const passing = Array.from({ length: extra }, () => cellEl(slotSymbol()));
+      strip.prepend(...next.map(cellEl), ...passing);
+      const hidden = ((strip.children.length - SLOT_ROWS) / strip.children.length) * 100;
+      const spin = strip.animate(
+        [
+          { transform: `translateY(-${hidden}%)`, filter: "blur(2.5px)" },
+          { filter: "blur(2.5px)", offset: 0.7 },
+          { transform: "translateY(0)", filter: "blur(0)" },
+        ],
+        // Decelerates and overshoots a touch, like a reel settling.
+        { duration, easing: "cubic-bezier(0.18, 0.8, 0.3, 1.07)" },
+      );
+      // The timer is a backstop for a throttled (background) tab.
+      await Promise.race([spin.finished.catch(() => {}), sleep(duration + 400)]);
+      spin.cancel();
+      for (const el of [...passing, ...old]) el.remove();
     }
 
     // Something to look at before the first spin: a grid that pays nothing.
     let idle: number[];
     do idle = Array.from({ length: SLOT_ROWS * SLOT_COLS }, slotSymbol);
     while (slotWins(idle).length);
-    render(idle);
+    strips.forEach((strip, col) => strip.replaceChildren(...column(idle, col).map(cellEl)));
 
     async function play(steps: SlotStep[], stake: number) {
       const quick = reducedMotion();
       let won = 0;
       let jackpot = false;
-      for (const step of steps) {
-        render(step.grid, step.fall);
-        await sleep(quick ? 150 : 650);
+
+      // Every reel spins; they stop left to right, one after another.
+      await Promise.all(strips.map((_, col) => spinReel(col, column(steps[0].grid, col), 12 + col * 6, 750 + col * 330)));
+
+      for (const [n, step] of steps.entries()) {
+        if (!root.isConnected) break; // navigated away mid-spin
         if (!step.wins.length) break;
 
         const gain = Math.round(stake * slotStepReturn(step));
         won += gain;
         const hit = step.wins.some((win) => win.jackpot);
+        const onLine = step.wins.some((win) => win.line);
         jackpot ||= hit;
-        for (const win of step.wins) for (const i of win.cells) cells[i].classList.add(win.jackpot ? "jackpot" : "win");
+        for (const win of step.wins) for (const i of win.cells) cellAt(i).classList.add("win", ...(win.jackpot ? ["jackpot"] : []));
         multEl.textContent = step.mult > 1 ? `×${step.mult}` : "";
         if (step.mult > 1) bump(multEl);
         wonEl.textContent = fmt(won);
         bump(wonEl);
-        say(result, hit ? `${t.jackpot} +${fmt(gain)}` : `+${fmt(gain)}`, "win");
+        say(result, `${hit ? t.jackpot : onLine ? t.line : ""} +${fmt(gain)}`.trim(), "win");
         if (hit) {
           root.classList.add("is-jackpot");
-          burst($("[data-grid]"), 80);
+          burst($("[data-machine]"), 80);
         }
-        // The jackpot gets a longer look before the line pops.
-        await sleep(quick ? 300 : hit ? 2200 : 750);
+        // The jackpot gets a longer look before it pops.
+        await sleep(quick ? 300 : hit ? 2200 : 800);
         root.classList.remove("is-jackpot");
 
-        for (const win of step.wins) for (const i of win.cells) syms[i].classList.add("gone");
+        const cells = step.wins.flatMap((win) => win.cells);
+        for (const i of cells) cellAt(i).classList.add("gone");
         await sleep(quick ? 0 : 260);
+
+        // Only the reels that lost symbols spin again, left to right.
+        const reels = [...new Set(cells.map((i) => i % SLOT_COLS))].sort((a, b) => a - b);
+        await Promise.all(reels.map((col, k) => spinReel(col, column(steps[n + 1].grid, col), 5, 480 + k * 170)));
       }
       return { won, jackpot };
     }
@@ -265,15 +358,14 @@ const paytable = SLOT_SYMBOLS.map((symbol, id) => ({ id, pays: symbol.pays })).r
       multEl.textContent = "";
       say(result, "");
 
-      const steps = slotSpin();
-      const { won, jackpot } = await play(steps, stake);
+      const { won, jackpot } = await play(slotSpin(), stake);
       if (!root.isConnected) return; // navigated away mid-spin
 
       if (won) addChips(won);
       if (won > stake) {
         say(result, `${jackpot ? t.jackpot : t.prize} +${fmt(won)}`, "win");
         // A big one (10x the stake or more) gets a bigger party.
-        burst($("[data-grid]"), won >= stake * 10 ? 60 : 24);
+        burst($("[data-machine]"), won >= stake * 10 ? 60 : 24);
       } else if (won) say(result, `${t.back} ${fmt(won)}`);
       else say(result, t.nothing, "lose");
 
