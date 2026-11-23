@@ -1,0 +1,255 @@
+---
+// One game page: the shared chrome (title, chip balance, how-to-play) around
+// the game's own component. Styles here are global (scoped under .game)
+// because cards, chips and confetti are created from JS and would never get
+// Astro's scoping attribute.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Blackjack from "./Blackjack.astro";
+import Bubbles from "./Bubbles.astro";
+import Poker from "./Poker.astro";
+import Roulette from "./Roulette.astro";
+import { localize } from "../../i18n/site";
+import type { Game, Lang } from "../../games/registry";
+
+interface Props {
+  game: Game;
+  lang: Lang;
+}
+
+const { game, lang } = Astro.props;
+const copy = game.copy[lang];
+const path = `/games/${game.id}/`;
+
+const t =
+  lang === "es"
+    ? {
+        all: "Todos los juegos",
+        chips: "Fichas",
+        refill: "Recargar fichas",
+        how: "Cómo se juega",
+        playMoney: "Fichas ficticias: no hay dinero real, ni premios, ni forma de comprarlas. Solo para divertirse.",
+      }
+    : {
+        all: "All games",
+        chips: "Chips",
+        refill: "Refill chips",
+        how: "How to play",
+        playMoney: "Play-money chips: no real money, no prizes and no way to buy them. Just for fun.",
+      };
+---
+
+<BaseLayout title={copy.title} description={copy.description} lang={lang} sideBarActiveItemID="games" alternates={{ en: path, es: `/es${path}` }}>
+  <div class={`game tone-${game.tone}`} data-game-shell>
+    <a href={localize("/games/", lang)} class="game-back">← {t.all}</a>
+    <div class="game-head">
+      <h1 class="game-title">{copy.name}</h1>
+      {
+        game.casino && (
+          <div class="bank">
+            <span class="bank-label">{t.chips}</span>
+            <strong class="bank-value" data-chips>1,000</strong>
+            <button type="button" class="bank-refill" data-refill hidden>{t.refill}</button>
+          </div>
+        )
+      }
+    </div>
+    <p class="game-intro">{copy.desc}</p>
+
+    {game.id === "bubbles" && <Bubbles lang={lang} />}
+    {game.id === "blackjack" && <Blackjack lang={lang} />}
+    {game.id === "poker" && <Poker lang={lang} />}
+    {game.id === "roulette" && <Roulette lang={lang} />}
+
+    <section class="game-how">
+      <h2>{t.how}</h2>
+      <ul>{copy.how.map((line) => <li>{line}</li>)}</ul>
+      {game.casino && <p class="game-fine">{t.playMoney}</p>}
+    </section>
+  </div>
+</BaseLayout>
+
+<style is:global>
+.game {
+  --magenta: #d946ef;
+  --purple: #a855f7;
+  --cyan: #22d3ee;
+  --amber: #fbbf24;
+  --win: #34d399;
+  --lose: #fb7185;
+  --surface: #131120;
+  --surface-2: #1c1a2e;
+  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.game.tone-cyan { --tone: var(--cyan); }
+.game.tone-magenta { --tone: var(--magenta); }
+.game.tone-purple { --tone: var(--purple); }
+.game.tone-amber { --tone: var(--amber); }
+
+.game-back { font-size: 0.875rem; opacity: 0.7; }
+.game-back:hover, .game-back:focus-visible { opacity: 1; color: var(--tone); }
+.game-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem; margin-top: 0.75rem; }
+.game-title { font-size: clamp(1.6rem, 6vw, 2.25rem); font-weight: 700; margin: 0; color: var(--tone); }
+.game-intro { opacity: 0.7; margin: 0.4rem 0 1.5rem; max-width: 40rem; }
+
+.bank { display: flex; align-items: center; gap: 0.6rem; padding: 0.4rem 0.9rem; border-radius: 9999px; background: var(--surface); border: 1px solid var(--surface-2); }
+.bank-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.12em; opacity: 0.6; }
+.bank-value { font-size: 1.15rem; font-variant-numeric: tabular-nums; color: var(--amber); display: inline-block; }
+.bank-value.up { animation: bank-up 0.6s var(--spring); }
+.bank-value.down { animation: bank-down 0.4s ease; }
+.bank-refill { font-size: 0.8rem; font-weight: 600; padding: 0.25rem 0.7rem; border-radius: 9999px; background: var(--amber); color: #0b0a14; cursor: pointer; }
+@keyframes bank-up { 40% { transform: scale(1.35); color: var(--win); } }
+@keyframes bank-down { 40% { transform: scale(0.9); color: var(--lose); } }
+
+/* ---------- table, buttons, result line ---------- */
+.game-table {
+  position: relative;
+  padding: clamp(1rem, 4vw, 1.75rem);
+  border-radius: 1.25rem;
+  background: radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--tone) 14%, transparent), transparent 60%), var(--surface);
+  border: 1px solid var(--surface-2);
+}
+.game-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem; margin-top: 1rem; }
+.game-btn {
+  min-width: 6.5rem;
+  padding: 0.7rem 1.2rem;
+  border-radius: 9999px;
+  font-weight: 700;
+  cursor: pointer;
+  background: var(--surface-2);
+  border: 1px solid rgba(232, 230, 242, 0.16);
+  transition: transform 0.35s var(--spring), box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.game-btn.main { background: var(--tone); color: #0b0a14; border-color: transparent; }
+.game-btn:hover:not(:disabled), .game-btn:focus-visible { border-color: var(--tone); box-shadow: 0 0 22px -6px var(--tone); }
+.game-btn:focus-visible { outline: 2px solid var(--tone); outline-offset: 3px; }
+.game-btn:active:not(:disabled) { transform: scale(0.94); }
+.game-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.game [hidden] { display: none !important; }
+
+.result { min-height: 1.75rem; margin: 0.75rem 0; text-align: center; font-weight: 700; font-size: 1.15rem; }
+.result.win { color: var(--win); text-shadow: 0 0 18px rgba(52, 211, 153, 0.5); }
+.result.lose { color: var(--lose); }
+.result.pop { animation: result-pop 0.5s var(--spring); }
+@keyframes result-pop { from { transform: scale(0.6); opacity: 0; } }
+
+/* ---------- chips ---------- */
+.chip-row { display: flex; justify-content: center; gap: 0.6rem; margin-top: 1rem; }
+.chip-btn {
+  --chip: #94a3b8;
+  width: 3.1rem;
+  aspect-ratio: 1;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  cursor: pointer;
+  color: #0b0a14;
+  background: radial-gradient(circle, var(--chip) 0 52%, #0b0a14 53% 58%, var(--chip) 59%);
+  border: 3px dashed rgba(11, 10, 20, 0.55);
+  opacity: 0.6;
+  transition: transform 0.35s var(--spring), opacity 0.2s ease, box-shadow 0.2s ease;
+}
+.chip-50 { --chip: var(--cyan); }
+.chip-100 { --chip: var(--magenta); }
+.chip-500 { --chip: var(--amber); }
+.chip-btn:hover, .chip-btn:focus-visible { opacity: 1; }
+.chip-btn:focus-visible { outline: 2px solid #e8e6f2; outline-offset: 3px; }
+.chip-btn[aria-pressed="true"] { opacity: 1; transform: translateY(-5px) scale(1.1); box-shadow: 0 8px 20px -6px var(--chip); }
+
+/* ---------- playing cards ---------- */
+.hand { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; min-height: 6.4rem; }
+.pcard {
+  width: 4.2rem;
+  height: 6rem;
+  border-radius: 0.6rem;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  line-height: 1;
+  background: #f4f2fb;
+  color: #131120;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45);
+  animation: card-in 0.4s var(--spring) backwards;
+}
+.pcard b { font-size: 1.5rem; }
+.pcard span { font-size: 1.6rem; }
+.pcard.red { color: #e11d48; }
+.pcard.back {
+  background: repeating-linear-gradient(45deg, var(--purple) 0 6px, #6d28d9 6px 12px);
+  border: 3px solid #f4f2fb;
+}
+@keyframes card-in { from { transform: translateY(-28px) rotate(-10deg) scale(0.7); opacity: 0; } }
+
+/* ---------- confetti ---------- */
+.fx-bit {
+  position: fixed;
+  z-index: 50;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 2px;
+  pointer-events: none;
+  animation: fx-fly 0.9s cubic-bezier(0.1, 0.7, 0.3, 1) forwards;
+}
+@keyframes fx-fly {
+  to { transform: translate(var(--dx), calc(var(--dy) + 180px)) rotate(var(--rot)); opacity: 0; }
+}
+
+/* ---------- how to play ---------- */
+.game-how { margin-top: 2.5rem; }
+.game-how h2 { font-size: 1.1rem; font-weight: 700; margin: 0 0 0.5rem; }
+.game-how ul { list-style: disc; padding-left: 1.25rem; opacity: 0.8; font-size: 0.925rem; display: grid; gap: 0.3rem; }
+.game-fine { margin-top: 1rem; font-size: 0.8rem; opacity: 0.55; }
+
+/* Not the bubble game: there the motion is the game, and its bubbles are
+   removed on animationend. */
+@media (prefers-reduced-motion: reduce) {
+  .game-table *, .bank *, .fx-bit { animation: none !important; }
+}
+</style>
+
+<script>
+  import { fmt, getChips, reducedMotion, setChips, START_CHIPS } from "../../games/ui";
+
+  // The lowest bet any game takes; below it the player is offered a refill.
+  const MIN_BET = 10;
+
+  function showBalance(shell: HTMLElement, to: number) {
+    const el = shell.querySelector<HTMLElement>("[data-chips]");
+    if (!el) return;
+    shell.querySelector<HTMLElement>("[data-refill]")!.hidden = to >= MIN_BET;
+    const from = Number(el.dataset.v ?? to);
+    el.dataset.v = String(to);
+    if (from === to || reducedMotion()) {
+      el.textContent = fmt(to);
+      return;
+    }
+    el.classList.remove("up", "down");
+    void el.offsetWidth; // restart the animation
+    el.classList.add(to > from ? "up" : "down");
+    const start = performance.now();
+    const step = (now: number) => {
+      // A newer change took over: let its own count-up finish.
+      if (el.dataset.v !== String(to)) return;
+      const k = Math.min(1, (now - start) / 500);
+      el.textContent = fmt(Math.round(from + (to - from) * k));
+      if (k < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+
+  function initShell() {
+    document.querySelectorAll<HTMLElement>("[data-game-shell]").forEach((shell) => {
+      if (shell.dataset.ready) return;
+      shell.dataset.ready = "1";
+      showBalance(shell, getChips());
+      shell.querySelector("[data-refill]")?.addEventListener("click", () => setChips(START_CHIPS));
+    });
+  }
+
+  window.addEventListener("yc-chips", (event) => {
+    const shell = document.querySelector<HTMLElement>("[data-game-shell]");
+    if (shell) showBalance(shell, (event as CustomEvent<number>).detail);
+  });
+
+  initShell();
+  document.addEventListener("astro:page-load", initShell);
+</script>
