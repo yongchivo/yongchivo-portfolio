@@ -12,7 +12,7 @@ import { alternatePath, localize, ui, type SiteLang } from "../i18n/site";
 
 interface Props {
   lang?: SiteLang;
-  /** "tools" | "projects" | "cv" | "blog" — the section to highlight. */
+  /** "tools" | "projects" | "games" | "cv" | "blog" — the section to highlight. */
   active?: string;
 }
 
@@ -23,6 +23,7 @@ const other = lang === "es" ? "en" : "es";
 const items = [
   { id: "tools", label: t.nav.tools, href: localize("/tools/", lang), tone: "cyan" },
   { id: "projects", label: t.nav.projects, href: localize("/projects", lang), tone: "magenta" },
+  { id: "games", label: t.nav.games, href: localize("/games/", lang), tone: "amber" },
   { id: "cv", label: t.nav.who, href: localize("/cv", lang), tone: "purple" },
   { id: "blog", label: t.nav.blog, href: "/blog/", tone: "neutral" },
 ];
@@ -154,6 +155,7 @@ const items = [
   .tone-cyan { --tone: var(--cyan); }
   .tone-magenta { --tone: var(--magenta); }
   .tone-purple { --tone: var(--purple); }
+  .tone-amber { --tone: #fbbf24; }
   .tone-neutral { --tone: #e8e6f2; }
 
   .topnav a:hover,

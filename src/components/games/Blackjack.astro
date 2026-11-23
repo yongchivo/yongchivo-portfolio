@@ -1,0 +1,179 @@
+---
+import ChipRow from "./ChipRow.astro";
+import type { Lang } from "../../games/registry";
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+
+const t =
+  lang === "es"
+    ? {
+        dealer: "Crupier",
+        you: "Tú",
+        bet: "Apuesta",
+        deal: "Repartir",
+        hit: "Pedir",
+        stand: "Plantarse",
+        double: "Doblar",
+        blackjack: "¡Blackjack!",
+        win: "¡Ganas!",
+        push: "Empate — recuperas la apuesta",
+        bust: "Te pasaste",
+        lose: "Gana el crupier",
+        noChips: "No tienes fichas suficientes",
+      }
+    : {
+        dealer: "Dealer",
+        you: "You",
+        bet: "Bet",
+        deal: "Deal",
+        hit: "Hit",
+        stand: "Stand",
+        double: "Double",
+        blackjack: "Blackjack!",
+        win: "You win!",
+        push: "Push — bet returned",
+        bust: "Bust",
+        lose: "Dealer wins",
+        noChips: "Not enough chips",
+      };
+---
+
+<div class="game-table bj" data-game="blackjack" data-t={JSON.stringify(t)}>
+  <p class="bj-label">{t.dealer} <b data-dealer-total></b></p>
+  <div class="hand" data-dealer></div>
+
+  <p class="result" data-result aria-live="polite"></p>
+
+  <div class="hand" data-player></div>
+  <p class="bj-label">{t.you} <b data-player-total></b></p>
+
+  <div data-betting>
+    <ChipRow label={t.bet} />
+    <div class="game-actions">
+      <button type="button" class="game-btn main" data-deal>{t.deal}</button>
+    </div>
+  </div>
+  <div class="game-actions" data-playing hidden>
+    <button type="button" class="game-btn main" data-hit>{t.hit}</button>
+    <button type="button" class="game-btn" data-stand>{t.stand}</button>
+    <button type="button" class="game-btn" data-double>{t.double}</button>
+  </div>
+</div>
+
+<style is:global>
+.bj-label { text-align: center; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.12em; opacity: 0.7; margin: 0.5rem 0; }
+.bj-label b { margin-left: 0.4rem; font-size: 1rem; color: var(--tone); }
+</style>
+
+<script>
+  import { bjReturn, bjValue, isBlackjack, newDeck, type Card } from "../../games/logic";
+  import { addChips, burst, fmt, getChips, initBet, reducedMotion, say, showCards, sleep } from "../../games/ui";
+
+  function init(root: HTMLElement) {
+    const t = JSON.parse(root.dataset.t!);
+    const $ = <T extends HTMLElement>(sel: string) => root.querySelector<T>(sel)!;
+    const dealerEl = $("[data-dealer]");
+    const playerEl = $("[data-player]");
+    const result = $("[data-result]");
+    const bet = initBet(root);
+
+    let deck: Card[] = [];
+    let player: Card[] = [];
+    let dealer: Card[] = [];
+    let stake = 0;
+    let busy = false; // dealer is drawing: ignore clicks
+
+    function render(reveal: boolean) {
+      showCards(playerEl, player);
+      showCards(dealerEl, dealer, reveal ? -1 : 1);
+      $("[data-player-total]").textContent = String(bjValue(player).total);
+      // While the hole card is down only the up-card counts.
+      $("[data-dealer-total]").textContent = String(bjValue(reveal ? dealer : dealer.slice(0, 1)).total);
+    }
+
+    function setPlaying(playing: boolean) {
+      $("[data-betting]").hidden = playing;
+      $("[data-playing]").hidden = !playing;
+      $<HTMLButtonElement>("[data-double]").disabled = player.length !== 2 || getChips() < stake;
+    }
+
+    function finish() {
+      render(true);
+      const back = bjReturn(player, dealer) * stake;
+      if (back) addChips(back);
+      const net = back - stake;
+      if (net > 0) {
+        say(result, `${isBlackjack(player) ? t.blackjack : t.win} +${fmt(net)}`, "win");
+        burst(playerEl);
+      } else if (net === 0) say(result, t.push);
+      else say(result, bjValue(player).total > 21 ? t.bust : t.lose, "lose");
+      setPlaying(false);
+    }
+
+    async function stand() {
+      busy = true;
+      render(true);
+      while (bjValue(dealer).total < 17) {
+        await sleep(reducedMotion() ? 0 : 550);
+        if (!root.isConnected) return; // navigated away mid-hand
+        dealer.push(deck.pop()!);
+        render(true);
+      }
+      busy = false;
+      finish();
+    }
+
+    $("[data-deal]").addEventListener("click", () => {
+      stake = bet();
+      if (stake > getChips()) return say(result, t.noChips, "lose");
+      addChips(-stake);
+      deck = newDeck();
+      player = [deck.pop()!, deck.pop()!];
+      dealer = [deck.pop()!, deck.pop()!];
+      dealerEl.replaceChildren();
+      playerEl.replaceChildren();
+      say(result, "");
+      render(false);
+      if (isBlackjack(player) || isBlackjack(dealer)) return finish();
+      setPlaying(true);
+    });
+
+    $("[data-hit]").addEventListener("click", () => {
+      if (busy) return;
+      player.push(deck.pop()!);
+      render(false);
+      const { total } = bjValue(player);
+      if (total > 21) finish();
+      else if (total === 21) stand();
+      else setPlaying(true);
+    });
+
+    $("[data-stand]").addEventListener("click", () => {
+      if (!busy) stand();
+    });
+
+    $("[data-double]").addEventListener("click", () => {
+      if (busy) return;
+      addChips(-stake);
+      stake *= 2;
+      player.push(deck.pop()!);
+      render(false);
+      if (bjValue(player).total > 21) finish();
+      else stand();
+    });
+  }
+
+  function initAll() {
+    document.querySelectorAll<HTMLElement>('[data-game="blackjack"]').forEach((root) => {
+      if (root.dataset.ready) return;
+      root.dataset.ready = "1";
+      init(root);
+    });
+  }
+
+  initAll();
+  document.addEventListener("astro:page-load", initAll);
+</script>

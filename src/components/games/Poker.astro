@@ -1,0 +1,192 @@
+---
+// Five-card draw video poker, jacks or better.
+import ChipRow from "./ChipRow.astro";
+import { PAYTABLE } from "../../games/logic";
+import type { Lang } from "../../games/registry";
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+
+const t =
+  lang === "es"
+    ? {
+        bet: "Apuesta",
+        deal: "Repartir",
+        draw: "Cambiar",
+        hold: "Guardada",
+        pickHolds: "Toca las cartas que quieras guardar",
+        nothing: "Nada esta vez",
+        noChips: "No tienes fichas suficientes",
+        cardN: "Carta",
+        hands: {
+          royal: "Escalera real",
+          straightFlush: "Escalera de color",
+          four: "Póker",
+          fullHouse: "Full",
+          flush: "Color",
+          straight: "Escalera",
+          three: "Trío",
+          twoPair: "Doble pareja",
+          jacks: "Jotas o mejor",
+        },
+      }
+    : {
+        bet: "Bet",
+        deal: "Deal",
+        draw: "Draw",
+        hold: "Held",
+        pickHolds: "Tap the cards you want to keep",
+        nothing: "Nothing this time",
+        noChips: "Not enough chips",
+        cardN: "Card",
+        hands: {
+          royal: "Royal flush",
+          straightFlush: "Straight flush",
+          four: "Four of a kind",
+          fullHouse: "Full house",
+          flush: "Flush",
+          straight: "Straight",
+          three: "Three of a kind",
+          twoPair: "Two pair",
+          jacks: "Jacks or better",
+        },
+      };
+---
+
+<div class="game-table vp" data-game="poker" data-t={JSON.stringify(t)}>
+  <dl class="vp-pays">
+    {
+      PAYTABLE.map(([name, pays]) => (
+        <div data-pay={name}>
+          <dt>{t.hands[name]}</dt>
+          <dd>×{pays}</dd>
+        </div>
+      ))
+    }
+  </dl>
+
+  <div class="hand vp-hand">
+    {
+      [0, 1, 2, 3, 4].map((i) => (
+        <button type="button" class="vp-slot" data-slot={i} aria-pressed="false" aria-label={`${t.cardN} ${i + 1}`} disabled>
+          <span class="pcard back"></span>
+          <span class="vp-held" aria-hidden="true">{t.hold}</span>
+        </button>
+      ))
+    }
+  </div>
+
+  <p class="result" data-result aria-live="polite"></p>
+
+  <div data-betting><ChipRow label={t.bet} /></div>
+  <div class="game-actions">
+    <button type="button" class="game-btn main" data-go>{t.deal}</button>
+  </div>
+</div>
+
+<style is:global>
+.vp-pays { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.3rem 0.5rem; margin: 0 0 1.25rem; font-size: 0.78rem; }
+.vp-pays div { display: flex; justify-content: space-between; gap: 0.4rem; padding: 0.3rem 0.55rem; border-radius: 0.5rem; background: rgba(232, 230, 242, 0.05); transition: background-color 0.2s ease; }
+.vp-pays dt { opacity: 0.8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.vp-pays dd { margin: 0; font-weight: 700; color: var(--amber); }
+.vp-pays .hit { background: var(--tone); color: #0b0a14; animation: result-pop 0.5s var(--spring); }
+.vp-pays .hit dt { opacity: 1; font-weight: 700; }
+.vp-pays .hit dd { color: inherit; }
+@media (max-width: 520px) { .vp-pays { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* .vp prefix: must beat the shared .hand rule whatever order the CSS lands in. */
+.vp .vp-hand { flex-wrap: nowrap; gap: clamp(0.25rem, 1.5vw, 0.6rem); }
+.vp-slot { position: relative; flex: 1 1 0; min-width: 0; max-width: 4.6rem; padding: 0 0 1.4rem; border-radius: 0.6rem; cursor: pointer; transition: transform 0.35s var(--spring); }
+.vp-slot:disabled { cursor: default; }
+.vp-slot:focus-visible { outline: 2px solid var(--tone); outline-offset: 3px; }
+.vp-slot .pcard { width: 100%; height: auto; aspect-ratio: 7 / 10; }
+.vp-held { position: absolute; left: 0; right: 0; bottom: 0; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--tone); opacity: 0; }
+.vp-slot[aria-pressed="true"] { transform: translateY(-10px); }
+.vp-slot[aria-pressed="true"] .pcard { box-shadow: 0 0 0 3px var(--tone), 0 10px 22px rgba(0, 0, 0, 0.5); }
+.vp-slot[aria-pressed="true"] .vp-held { opacity: 1; }
+</style>
+
+<script>
+  import { cardLabel, newDeck, pokerHand, pokerPays, type Card } from "../../games/logic";
+  import { addChips, burst, cardEl, fmt, getChips, initBet, say } from "../../games/ui";
+
+  function init(root: HTMLElement) {
+    const t = JSON.parse(root.dataset.t!);
+    const $ = <T extends HTMLElement>(sel: string) => root.querySelector<T>(sel)!;
+    const slots = [...root.querySelectorAll<HTMLButtonElement>("[data-slot]")];
+    const go = $("[data-go]");
+    const result = $("[data-result]");
+    const bet = initBet(root);
+
+    let deck: Card[] = [];
+    let hand: Card[] = [];
+    let stake = 0;
+    let holding = false; // between deal and draw
+
+    function setCard(i: number, card: Card) {
+      const slot = slots[i];
+      slot.querySelector(".pcard")!.replaceWith(cardEl(card));
+      slot.setAttribute("aria-label", cardLabel(card));
+    }
+
+    function setPhase(hold: boolean) {
+      holding = hold;
+      go.textContent = hold ? t.draw : t.deal;
+      $("[data-betting]").hidden = hold;
+      slots.forEach((slot) => (slot.disabled = !hold));
+    }
+
+    slots.forEach((slot) =>
+      slot.addEventListener("click", () =>
+        slot.setAttribute("aria-pressed", String(slot.getAttribute("aria-pressed") !== "true")),
+      ),
+    );
+
+    go.addEventListener("click", () => {
+      if (!holding) {
+        stake = bet();
+        if (stake > getChips()) return say(result, t.noChips, "lose");
+        addChips(-stake);
+        deck = newDeck();
+        hand = deck.splice(0, 5);
+        root.querySelector(".hit")?.classList.remove("hit");
+        slots.forEach((slot, i) => {
+          slot.setAttribute("aria-pressed", "false");
+          setCard(i, hand[i]);
+        });
+        say(result, t.pickHolds);
+        setPhase(true);
+        return;
+      }
+
+      slots.forEach((slot, i) => {
+        if (slot.getAttribute("aria-pressed") === "true") return;
+        hand[i] = deck.pop()!;
+        setCard(i, hand[i]);
+      });
+      const made = pokerHand(hand);
+      const back = pokerPays(made) * stake;
+      if (made) {
+        addChips(back);
+        root.querySelector(`[data-pay="${made}"]`)!.classList.add("hit");
+        say(result, `${t.hands[made]} +${fmt(back)}`, "win");
+        // "Jacks or better" only returns the stake: keep the confetti for real wins.
+        if (back > stake) burst(root.querySelector(".vp-hand")!);
+      } else say(result, t.nothing, "lose");
+      setPhase(false);
+    });
+  }
+
+  function initAll() {
+    document.querySelectorAll<HTMLElement>('[data-game="poker"]').forEach((root) => {
+      if (root.dataset.ready) return;
+      root.dataset.ready = "1";
+      init(root);
+    });
+  }
+
+  initAll();
+  document.addEventListener("astro:page-load", initAll);
+</script>

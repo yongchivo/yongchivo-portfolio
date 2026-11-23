@@ -1,0 +1,300 @@
+---
+// European roulette. The wheel is a static SVG built here from WHEEL; the
+// script only rotates it so the winning pocket stops under the pointer.
+import ChipRow from "./ChipRow.astro";
+import { pocketColor, WHEEL } from "../../games/logic";
+import type { Lang } from "../../games/registry";
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+
+const t =
+  lang === "es"
+    ? {
+        chip: "Valor de la ficha",
+        spin: "Girar",
+        clear: "Quitar apuestas",
+        onTable: "En la mesa",
+        history: "Últimos números",
+        place: "Toca la mesa para apostar",
+        noChips: "No tienes fichas suficientes",
+        red: "rojo",
+        black: "negro",
+        green: "verde",
+        outs: { low: "1–18", even: "Par", red: "Rojo", black: "Negro", odd: "Impar", high: "19–36" },
+      }
+    : {
+        chip: "Chip value",
+        spin: "Spin",
+        clear: "Clear bets",
+        onTable: "On the table",
+        history: "Last numbers",
+        place: "Tap the table to place a bet",
+        noChips: "Not enough chips",
+        red: "red",
+        black: "black",
+        green: "green",
+        outs: { low: "1–18", even: "Even", red: "Red", black: "Black", odd: "Odd", high: "19–36" },
+      };
+
+// One pocket, centred on 12 o'clock; each <g> rotates it into place.
+const step = 360 / WHEEL.length;
+const half = ((step / 2) * Math.PI) / 180;
+const x = (100 * Math.sin(half)).toFixed(3);
+const y = (-100 * Math.cos(half)).toFixed(3);
+const wedge = `M0 0L-${x} ${y}A100 100 0 0 1 ${x} ${y}Z`;
+const fill = { green: "#16a34a", red: "#e11d48", black: "#1c1a2e" };
+
+const numbers = Array.from({ length: 36 }, (_, i) => i + 1);
+const outs = ["low", "even", "red", "black", "odd", "high"] as const;
+---
+
+<div class="game-table rl" data-game="roulette" data-t={JSON.stringify(t)}>
+  <div class="rl-top">
+    <div class="rl-wheel-wrap">
+      <span class="rl-pointer" aria-hidden="true"></span>
+      <svg class="rl-wheel" data-wheel viewBox="-104 -104 208 208" aria-hidden="true">
+        <circle r="103" fill="#fbbf24"></circle>
+        {
+          WHEEL.map((n, i) => (
+            <g transform={`rotate(${(i * step).toFixed(3)})`}>
+              <path d={wedge} fill={fill[pocketColor(n)]} stroke="#0b0a14" stroke-width="0.6" />
+              <text y="-86" text-anchor="middle" font-size="8.5" font-weight="700" fill="#f4f2fb">{n}</text>
+            </g>
+          ))
+        }
+        <circle r="76" fill="none" stroke="rgba(251, 191, 36, 0.55)" stroke-width="1"></circle>
+        <circle r="56" fill="#131120" stroke="#fbbf24" stroke-width="2"></circle>
+      </svg>
+      <span class="rl-last" data-last>–</span>
+    </div>
+    <ol class="rl-history" data-history aria-label={t.history}></ol>
+  </div>
+
+  <p class="result" data-result aria-live="polite">{t.place}</p>
+
+  <div class="rl-nums">
+    <button type="button" class="rl-spot green rl-zero" data-spot="n0" data-label="0">0</button>
+    {
+      numbers.map((n) => (
+        <button
+          type="button"
+          class={`rl-spot ${pocketColor(n)}`}
+          data-spot={`n${n}`}
+          data-label={n}
+          style={`--c:${Math.ceil(n / 3)};--r:${((n - 1) % 3) + 1}`}
+        >
+          {n}
+        </button>
+      ))
+    }
+  </div>
+  <div class="rl-outs rl-dozens">
+    {
+      [1, 2, 3].map((d) => {
+        const label = `${d * 12 - 11}–${d * 12}`;
+        return <button type="button" class="rl-spot" data-spot={`d${d}`} data-label={label}>{label}</button>;
+      })
+    }
+  </div>
+  <div class="rl-outs rl-even">
+    {
+      outs.map((spot) => (
+        <button type="button" class={`rl-spot ${spot === "red" || spot === "black" ? spot : ""}`} data-spot={spot} data-label={t.outs[spot]}>
+          {t.outs[spot]}
+        </button>
+      ))
+    }
+  </div>
+
+  <ChipRow label={t.chip} />
+  <p class="rl-total">{t.onTable}: <b data-total>0</b></p>
+  <div class="game-actions">
+    <button type="button" class="game-btn main" data-spin disabled>{t.spin}</button>
+    <button type="button" class="game-btn" data-clear disabled>{t.clear}</button>
+  </div>
+</div>
+
+<style is:global>
+.rl-top { display: grid; justify-items: center; gap: 0.9rem; }
+.rl-wheel-wrap { position: relative; width: min(100%, 17rem); aspect-ratio: 1; }
+.rl-wheel { width: 100%; height: 100%; border-radius: 9999px; box-shadow: 0 0 40px -10px var(--amber); transition: transform 4.2s cubic-bezier(0.12, 0.6, 0.08, 1); }
+.rl-pointer {
+  position: absolute; z-index: 1; top: -0.35rem; left: 50%; translate: -50% 0;
+  border: 0.6rem solid transparent; border-top: 1.1rem solid #f4f2fb; border-bottom: 0;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.6));
+}
+.rl-last {
+  position: absolute; inset: 0; margin: auto; width: 34%; height: 34%; border-radius: 9999px;
+  display: grid; place-items: center; font-size: 1.9rem; font-weight: 800; color: #f4f2fb;
+}
+.rl-last.red, .rl-history .red, .rl-spot.red { background: #e11d48; }
+.rl-last.black, .rl-history .black, .rl-spot.black { background: #1c1a2e; }
+.rl-last.green, .rl-history .green, .rl-spot.green { background: #16a34a; }
+.rl-last.pop { animation: result-pop 0.6s var(--spring); }
+
+.rl-history { display: flex; gap: 0.3rem; min-height: 1.7rem; list-style: none; padding: 0; margin: 0; }
+.rl-history li { width: 1.7rem; height: 1.7rem; border-radius: 9999px; display: grid; place-items: center; font-size: 0.72rem; font-weight: 700; color: #f4f2fb; border: 1px solid rgba(232, 230, 242, 0.18); }
+.rl-history li:first-child { animation: result-pop 0.5s var(--spring); }
+
+/* Phones: three numbers per row, zero on top. Wide: the classic 12x3 layout. */
+.rl-nums { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; }
+.rl-zero { grid-column: 1 / -1; }
+.rl-nums .rl-spot:not(.rl-zero) { grid-column: var(--r); grid-row: calc(var(--c) + 1); }
+.rl-outs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; margin-top: 3px; }
+@media (min-width: 640px) {
+  .rl-nums { grid-template-columns: repeat(13, 1fr); }
+  .rl-zero { grid-column: 1; grid-row: 1 / 4; }
+  .rl-nums .rl-spot:not(.rl-zero) { grid-column: calc(var(--c) + 1); grid-row: calc(4 - var(--r)); }
+  .rl-even { grid-template-columns: repeat(6, 1fr); }
+}
+
+.rl-spot {
+  position: relative;
+  min-height: 2.6rem;
+  border-radius: 0.4rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #f4f2fb;
+  cursor: pointer;
+  background: var(--surface-2);
+  border: 1px solid rgba(232, 230, 242, 0.14);
+  transition: filter 0.15s ease, transform 0.3s var(--spring);
+}
+.rl-spot:hover, .rl-spot:focus-visible { filter: brightness(1.3); }
+.rl-spot:focus-visible { outline: 2px solid #f4f2fb; outline-offset: 1px; z-index: 1; }
+.rl-spot:active { transform: scale(0.93); }
+.rl-spot[data-stake]::after {
+  content: attr(data-stake);
+  /* Top-right corner, so the number underneath stays readable. */
+  position: absolute; z-index: 1; top: -0.3rem; right: -0.3rem;
+  min-width: 1.5rem; height: 1.5rem; padding: 0 0.2rem; border-radius: 9999px;
+  display: grid; place-items: center;
+  font-size: 0.62rem; font-weight: 800; color: #0b0a14;
+  background: var(--amber); border: 1.5px dashed rgba(11, 10, 20, 0.6);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5);
+  animation: result-pop 0.3s var(--spring);
+}
+.rl-spot.won { z-index: 1; box-shadow: 0 0 0 3px var(--amber), 0 0 24px var(--amber); animation: rl-won 0.5s ease 3 alternate; }
+@keyframes rl-won { to { transform: scale(1.12); } }
+
+.rl-total { text-align: center; font-size: 0.85rem; opacity: 0.8; margin: 0.75rem 0 0; }
+.rl-total b { color: var(--amber); }
+
+@media (prefers-reduced-motion: reduce) {
+  .rl-wheel { transition: none; }
+}
+</style>
+
+<script>
+  import { pocketColor, randInt, rouletteReturn, WHEEL } from "../../games/logic";
+  import { addChips, burst, fmt, getChips, initBet, reducedMotion, say, sleep } from "../../games/ui";
+
+  const STEP = 360 / WHEEL.length;
+  const short = (n: number) => (n >= 1000 ? `${n / 1000}k` : String(n));
+
+  function init(root: HTMLElement) {
+    const t = JSON.parse(root.dataset.t!);
+    const $ = <T extends HTMLElement>(sel: string) => root.querySelector<T>(sel)!;
+    const spots = [...root.querySelectorAll<HTMLButtonElement>("[data-spot]")];
+    const wheel = $("[data-wheel]");
+    const last = $("[data-last]");
+    const history = $("[data-history]");
+    const result = $("[data-result]");
+    const spinBtn = $<HTMLButtonElement>("[data-spin]");
+    const clearBtn = $<HTMLButtonElement>("[data-clear]");
+    const chip = initBet(root);
+
+    let bets: Record<string, number> = {};
+    let spinning = false;
+    let turn = 0; // wheel rotation so far, in degrees
+
+    const total = () => Object.values(bets).reduce((sum, stake) => sum + stake, 0);
+
+    function paint() {
+      for (const spot of spots) {
+        const stake = bets[spot.dataset.spot!];
+        if (stake) spot.dataset.stake = short(stake);
+        else delete spot.dataset.stake;
+        spot.setAttribute("aria-label", stake ? `${spot.dataset.label}: ${stake}` : spot.dataset.label!);
+      }
+      $("[data-total]").textContent = fmt(total());
+      spinBtn.disabled = clearBtn.disabled = spinning || total() === 0;
+    }
+
+    for (const spot of spots) {
+      spot.addEventListener("click", () => {
+        if (spinning) return;
+        if (total() + chip() > getChips()) return say(result, t.noChips, "lose");
+        const key = spot.dataset.spot!;
+        bets[key] = (bets[key] ?? 0) + chip();
+        paint();
+      });
+    }
+
+    clearBtn.addEventListener("click", () => {
+      bets = {};
+      paint();
+    });
+
+    spinBtn.addEventListener("click", async () => {
+      const staked = total();
+      if (spinning || staked === 0) return;
+      if (staked > getChips()) return say(result, t.noChips, "lose");
+      spinning = true;
+      addChips(-staked);
+      root.querySelector(".won")?.classList.remove("won");
+      say(result, "");
+      paint();
+
+      const index = randInt(WHEEL.length);
+      const n = WHEEL[index];
+      // Always forward: five full turns plus whatever brings pocket `index` to the top.
+      const target = (360 - index * STEP) % 360;
+      turn += 360 * 5 + ((target - (turn % 360) + 360) % 360);
+      wheel.style.transform = `rotate(${turn}deg)`;
+      await sleep(reducedMotion() ? 0 : 4300);
+      if (!root.isConnected) return; // navigated away mid-spin
+
+      const color = pocketColor(n);
+      const back = rouletteReturn(bets, n);
+      if (back) addChips(back);
+      const net = back - staked;
+
+      last.textContent = String(n);
+      last.className = `rl-last ${color}`;
+      void last.offsetWidth;
+      last.classList.add("pop");
+      const dot = document.createElement("li");
+      dot.className = color;
+      dot.textContent = String(n);
+      history.prepend(dot);
+      while (history.children.length > 8) history.lastElementChild!.remove();
+      root.querySelector(`[data-spot="n${n}"]`)!.classList.add("won");
+
+      const what = `${n} ${t[color]}`;
+      if (net > 0) {
+        say(result, `${what} · +${fmt(net)}`, "win");
+        burst(last, net >= staked * 5 ? 44 : 22);
+      } else say(result, net < 0 ? `${what} · −${fmt(-net)}` : what, net < 0 ? "lose" : "");
+
+      // Bets stay down for the next spin, unless the balance no longer covers them.
+      if (staked > getChips()) bets = {};
+      spinning = false;
+      paint();
+    });
+  }
+
+  function initAll() {
+    document.querySelectorAll<HTMLElement>('[data-game="roulette"]').forEach((root) => {
+      if (root.dataset.ready) return;
+      root.dataset.ready = "1";
+      init(root);
+    });
+  }
+
+  initAll();
+  document.addEventListener("astro:page-load", initAll);
+</script>

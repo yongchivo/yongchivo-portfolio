@@ -11,6 +11,7 @@ export const ui = {
     nav: {
       tools: "Tools",
       projects: "Projects",
+      games: "Games",
       who: "Who am I?",
       blog: "Blog",
     },
@@ -27,6 +28,7 @@ export const ui = {
     nav: {
       tools: "Herramientas",
       projects: "Proyectos",
+      games: "Juegos",
       who: "¿Quién soy?",
       blog: "Blog (EN)",
     },
@@ -48,7 +50,7 @@ export function localize(path: string, lang: SiteLang): string {
 }
 
 // Paths (without the /es prefix) that exist in BOTH languages.
-const BILINGUAL = /^\/(?:|projects(?:\/[a-z0-9-]+)?|cv|tools|convert(?:\/.*)?|analytics(?:\/.*)?)\/?$/;
+const BILINGUAL = /^\/(?:|projects(?:\/[a-z0-9-]+)?|cv|tools|convert(?:\/.*)?|analytics(?:\/.*)?|games(?:\/[a-z-]+)?)\/?$/;
 
 /**
  * The same page in the other language, or that language's home page when the

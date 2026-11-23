@@ -1,0 +1,255 @@
+---
+// 30 seconds of popping. Bubbles are real <button>s rising on a CSS animation,
+// so there is no frame loop: just a spawn timer and a clock.
+import type { Lang } from "../../games/registry";
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+
+const t =
+  lang === "es"
+    ? {
+        score: "Puntos",
+        time: "Tiempo",
+        best: "Récord",
+        start: "Jugar",
+        again: "Otra vez",
+        ready: "30 segundos. Explota todo lo que puedas.",
+        final: "Puntos:",
+        newBest: "¡Nuevo récord!",
+        bubble: "Burbuja",
+      }
+    : {
+        score: "Score",
+        time: "Time",
+        best: "Best",
+        start: "Play",
+        again: "Play again",
+        ready: "30 seconds. Pop everything you can.",
+        final: "Score:",
+        newBest: "New best!",
+        bubble: "Bubble",
+      };
+---
+
+<div class="bb" data-game="bubbles" data-t={JSON.stringify(t)}>
+  <div class="bb-hud">
+    <span>{t.score} <b data-score>0</b></span>
+    <span class="bb-combo" data-combo aria-hidden="true"></span>
+    <span>{t.time} <b data-time>30</b></span>
+    <span>{t.best} <b data-best>0</b></span>
+  </div>
+  <div class="bb-arena" data-arena>
+    <div class="bb-overlay" data-overlay>
+      <p class="result" data-result aria-live="polite">{t.ready}</p>
+      <button type="button" class="game-btn main" data-start>{t.start}</button>
+    </div>
+  </div>
+</div>
+
+<style is:global>
+.bb-hud { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 1rem; margin-bottom: 0.6rem; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; }
+.bb-hud span { opacity: 0.85; }
+.bb-hud b { margin-left: 0.5rem; font-size: 1.15rem; font-variant-numeric: tabular-nums; color: var(--tone); display: inline-block; }
+.bb-hud b.bump { animation: bb-bump 0.3s var(--spring); }
+.bb-combo { font-weight: 800; font-size: 1.1rem; color: var(--amber); min-width: 2.5rem; text-align: center; }
+.bb-combo.bump { animation: bb-bump 0.4s var(--spring); }
+@keyframes bb-bump { 40% { transform: scale(1.5); } }
+
+.bb-arena {
+  position: relative;
+  height: min(68vh, 32rem);
+  overflow: hidden;
+  border-radius: 1.25rem;
+  background: radial-gradient(circle at 50% 110%, rgba(34, 211, 238, 0.18), transparent 60%), var(--surface);
+  border: 1px solid var(--surface-2);
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.bb-overlay { position: absolute; inset: 0; z-index: 2; display: grid; place-content: center; justify-items: center; gap: 0.5rem; padding: 1rem; text-align: center; background: rgba(11, 10, 20, 0.55); }
+
+.bb-bubble {
+  --tone: var(--cyan);
+  position: absolute;
+  top: 100%;
+  border-radius: 9999px;
+  cursor: pointer;
+  background:
+    radial-gradient(circle at 30% 24%, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0) 26%),
+    radial-gradient(circle at 60% 70%, color-mix(in srgb, var(--tone) 55%, transparent), color-mix(in srgb, var(--tone) 18%, transparent) 70%);
+  border: 1.5px solid color-mix(in srgb, var(--tone) 80%, white);
+  box-shadow: inset 0 -8px 16px rgba(0, 0, 0, 0.25), 0 0 18px -4px var(--tone);
+  animation: bb-rise var(--dur) linear forwards;
+}
+.bb-bubble.t1 { --tone: var(--magenta); }
+.bb-bubble.t2 { --tone: var(--purple); }
+.bb-bubble.gold { --tone: var(--amber); box-shadow: inset 0 -8px 16px rgba(0, 0, 0, 0.25), 0 0 26px 2px var(--amber); }
+.bb-bubble:focus-visible { outline: 2px solid #f4f2fb; outline-offset: 2px; }
+/* Popped: freeze where it is, then burst. */
+.bb-bubble.popped { pointer-events: none; animation: bb-pop 0.22s ease-out forwards; }
+@keyframes bb-rise { to { transform: translateY(calc(-1 * var(--h) - 100%)); } }
+@keyframes bb-pop { to { scale: 1.6; opacity: 0; } }
+
+.bb-plus { position: absolute; z-index: 1; translate: -50% -50%; font-weight: 800; font-size: 1.1rem; color: #f4f2fb; text-shadow: 0 0 10px var(--tone); pointer-events: none; animation: bb-plus 0.7s ease-out forwards; }
+.bb-plus.gold { color: var(--amber); font-size: 1.5rem; }
+@keyframes bb-plus { to { transform: translateY(-46px); opacity: 0; } }
+</style>
+
+<script>
+  import { burst, fmt, say } from "../../games/ui";
+
+  const ROUND = 30; // seconds
+  const BEST_KEY = "yc-games-bubbles-best";
+
+  const readBest = () => {
+    try {
+      return Number(localStorage.getItem(BEST_KEY)) || 0;
+    } catch {
+      return 0;
+    }
+  };
+
+  function init(root: HTMLElement) {
+    const t = JSON.parse(root.dataset.t!);
+    const $ = <T extends HTMLElement>(sel: string) => root.querySelector<T>(sel)!;
+    const arena = $("[data-arena]");
+    const overlay = $("[data-overlay]");
+    const scoreEl = $("[data-score]");
+    const comboEl = $("[data-combo]");
+    const timeEl = $("[data-time]");
+    const bestEl = $("[data-best]");
+    const startBtn = $("[data-start]");
+
+    let best = readBest();
+    let score = 0;
+    let streak = 0;
+    let left = 0;
+    let clock = 0;
+    let spawner = 0;
+    bestEl.textContent = fmt(best);
+
+    const multiplier = () => Math.min(5, 1 + Math.floor(streak / 5));
+    const bump = (el: HTMLElement) => {
+      el.classList.remove("bump");
+      void el.offsetWidth;
+      el.classList.add("bump");
+    };
+
+    function setStreak(next: number) {
+      const before = multiplier();
+      streak = next;
+      const now = multiplier();
+      comboEl.textContent = now > 1 ? `×${now}` : "";
+      if (now > before) bump(comboEl);
+    }
+
+    function spawn() {
+      if (!root.isConnected) return stop(); // navigated away mid-round
+      const elapsed = (ROUND - left) / ROUND; // 0 -> 1 over the round
+      const size = 46 + Math.random() * 40;
+      const bubble = document.createElement("button");
+      bubble.type = "button";
+      bubble.className = `bb-bubble t${Math.floor(Math.random() * 3)}`;
+      if (Math.random() < 0.08) bubble.classList.add("gold");
+      bubble.setAttribute("aria-label", t.bubble);
+      bubble.style.cssText =
+        `width:${size}px;height:${size}px;` +
+        `left:${Math.random() * (arena.clientWidth - size)}px;` +
+        `--h:${arena.clientHeight}px;--dur:${(4.6 - elapsed * 2 + Math.random()).toFixed(2)}s`;
+      // Reached the top unpopped: it got away.
+      bubble.addEventListener("animationend", () => {
+        if (!bubble.classList.contains("popped")) setStreak(0);
+        bubble.remove();
+      });
+      arena.append(bubble);
+      // Bubbles come faster as the round goes on.
+      spawner = window.setTimeout(spawn, 520 - elapsed * 300);
+    }
+
+    function pop(bubble: HTMLElement) {
+      if (bubble.classList.contains("popped")) return;
+      const gold = bubble.classList.contains("gold");
+      setStreak(streak + 1);
+      const points = (gold ? 50 : 10) * multiplier();
+      score += points;
+      scoreEl.textContent = fmt(score);
+      bump(scoreEl);
+
+      // Pin it where it is (the rise animation is about to be replaced).
+      const box = bubble.getBoundingClientRect();
+      const home = arena.getBoundingClientRect();
+      bubble.style.top = `${box.top - home.top}px`;
+      bubble.classList.add("popped");
+
+      const plus = document.createElement("span");
+      plus.className = `bb-plus${gold ? " gold" : ""}`;
+      plus.textContent = `+${points}`;
+      plus.style.cssText = `left:${box.left - home.left + box.width / 2}px;top:${box.top - home.top + box.height / 2}px`;
+      plus.addEventListener("animationend", () => plus.remove());
+      arena.append(plus);
+    }
+
+    function stop() {
+      clearInterval(clock);
+      clearTimeout(spawner);
+    }
+
+    function end() {
+      stop();
+      arena.querySelectorAll(".bb-bubble, .bb-plus").forEach((el) => el.remove());
+      const record = score > best;
+      if (record) {
+        best = score;
+        bestEl.textContent = fmt(best);
+        try {
+          localStorage.setItem(BEST_KEY, String(best));
+        } catch {}
+      }
+      overlay.hidden = false;
+      startBtn.textContent = t.again;
+      say($("[data-result]"), record ? `${t.newBest} ${fmt(score)}` : `${t.final} ${fmt(score)}`, record ? "win" : "");
+      if (record) burst(startBtn, 40);
+      startBtn.focus();
+    }
+
+    startBtn.addEventListener("click", () => {
+      score = 0;
+      left = ROUND;
+      setStreak(0);
+      scoreEl.textContent = "0";
+      timeEl.textContent = String(ROUND);
+      overlay.hidden = true;
+      clock = window.setInterval(() => {
+        left--;
+        timeEl.textContent = String(left);
+        if (left <= 0) end();
+      }, 1000);
+      spawn();
+    });
+
+    // pointerdown is snappier than click on touch screens; click still covers
+    // the keyboard. pop() ignores the second event for the same bubble.
+    const onHit = (event: Event) => {
+      if (!overlay.hidden) return;
+      const bubble = (event.target as HTMLElement).closest<HTMLElement>(".bb-bubble");
+      if (bubble) pop(bubble);
+      else if (event.type === "pointerdown") setStreak(0); // tapped empty water
+    };
+    arena.addEventListener("pointerdown", onHit);
+    arena.addEventListener("click", onHit);
+  }
+
+  function initAll() {
+    document.querySelectorAll<HTMLElement>('[data-game="bubbles"]').forEach((root) => {
+      if (root.dataset.ready) return;
+      root.dataset.ready = "1";
+      init(root);
+    });
+  }
+
+  initAll();
+  document.addEventListener("astro:page-load", initAll);
+</script>

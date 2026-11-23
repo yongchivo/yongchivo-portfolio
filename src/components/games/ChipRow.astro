@@ -1,0 +1,16 @@
+---
+// The bet selector shared by the chip games. Wired by initBet() in games/ui.ts.
+// Values are multiples of 10 so a 3:2 blackjack always pays whole chips.
+interface Props {
+  label: string;
+}
+const { label } = Astro.props;
+---
+
+<div class="chip-row" role="group" aria-label={label}>
+  {[10, 50, 100, 500].map((value) => (
+    <button type="button" class={`chip-btn chip-${value}`} data-chip={value} aria-pressed="false">
+      {value}
+    </button>
+  ))}
+</div>
