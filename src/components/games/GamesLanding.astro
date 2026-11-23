@@ -1,8 +1,11 @@
 ---
-// The /games/ hub: one card per game in the registry.
+// The /games/ hub: a menu built from the registry. Each category that has
+// games gets a jump link at the top and its own section of cards, so a new
+// game (or category) appears here without this file being touched.
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import GamesLogo from "./GamesLogo.astro";
 import { localize } from "../../i18n/site";
-import { games, type Lang } from "../../games/registry";
+import { categories, games, type Lang } from "../../games/registry";
 
 interface Props {
   lang: Lang;
@@ -12,43 +15,75 @@ const { lang } = Astro.props;
 const t =
   lang === "es"
     ? {
-        title: "Juegos — Burbujas, Blackjack, Póker y Ruleta gratis | Yongchivo",
+        title: "Yongchivo Games — Blackjack, Póker, Ruleta, Slot y Sobres gratis",
         description:
-          "Juegos rápidos para el navegador: explota burbujas, blackjack, vídeo póker y ruleta con fichas ficticias. Gratis, sin registro y sin dinero real.",
-        h1: "Juegos",
+          "Juegos rápidos para el navegador: explota burbujas, blackjack, Texas Hold'em, ruleta, slot y sobres de cartas coleccionables con fichas ficticias. Gratis, sin registro y sin dinero real.",
         intro: "Partidas rápidas en el navegador. Gratis, sin registro y sin dinero real.",
+        menu: "Categorías",
         play: "Jugar",
       }
     : {
-        title: "Games — Free Bubble Pop, Blackjack, Poker & Roulette | Yongchivo",
+        title: "Yongchivo Games — Free Blackjack, Poker, Roulette & Slots",
         description:
-          "Quick browser games: bubble pop, blackjack, video poker and roulette with play-money chips. Free, no sign-up and no real money.",
-        h1: "Games",
+          "Quick browser games: bubble pop, blackjack, Texas hold'em, roulette, a cascade slot and collectible card packs with play-money chips. Free, no sign-up and no real money.",
         intro: "Quick games in your browser. Free, no sign-up and no real money.",
+        menu: "Categories",
         play: "Play",
       };
+
+const sections = categories
+  .map((category) => ({ ...category, games: games.filter((game) => game.category === category.id) }))
+  .filter((section) => section.games.length > 0);
 ---
 
 <BaseLayout title={t.title} description={t.description} lang={lang} sideBarActiveItemID="games" alternates={{ en: "/games/", es: "/es/games/" }}>
   <div class="games">
-    <h1 class="games-title">{t.h1.toUpperCase()}</h1>
+    <h1 class="games-brand"><GamesLogo /></h1>
     <p class="games-intro">{t.intro}</p>
-    <ul class="games-grid">
-      {
-        games.map((game, i) => (
-          <li>
-            <a href={localize(`/games/${game.id}/`, lang)} class={`game-card tone-${game.tone}`} style={`--i:${i}`}>
-              <span class="game-orb">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={game.icon} />
-              </span>
-              <span class="game-name">{game.copy[lang].name}</span>
-              <span class="game-desc">{game.copy[lang].desc}</span>
-              <span class="game-play">{t.play} →</span>
-            </a>
-          </li>
-        ))
-      }
-    </ul>
+
+    <nav aria-label={t.menu}>
+      <ul class="games-menu">
+        {
+          sections.map((section) => (
+            <li>
+              <a href={`#${section.id}`} class={`games-tab tone-${section.tone}`}>
+                {section.copy[lang].name}
+                <span class="games-count">{section.games.length}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    {
+      sections.map((section) => (
+        <section id={section.id} class={`games-section tone-${section.tone}`}>
+          <div class="section-head">
+            <span class="section-dot" aria-hidden="true" />
+            <h2 class="section-title">{section.copy[lang].name}</h2>
+            <span class="games-count">{section.games.length}</span>
+          </div>
+          <p class="section-intro">{section.copy[lang].intro}</p>
+          <ul class="games-grid">
+            {section.games.map((game, i) => (
+              <li>
+                <a href={localize(`/games/${game.id}/`, lang)} class={`game-card tone-${game.tone}`} style={`--i:${i}`}>
+                  <span class="game-orb">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={game.icon} />
+                  </span>
+                  <span class="game-text">
+                    <span class="game-name">{game.copy[lang].name}</span>
+                    <span class="game-desc">{game.copy[lang].desc}</span>
+                  </span>
+                  <span class="game-play">{t.play}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
   </div>
 </BaseLayout>
 
@@ -62,39 +97,62 @@ const t =
 .tone-magenta { --tone: #d946ef; }
 .tone-purple { --tone: #a855f7; }
 .tone-amber { --tone: #fbbf24; }
+.tone-green { --tone: #34d399; }
+.tone-rose { --tone: #fb7185; }
 
-.games-title {
-  text-align: center;
-  font-weight: 700;
-  font-size: clamp(1.6rem, 7.5vw, 3rem);
-  letter-spacing: 0.18em;
-  margin: 0 -0.18em 0 0;
-  background: linear-gradient(to right, #d946ef, #a855f7, #22d3ee);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+.games-brand { text-align: center; margin: 0; }
+.games-intro { text-align: center; opacity: 0.7; margin: 0.9rem auto 1.75rem; max-width: 32rem; }
+
+/* ---------- category menu ---------- */
+.games-menu { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem; list-style: none; padding: 0; margin: 0 0 2.75rem; }
+.games-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  background: var(--surface);
+  border: 1px solid var(--surface-2);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
 }
-.games-intro { text-align: center; opacity: 0.7; margin: 0.75rem auto 2.5rem; max-width: 32rem; }
+.games-tab:hover, .games-tab:focus-visible { border-color: var(--tone); box-shadow: 0 0 20px -6px var(--tone); }
+.games-tab:focus-visible { outline: 2px solid var(--tone); outline-offset: 3px; }
+.games-count {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.1rem 0.5rem;
+  border-radius: 9999px;
+  color: var(--tone);
+  border: 1px solid var(--tone);
+}
 
-.games-grid { display: grid; gap: 1rem; list-style: none; padding: 0; margin: 0; }
+/* ---------- sections ---------- */
+.games-section { margin-bottom: 3rem; scroll-margin-top: 5rem; }
+.section-head { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.35rem; }
+.section-dot { width: 0.7rem; height: 0.7rem; border-radius: 9999px; background: var(--tone); box-shadow: 0 0 12px var(--tone); }
+.section-title { font-size: 1.35rem; font-weight: 700; margin: 0; }
+.section-intro { font-size: 0.875rem; opacity: 0.65; margin: 0 0 1.1rem 1.45rem; max-width: 40rem; }
+
+.games-grid { display: grid; gap: 0.85rem; list-style: none; padding: 0; margin: 0; }
 @media (min-width: 640px) { .games-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
 .game-card {
-  display: grid;
-  justify-items: center;
-  gap: 0.45rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
   height: 100%;
-  padding: 1.75rem 1.25rem 1.4rem;
-  text-align: center;
-  border-radius: 1.25rem;
-  background: radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--tone) 16%, transparent), transparent 60%), var(--surface);
+  padding: 1rem 1.1rem;
+  border-radius: 1rem;
+  background: radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--tone) 14%, transparent), transparent 55%), var(--surface);
   border: 1px solid var(--surface-2);
   transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.4s var(--spring);
 }
-.game-card:hover, .game-card:focus-visible { border-color: var(--tone); box-shadow: 0 0 30px -8px var(--tone); }
+.game-card:hover, .game-card:focus-visible { border-color: var(--tone); box-shadow: 0 0 28px -8px var(--tone); }
 .game-card:focus-visible { outline: 2px solid var(--tone); outline-offset: 3px; }
 .game-orb {
-  width: 4.5rem;
+  flex: none;
+  width: 3.5rem;
   aspect-ratio: 1;
   border-radius: 9999px;
   display: grid;
@@ -102,20 +160,31 @@ const t =
   color: var(--tone);
   background: radial-gradient(circle at 30% 22%, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0) 32%), var(--surface);
   border: 1px solid rgba(232, 230, 242, 0.14);
-  box-shadow: inset 0 -10px 20px rgba(0, 0, 0, 0.4), 0 0 26px -6px var(--tone);
+  box-shadow: inset 0 -8px 16px rgba(0, 0, 0, 0.4), 0 0 22px -6px var(--tone);
   transition: transform 0.5s var(--spring);
 }
-.game-orb svg { width: 45%; height: 45%; }
-.game-name { font-size: 1.2rem; font-weight: 700; }
-.game-desc { font-size: 0.875rem; opacity: 0.7; line-height: 1.4; }
-.game-play { margin-top: 0.4rem; font-weight: 700; font-size: 0.9rem; color: var(--tone); }
+.game-orb svg { width: 46%; height: 46%; }
+.game-text { flex: 1; min-width: 0; }
+.game-name { display: block; font-size: 1.05rem; font-weight: 700; }
+.game-desc { display: block; font-size: 0.85rem; opacity: 0.7; line-height: 1.4; margin-top: 0.15rem; }
+.game-play {
+  flex: none;
+  padding: 0.4rem 0.9rem;
+  border-radius: 9999px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #0b0a14;
+  background: var(--tone);
+  transition: transform 0.4s var(--spring);
+}
 
 @media (prefers-reduced-motion: no-preference) {
-  .game-card:hover { transform: translateY(-4px); }
+  .game-card:hover { transform: translateY(-3px); }
   .game-card:hover .game-orb { transform: scale(1.12) rotate(-6deg); }
+  .game-card:hover .game-play { transform: scale(1.08); }
   .game-orb { animation: game-float 5s ease-in-out infinite; animation-delay: calc(var(--i) * -1.3s); }
 }
 @keyframes game-float {
-  50% { translate: 0 -5px; }
+  50% { translate: 0 -4px; }
 }
 </style>

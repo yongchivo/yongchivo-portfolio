@@ -3,7 +3,43 @@
 import type { SiteLang } from "../i18n/site";
 
 export type Lang = SiteLang;
-export type GameId = "bubbles" | "blackjack" | "poker" | "roulette";
+export type GameId = "bubbles" | "blackjack" | "poker" | "roulette" | "slots" | "packs";
+export type CategoryId = "arcade" | "casino" | "collect";
+type Tone = "cyan" | "magenta" | "purple" | "amber" | "green" | "rose";
+
+/**
+ * The hub's menu, in display order. A category only shows up once a game uses
+ * it, so new ones can be listed here ahead of time.
+ */
+export const categories: { id: CategoryId; tone: Tone; copy: Record<Lang, { name: string; intro: string }> }[] = [
+  {
+    id: "arcade",
+    tone: "cyan",
+    copy: {
+      en: { name: "Arcade", intro: "Fast rounds against the clock. Your best score is saved in this browser." },
+      es: { name: "Arcade", intro: "Partidas rápidas contra el reloj. Tu récord se guarda en este navegador." },
+    },
+  },
+  {
+    id: "casino",
+    tone: "amber",
+    copy: {
+      en: { name: "Casino", intro: "One shared balance of play-money chips. No real money, no prizes." },
+      es: { name: "Casino", intro: "Un saldo compartido de fichas ficticias. Sin dinero real ni premios." },
+    },
+  },
+  {
+    id: "collect",
+    tone: "purple",
+    copy: {
+      en: { name: "Collection", intro: "Spend the chips you win on card packs and fill the album." },
+      es: { name: "Colección", intro: "Gasta las fichas que ganes en sobres de cartas y completa el álbum." },
+    },
+  },
+];
+
+/** Games outside the arcade play with the shared play-money chip balance. */
+export const usesChips = (game: Game) => game.category !== "arcade";
 
 interface GameCopy {
   name: string;
@@ -18,20 +54,20 @@ interface GameCopy {
 
 export interface Game {
   id: GameId;
-  tone: "cyan" | "magenta" | "purple" | "amber";
+  /** Which section of the hub it sits in. */
+  category: CategoryId;
+  tone: Tone;
   /** 24x24 stroked icon body. */
   icon: string;
-  /** Uses the shared play-money chip balance. */
-  casino: boolean;
   copy: Record<Lang, GameCopy>;
 }
 
 export const games: Game[] = [
   {
     id: "bubbles",
+    category: "arcade",
     tone: "cyan",
     icon: '<circle cx="9" cy="14" r="5"/><circle cx="17" cy="7" r="3"/><circle cx="18.5" cy="16.5" r="1.5"/>',
-    casino: false,
     copy: {
       en: {
         name: "Bubble Pop",
@@ -61,9 +97,9 @@ export const games: Game[] = [
   },
   {
     id: "blackjack",
+    category: "casino",
     tone: "magenta",
     icon: '<rect x="4" y="3" width="11" height="15" rx="2"/><path d="M9 21h9a2 2 0 0 0 2-2V8"/>',
-    casino: true,
     copy: {
       en: {
         name: "Blackjack",
@@ -93,64 +129,130 @@ export const games: Game[] = [
   },
   {
     id: "poker",
+    category: "casino",
     tone: "purple",
     icon: '<path d="M12 3c3 4 7 6 7 10a3.5 3.5 0 0 1-7 1 3.5 3.5 0 0 1-7-1c0-4 4-6 7-10z"/><path d="M12 14v7M9 21h6"/>',
-    casino: true,
     copy: {
       en: {
-        name: "Video Poker",
-        desc: "Five-card draw: hold the cards you like, redraw the rest. Jacks or better pays.",
-        title: "Video Poker (Jacks or Better) — Free Play-Money Game | Yongchivo",
+        name: "Texas Hold'em",
+        desc: "Heads-up against the dealer: two cards each, five on the board. Call or fold after the flop.",
+        title: "Texas Hold'em vs the Dealer — Free Play-Money Poker | Yongchivo",
         description:
-          "Five-card draw video poker in your browser with play-money chips: hold, draw and hit a pair of jacks or better — up to a royal flush at 250×. Free, no real money.",
+          "Play Texas hold'em heads-up against the dealer in your browser with play-money chips: ante, see the flop, call or fold, best five cards win. Free, no real money.",
         how: [
-          "Pick a bet and deal five cards.",
-          "Tap the cards you want to keep, then draw to replace the rest.",
-          "A pair of jacks or better pays — the paytable shows what each hand returns.",
+          "Pick your ante and deal. You get two cards, the dealer gets two face down, and the flop (three shared cards) goes on the board.",
+          "Call to stake twice your ante and see the last two cards, or fold and lose only the ante.",
+          "The best five cards out of your two plus the five on the board win. A win pays 1:1 on everything you staked; a tie returns it.",
         ],
       },
       es: {
-        name: "Vídeo póker",
-        desc: "Póker de cinco cartas: guarda las que quieras y cambia el resto. Paga desde pareja de jotas.",
-        title: "Vídeo póker (Jotas o mejor) — Juego gratis con fichas ficticias | Yongchivo",
+        name: "Texas Hold'em",
+        desc: "Mano a mano contra el crupier: dos cartas cada uno y cinco en la mesa. Iguala o retírate tras el flop.",
+        title: "Texas Hold'em contra el crupier — Póker gratis con fichas ficticias | Yongchivo",
         description:
-          "Vídeo póker de cinco cartas en tu navegador con fichas ficticias: guarda, cambia y consigue pareja de jotas o mejor — hasta la escalera real a 250×. Gratis, sin dinero real.",
+          "Juega al Texas Hold'em mano a mano contra el crupier en tu navegador con fichas ficticias: apuesta inicial, flop, iguala o retírate, y gana la mejor mano de cinco cartas. Gratis, sin dinero real.",
         how: [
-          "Elige apuesta y reparte cinco cartas.",
-          "Toca las cartas que quieras guardar y cambia el resto.",
-          "Paga desde pareja de jotas — la tabla muestra cuánto devuelve cada mano.",
+          "Elige tu apuesta inicial y reparte. Recibes dos cartas, el crupier dos boca abajo, y sale el flop (tres cartas comunes) en la mesa.",
+          "Iguala para apostar el doble de la inicial y ver las dos últimas cartas, o retírate y pierde solo la inicial.",
+          "Gana la mejor mano de cinco cartas entre tus dos y las cinco de la mesa. Ganar paga 1:1 sobre todo lo apostado; el empate lo devuelve.",
         ],
       },
     },
   },
   {
     id: "roulette",
+    category: "casino",
     tone: "amber",
     icon: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 3v6M12 15v6M3 12h6M15 12h6"/>',
-    casino: true,
     copy: {
       en: {
         name: "Roulette",
-        desc: "European roulette, single zero. Bet on numbers, colours or dozens and spin.",
+        desc: "European roulette, single zero. Bet on numbers, splits, corners, columns or colours and spin.",
         title: "Roulette — Free Play-Money European Roulette | Yongchivo",
         description:
-          "Spin a single-zero European roulette wheel in your browser with play-money chips: straight numbers at 35:1, red/black, odd/even and dozens. Free, no real money.",
+          "Spin a single-zero European roulette wheel in your browser with play-money chips: straight numbers at 35:1, splits, streets, corners, columns, dozens and red/black. Free, no real money.",
         how: [
-          "Pick a chip and tap the table to place bets — tap again to add more.",
-          "Spin. A single number pays 35:1, a dozen 2:1, and red/black, odd/even and high/low pay 1:1.",
+          "Pick a chip and tap a number to bet on it — tap again to add more.",
+          "Tap the dot on the edge between two numbers to split them (17:1), on the corner four share (8:1), or at the end of a row of three for the street (11:1).",
+          "A column (the 2:1 boxes) or a dozen pays 2:1; red/black, odd/even and high/low pay 1:1. A single number pays 35:1.",
           "Zero loses every outside bet. Your bets stay on the table for the next spin.",
         ],
       },
       es: {
         name: "Ruleta",
-        desc: "Ruleta europea de un solo cero. Apuesta a números, colores o docenas y gira.",
+        desc: "Ruleta europea de un solo cero. Apuesta a números, caballos, cuadros, columnas o colores y gira.",
         title: "Ruleta — Ruleta europea gratis con fichas ficticias | Yongchivo",
         description:
-          "Gira una ruleta europea de un solo cero en tu navegador con fichas ficticias: pleno a 35:1, rojo/negro, par/impar y docenas. Gratis, sin dinero real.",
+          "Gira una ruleta europea de un solo cero en tu navegador con fichas ficticias: pleno a 35:1, caballos, calles, cuadros, columnas, docenas y rojo/negro. Gratis, sin dinero real.",
         how: [
-          "Elige una ficha y toca la mesa para apostar — toca otra vez para sumar más.",
-          "Gira. Un pleno paga 35:1, una docena 2:1, y rojo/negro, par/impar y falta/pasa pagan 1:1.",
+          "Elige una ficha y toca un número para apostarle — toca otra vez para sumar más.",
+          "Toca el punto del borde entre dos números para el caballo (17:1), el de la esquina que comparten cuatro para el cuadro (8:1), o el del extremo de una fila de tres para la calle (11:1).",
+          "Una columna (las casillas 2:1) o una docena paga 2:1; rojo/negro, par/impar y falta/pasa pagan 1:1. Un pleno paga 35:1.",
           "El cero hace perder todas las apuestas exteriores. Tus apuestas se quedan en la mesa para la siguiente tirada.",
+        ],
+      },
+    },
+  },
+  {
+    id: "slots",
+    category: "casino",
+    tone: "green",
+    icon: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M9 5v14M15 5v14M5.5 12h1M11.5 12h1M17.5 12h1"/>',
+    copy: {
+      en: {
+        name: "Cascade Slot",
+        desc: "A 5×5 grid. Seven or more matching symbols anywhere pay, pop and let new ones fall. Line up five Ys for the jackpot.",
+        title: "Cascade Slot — Free Play-Money Slot Game | Yongchivo",
+        description:
+          "A 5×5 cascade slot in your browser with play-money chips: 7 or more matching symbols anywhere pay, winners pop, new symbols fall, and a line of five Ys hits the ×500 jackpot. Free, no real money.",
+        how: [
+          "Pick a bet and spin. Symbols don't need to line up: 7 or more of the same anywhere on the grid pay.",
+          "Winning symbols pop, the rest fall and new ones drop in — which can win again in the same spin. Each cascade raises the multiplier by one, up to ×5.",
+          "Five Yongchivo Ys in a straight line — across, down or diagonal — pay the top prize: ×500 your bet.",
+        ],
+      },
+      es: {
+        name: "Slot de cascadas",
+        desc: "Cuadrícula de 5×5. Siete o más símbolos iguales en cualquier sitio dan premio, explotan y caen nuevos. Cinco Y en línea: premio máximo.",
+        title: "Slot de cascadas — Tragaperras gratis con fichas ficticias | Yongchivo",
+        description:
+          "Un slot de cascadas 5×5 en tu navegador con fichas ficticias: 7 o más símbolos iguales en cualquier sitio dan premio, explotan, caen nuevos, y cinco Y en línea dan el premio máximo de ×500. Gratis, sin dinero real.",
+        how: [
+          "Elige apuesta y gira. Los símbolos no tienen que estar en línea: 7 o más iguales en cualquier parte de la cuadrícula dan premio.",
+          "Los símbolos premiados explotan, el resto cae y entran nuevos, que pueden volver a premiar en la misma tirada. Cada cascada sube el multiplicador en uno, hasta ×5.",
+          "Cinco Y de Yongchivo en línea recta — horizontal, vertical o diagonal — dan el premio máximo: ×500 tu apuesta.",
+        ],
+      },
+    },
+  },
+  {
+    id: "packs",
+    category: "collect",
+    tone: "rose",
+    icon: '<rect x="6" y="3" width="12" height="18" rx="2"/><path d="M6 7.5h12M12 11l2.2 2.5L12 16l-2.2-2.5z"/>',
+    copy: {
+      en: {
+        name: "Card Packs",
+        desc: "Spend chips on packs of five cards and collect all 30 — from everyday Firewalls to the legendary Y.",
+        title: "Card Packs — Collect 30 Cyber-Security Cards | Yongchivo",
+        description:
+          "Open card packs with play-money chips and collect 30 cyber-security cards across four rarities. Duplicates give chips back. Free, no real money and nothing to buy.",
+        how: [
+          "A pack costs 100 chips and holds five cards. The last one is always rare or better.",
+          "New cards go into your album; a duplicate gives a few chips back instead (more for rarer cards).",
+          "Earn chips in the casino games, or refill when you run out. Your album is saved in this browser.",
+        ],
+      },
+      es: {
+        name: "Sobres de cartas",
+        desc: "Gasta fichas en sobres de cinco cartas y colecciona las 30: del Cortafuegos de cada día a la Y legendaria.",
+        title: "Sobres de cartas — Colecciona 30 cartas de ciberseguridad | Yongchivo",
+        description:
+          "Abre sobres con fichas ficticias y colecciona 30 cartas de ciberseguridad de cuatro rarezas. Las repetidas devuelven fichas. Gratis, sin dinero real y sin nada que comprar.",
+        how: [
+          "Un sobre cuesta 100 fichas y trae cinco cartas. La última siempre es rara o mejor.",
+          "Las cartas nuevas van a tu álbum; una repetida te devuelve unas fichas (más cuanto más rara).",
+          "Consigue fichas en los juegos de casino, o recarga cuando te quedes sin ellas. Tu álbum se guarda en este navegador.",
         ],
       },
     },

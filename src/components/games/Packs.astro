@@ -1,0 +1,348 @@
+---
+// Card packs: spend play-money chips on a pack of five, reveal them one by
+// one, and fill the album. Duplicates give a few chips back. The collection
+// lives in localStorage, keyed by each card's stable id.
+import { CARDS, PACK_COST, PACK_SIZE, RARITIES } from "../../games/cards";
+import type { Lang } from "../../games/registry";
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+
+const t =
+  lang === "es"
+    ? {
+        collection: "Colección",
+        open: "Abrir sobre",
+        ready: `Cada sobre trae ${PACK_SIZE} cartas; la última es rara o mejor`,
+        album: "Álbum",
+        fresh: "NUEVA",
+        newCards: "nuevas",
+        noNew: "Ninguna nueva",
+        refund: "por repetidas",
+        complete: "¡Colección completa!",
+        locked: "Carta sin descubrir",
+        owned: "Tienes",
+        noChips: "No tienes fichas suficientes",
+        odds: "Probabilidad por carta",
+      }
+    : {
+        collection: "Collection",
+        open: "Open a pack",
+        ready: `Each pack holds ${PACK_SIZE} cards; the last is rare or better`,
+        album: "Album",
+        fresh: "NEW",
+        newCards: "new",
+        noNew: "Nothing new",
+        refund: "for duplicates",
+        complete: "Collection complete!",
+        locked: "Undiscovered card",
+        owned: "You have",
+        noChips: "Not enough chips",
+        odds: "Odds per card",
+      };
+
+// Only what the script needs, in this page's language.
+const cards = CARDS.map((card) => ({
+  id: card.id,
+  emoji: card.emoji,
+  rarity: card.rarity,
+  name: card.name[lang],
+  desc: card.desc[lang],
+}));
+const rarityNames = RARITIES.map((tier) => tier.name[lang]);
+---
+
+<div class="game-table pk" data-game="packs" data-t={JSON.stringify(t)} data-cards={JSON.stringify(cards)} data-rarities={JSON.stringify(rarityNames)}>
+  <div class="pk-progress">
+    <span>{t.collection} <b><span data-owned>0</span>/{CARDS.length}</span></b>
+    <span class="pk-bar" aria-hidden="true"><i data-bar></i></span>
+  </div>
+
+  <div class="pk-stage">
+    {/* Decorative: tapping it does the same as the button underneath. */}
+    <div class="pk-pack" data-pack aria-hidden="true">
+      <span class="pk-pack-y"></span>
+      <span class="pk-pack-name">YONGCHIVO</span>
+      <span class="pk-pack-sub">{PACK_SIZE} × ✦</span>
+    </div>
+    <ul class="pk-reveal" data-reveal hidden></ul>
+  </div>
+
+  <p class="result" data-result aria-live="polite">{t.ready}</p>
+
+  <div class="game-actions">
+    <button type="button" class="game-btn main" data-buy>{t.open} · {PACK_COST}</button>
+  </div>
+
+  <ul class="pk-odds" aria-label={t.odds}>
+    {RARITIES.map((tier, i) => <li class={`r${i}`}>{tier.name[lang]} <b>{tier.weight}%</b></li>)}
+  </ul>
+
+  <h2 class="pk-album-title">{t.album}</h2>
+  <ul class="pk-album" data-album>
+    {
+      cards.map((card) => (
+        <li class={`pk-card r${card.rarity} locked`} data-card={card.id} aria-label={t.locked}>
+          <span class="pk-emoji" aria-hidden="true">{card.emoji}</span>
+          <span class="pk-name">{card.name}</span>
+          <span class="pk-count" data-count></span>
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<style is:global>
+.pk { --r: #94a3b8; }
+.pk .r0 { --r: #94a3b8; }
+.pk .r1 { --r: #22d3ee; }
+.pk .r2 { --r: #d946ef; }
+.pk .r3 { --r: #fbbf24; }
+
+.pk-progress { display: grid; gap: 0.4rem; max-width: 22rem; margin: 0 auto 1.25rem; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; text-align: center; }
+.pk-progress b { margin-left: 0.4rem; font-size: 1.05rem; color: var(--tone); }
+.pk-bar { height: 0.45rem; border-radius: 9999px; background: var(--surface-2); overflow: hidden; }
+.pk-bar i { display: block; height: 100%; width: 0; border-radius: inherit; background: linear-gradient(to right, #d946ef, #a855f7, #22d3ee); transition: width 0.6s ease; }
+
+/* ---------- the pack and the reveal ---------- */
+.pk-stage { display: grid; place-items: center; min-height: 13.5rem; }
+.pk-pack {
+  width: 8.5rem;
+  aspect-ratio: 5 / 7;
+  border-radius: 0.9rem;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 0.35rem;
+  cursor: pointer;
+  color: #f4f2fb;
+  background:
+    linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, 0.28) 50%, transparent 60%),
+    linear-gradient(160deg, #d946ef, #a855f7 55%, #22d3ee);
+  /* Crimped foil along the top and bottom edges. */
+  border-block: 0.5rem dashed rgba(11, 10, 20, 0.45);
+  box-shadow: 0 14px 30px -10px #a855f7, inset 0 0 0 2px rgba(255, 255, 255, 0.25);
+  transition: transform 0.4s var(--spring);
+}
+.pk-pack:hover { transform: translateY(-5px) rotate(-2deg); }
+.pk-pack-y {
+  width: 3.4rem;
+  aspect-ratio: 1;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='4 4.5 24 24' fill='none' stroke='%23f4f2fb' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 9l8 9 8-9M16 18v6'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.pk-pack-name { font-size: 0.7rem; font-weight: 800; letter-spacing: 0.2em; }
+.pk-pack-sub { font-size: 0.7rem; opacity: 0.85; }
+.pk-pack.tearing { animation: pk-tear 0.7s ease-in forwards; }
+@keyframes pk-tear {
+  20%, 60% { transform: rotate(-5deg) scale(1.04); }
+  40%, 80% { transform: rotate(5deg) scale(1.04); }
+  100% { transform: scale(1.5); opacity: 0; filter: brightness(2.5); }
+}
+
+.pk-reveal { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem; list-style: none; padding: 0; margin: 0; width: 100%; }
+.pk-reveal .pk-card { width: 6.6rem; animation: pk-flip 0.5s var(--spring) backwards; animation-delay: calc(var(--i) * 380ms); }
+@keyframes pk-flip { from { transform: perspective(600px) rotateY(90deg) scale(0.7); opacity: 0; } }
+
+/* ---------- a card (album tile and revealed card) ---------- */
+.pk-card {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  border-radius: 0.7rem;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 0.2rem;
+  padding: 0.4rem 0.3rem;
+  text-align: center;
+  background: radial-gradient(circle at 50% 30%, color-mix(in srgb, var(--r) 28%, transparent), transparent 70%), #0f0d1a;
+  border: 2px solid var(--r);
+  box-shadow: 0 0 16px -6px var(--r);
+}
+.pk-card.r3 { box-shadow: 0 0 22px -2px var(--r); }
+.pk-emoji { font-size: 1.9rem; line-height: 1.1; }
+.pk-name { font-size: 0.7rem; font-weight: 700; line-height: 1.15; }
+.pk-desc { font-size: 0.6rem; line-height: 1.25; opacity: 0.75; }
+.pk-rarity { font-size: 0.55rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--r); }
+.pk-count, .pk-badge { position: absolute; top: -0.45rem; right: -0.45rem; padding: 0.05rem 0.4rem; border-radius: 9999px; font-size: 0.62rem; font-weight: 800; color: #0b0a14; background: var(--r); }
+.pk-count:empty { display: none; }
+.pk-badge { right: auto; left: -0.45rem; background: #34d399; }
+.pk-badge.dupe { background: var(--amber); }
+/* The Y card shows the logo itself instead of an emoji. */
+.pk-card[data-card="yongchivo"] .pk-emoji {
+  width: 2.3rem;
+  height: 2.3rem;
+  border-radius: 9999px;
+  font-size: 0;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='4 4.5 24 24' fill='none' stroke='%23f4f2fb' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 9l8 9 8-9M16 18v6'/%3E%3C/svg%3E") center / 62% no-repeat,
+    linear-gradient(160deg, #d946ef, #a855f7 55%, #22d3ee);
+}
+
+/* Not found yet: a silhouette and no name. */
+.pk-card.locked { border-style: dashed; border-color: color-mix(in srgb, var(--r) 45%, transparent); box-shadow: none; background: #0f0d1a; }
+.pk-card.locked .pk-emoji { filter: brightness(0) invert(0.22); }
+.pk-card.locked .pk-name { visibility: hidden; }
+.pk-card.locked .pk-name::after { content: "???"; visibility: visible; position: absolute; left: 0; right: 0; opacity: 0.4; }
+.pk-card.just { animation: result-pop 0.6s var(--spring); }
+
+.pk-odds { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.4rem; list-style: none; padding: 0; margin: 1rem 0 0; font-size: 0.72rem; }
+.pk-odds li { padding: 0.15rem 0.55rem; border-radius: 9999px; border: 1px solid var(--r); color: var(--r); }
+.pk-odds b { margin-left: 0.2rem; }
+
+.pk-album-title { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; opacity: 0.6; margin: 1.75rem 0 0.8rem; text-align: center; }
+.pk-album { display: grid; grid-template-columns: repeat(auto-fill, minmax(4.6rem, 1fr)); gap: 0.7rem; list-style: none; padding: 0; margin: 0; }
+.pk-album .pk-emoji { font-size: 1.5rem; }
+.pk-album .pk-name { font-size: 0.6rem; }
+</style>
+
+<script>
+  import { PACK_COST, RARITIES, rollPack } from "../../games/cards";
+  import { addChips, burst, fmt, getChips, reducedMotion, say, setRound, sleep } from "../../games/ui";
+
+  const KEY = "yc-games-cards";
+  type Owned = Record<string, number>;
+
+  function readOwned(): Owned {
+    try {
+      const saved = JSON.parse(localStorage.getItem(KEY) ?? "{}");
+      return saved && typeof saved === "object" && !Array.isArray(saved) ? saved : {};
+    } catch {
+      return {};
+    }
+  }
+
+  function init(root: HTMLElement) {
+    const t = JSON.parse(root.dataset.t!);
+    const cards: { id: string; emoji: string; rarity: number; name: string; desc: string }[] = JSON.parse(root.dataset.cards!);
+    const rarities: string[] = JSON.parse(root.dataset.rarities!);
+    const $ = <T extends HTMLElement>(sel: string) => root.querySelector<T>(sel)!;
+    const pack = $("[data-pack]");
+    const reveal = $("[data-reveal]");
+    const album = $("[data-album]");
+    const result = $("[data-result]");
+    const buy = $<HTMLButtonElement>("[data-buy]");
+    const owned = readOwned();
+    let busy = false;
+
+    const span = (className: string, text: string) => {
+      const el = document.createElement("span");
+      el.className = className;
+      el.textContent = text;
+      return el;
+    };
+
+    /** Brings the album and the progress bar in line with `owned`. */
+    function showAlbum(just: string[] = []) {
+      let found = 0;
+      for (const card of cards) {
+        // In the album only: revealed cards carry the same data-card.
+        const tile = album.querySelector<HTMLElement>(`[data-card="${card.id}"]`)!;
+        const count = owned[card.id] ?? 0;
+        if (count) found++;
+        tile.classList.toggle("locked", !count);
+        tile.classList.toggle("just", just.includes(card.id));
+        tile.querySelector("[data-count]")!.textContent = count > 1 ? `×${count}` : "";
+        tile.title = count ? card.desc : "";
+        tile.setAttribute("aria-label", count ? `${card.name} (${rarities[card.rarity]}). ${card.desc} ${t.owned} ${count}.` : t.locked);
+      }
+      $("[data-owned]").textContent = String(found);
+      $("[data-bar]").style.width = `${(100 * found) / cards.length}%`;
+      return found;
+    }
+
+    /** One revealed card, with its NEW or +refund badge. */
+    function revealed(index: number, slot: number, fresh: boolean) {
+      const card = cards[index];
+      const li = document.createElement("li");
+      li.className = `pk-card r${card.rarity}`;
+      li.dataset.card = card.id;
+      li.style.setProperty("--i", String(slot));
+      const emoji = span("pk-emoji", card.emoji);
+      emoji.setAttribute("aria-hidden", "true");
+      li.append(
+        span(fresh ? "pk-badge" : "pk-badge dupe", fresh ? t.fresh : `+${RARITIES[card.rarity].refund}`),
+        emoji,
+        span("pk-name", card.name),
+        span("pk-rarity", rarities[card.rarity]),
+        span("pk-desc", card.desc),
+      );
+      return li;
+    }
+
+    async function open() {
+      if (busy) return;
+      if (PACK_COST > getChips()) return say(result, t.noChips, "lose");
+      busy = true;
+      buy.disabled = true;
+      addChips(-PACK_COST);
+      setRound(root, true);
+      say(result, "");
+      const quick = reducedMotion();
+
+      // Tear the pack open.
+      reveal.hidden = true;
+      pack.hidden = false;
+      pack.classList.add("tearing");
+      await sleep(quick ? 0 : 700);
+      if (!root.isConnected) return; // navigated away mid-pack
+      pack.classList.remove("tearing");
+      pack.hidden = true;
+
+      // What is in it: decided now, shown one card at a time.
+      const pulled = rollPack();
+      const fresh: string[] = [];
+      let refund = 0;
+      const tiles = pulled.map((index, slot) => {
+        const card = cards[index];
+        const isNew = !owned[card.id];
+        if (isNew) fresh.push(card.id);
+        else refund += RARITIES[card.rarity].refund;
+        owned[card.id] = (owned[card.id] ?? 0) + 1;
+        return revealed(index, slot, isNew);
+      });
+      try {
+        localStorage.setItem(KEY, JSON.stringify(owned));
+      } catch {}
+      reveal.replaceChildren(...tiles);
+      reveal.hidden = false;
+
+      // Confetti as each epic or legendary turns over.
+      for (const [slot, index] of pulled.entries()) {
+        await sleep(quick ? 0 : 380);
+        if (!root.isConnected) return;
+        if (cards[index].rarity >= 2) burst(tiles[slot], cards[index].rarity === 3 ? 70 : 26);
+      }
+      await sleep(quick ? 0 : 300);
+
+      if (refund) addChips(refund);
+      const found = showAlbum(fresh);
+      const parts = [fresh.length ? `${fresh.length} ${t.newCards}` : t.noNew];
+      if (refund) parts.push(`+${fmt(refund)} ${t.refund}`);
+      if (found === cards.length && fresh.length) {
+        say(result, t.complete, "win");
+        burst(reveal, 90);
+      } else say(result, parts.join(" · "), fresh.length ? "win" : "");
+
+      busy = false;
+      buy.disabled = false;
+      setRound(root, false);
+    }
+
+    buy.addEventListener("click", open);
+    pack.addEventListener("click", open);
+    showAlbum();
+  }
+
+  function initAll() {
+    document.querySelectorAll<HTMLElement>('[data-game="packs"]').forEach((root) => {
+      if (root.dataset.ready) return;
+      root.dataset.ready = "1";
+      init(root);
+    });
+  }
+
+  initAll();
+  document.addEventListener("astro:page-load", initAll);
+</script>

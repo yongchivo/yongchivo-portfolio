@@ -70,7 +70,7 @@ const t =
 
 <script>
   import { bjReturn, bjValue, isBlackjack, newDeck, type Card } from "../../games/logic";
-  import { addChips, burst, fmt, getChips, initBet, reducedMotion, say, showCards, sleep } from "../../games/ui";
+  import { addChips, burst, fmt, getChips, initBet, reducedMotion, say, setRound, showCards, sleep } from "../../games/ui";
 
   function init(root: HTMLElement) {
     const t = JSON.parse(root.dataset.t!);
@@ -88,13 +88,14 @@ const t =
 
     function render(reveal: boolean) {
       showCards(playerEl, player);
-      showCards(dealerEl, dealer, reveal ? -1 : 1);
+      showCards(dealerEl, dealer, reveal ? [] : [1]);
       $("[data-player-total]").textContent = String(bjValue(player).total);
       // While the hole card is down only the up-card counts.
       $("[data-dealer-total]").textContent = String(bjValue(reveal ? dealer : dealer.slice(0, 1)).total);
     }
 
     function setPlaying(playing: boolean) {
+      setRound(root, playing);
       $("[data-betting]").hidden = playing;
       $("[data-playing]").hidden = !playing;
       $<HTMLButtonElement>("[data-double]").disabled = player.length !== 2 || getChips() < stake;

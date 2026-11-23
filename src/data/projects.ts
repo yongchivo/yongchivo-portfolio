@@ -75,6 +75,57 @@ export const projects: Project[] = [
     detailHref: { en: "/projects/uno", es: "/es/projects/uno" },
   },
   {
+    slug: "yongchivo-games",
+    section: "games",
+    status: "live",
+    cover: "/games-cover.webp",
+    title: { en: "Yongchivo Games — Browser Games", es: "Yongchivo Games — Juegos de navegador" },
+    summary: {
+      en: "Six quick browser games — bubble pop, blackjack, Texas hold'em, roulette, a cascade slot and collectible card packs — in English and Spanish. They use play-money chips only: no real money, no accounts, nothing to buy.",
+      es: "Seis juegos rápidos de navegador — explota burbujas, blackjack, Texas Hold'em, ruleta, un slot de cascadas y sobres de cartas coleccionables — en inglés y en español. Usan solo fichas ficticias: sin dinero real, sin cuentas y sin nada que comprar.",
+    },
+    meta: { en: "TypeScript · CSS · Astro", es: "TypeScript · CSS · Astro" },
+    body: {
+      en: [
+        "A games section for this site: bubble pop, blackjack, Texas hold'em, roulette, a cascade slot and collectible card packs, each on its own page in English and Spanish, with no new dependencies.",
+        "The casino games and the card packs share one balance of play-money chips kept in the browser. There is no backend, no account and no way to buy chips.",
+      ],
+      es: [
+        "Una sección de juegos para esta web: explota burbujas, blackjack, Texas Hold'em, ruleta, un slot de cascadas y sobres de cartas coleccionables, cada uno en su propia página en inglés y en español, sin dependencias nuevas.",
+        "Los juegos de casino y los sobres comparten un saldo de fichas ficticias guardado en el navegador. No hay backend, ni cuentas, ni forma de comprar fichas.",
+      ],
+    },
+    highlights: {
+      en: [
+        {
+          heading: "Decisions worth mentioning",
+          items: [
+            "The rules (hand totals, poker ranking, roulette payouts, slot cascades, the shuffle) are pure functions in one file, checked with a single node command and no test framework.",
+            "Bubble Pop has no canvas and no frame loop: every bubble is a real button rising on a CSS animation, so it also works from the keyboard.",
+            "The roulette wheel is a static SVG drawn at build time; the script only rotates it.",
+            "Games and categories live in a registry, so the hub, the pages in both languages and the links between games are generated from it.",
+          ],
+        },
+      ],
+      es: [
+        {
+          heading: "Decisiones que merece la pena contar",
+          items: [
+            "Las reglas (totales de mano, ranking de póker, pagos de la ruleta, cascadas del slot, el barajado) son funciones puras en un solo archivo, comprobadas con un único comando de node y sin framework de tests.",
+            "Explota burbujas no usa canvas ni bucle de frames: cada burbuja es un botón real que sube con una animación CSS, así que también funciona con teclado.",
+            "La rueda de la ruleta es un SVG estático dibujado al compilar; el script solo la gira.",
+            "Los juegos y las categorías viven en un registro, de modo que el hub, las páginas en ambos idiomas y los enlaces entre juegos se generan a partir de él.",
+          ],
+        },
+      ],
+    },
+    primary: {
+      href: { en: "/games/", es: "/es/games/" },
+      label: { en: "Play the games", es: "Jugar" },
+    },
+    secondary: [post("yongchivo-games-launch")],
+  },
+  {
     slug: "portfolio",
     section: "security",
     status: "live",

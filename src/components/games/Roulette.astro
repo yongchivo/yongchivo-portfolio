@@ -18,7 +18,14 @@ const t =
         clear: "Quitar apuestas",
         onTable: "En la mesa",
         history: "Últimos números",
-        place: "Toca la mesa para apostar",
+        stats: "Últimas {n} tiradas",
+        hotNumbers: "Números calientes",
+        hotZones: "Zonas calientes",
+        noHot: "Aún no se repite ninguno",
+        statsNote: "Es solo historial: cada tirada es independiente de las anteriores.",
+        dozen: "Docena",
+        place: "Toca un número, o el borde entre números para cubrir 2, 3 o 4",
+        column: "Columna",
         noChips: "No tienes fichas suficientes",
         red: "rojo",
         black: "negro",
@@ -31,7 +38,14 @@ const t =
         clear: "Clear bets",
         onTable: "On the table",
         history: "Last numbers",
-        place: "Tap the table to place a bet",
+        stats: "Last {n} spins",
+        hotNumbers: "Hot numbers",
+        hotZones: "Hot zones",
+        noHot: "None has repeated yet",
+        statsNote: "History only: every spin is independent of the ones before.",
+        dozen: "Dozen",
+        place: "Tap a number, or the edge between numbers to cover 2, 3 or 4",
+        column: "Column",
         noChips: "Not enough chips",
         red: "red",
         black: "black",
@@ -70,7 +84,27 @@ const outs = ["low", "even", "red", "black", "odd", "high"] as const;
       </svg>
       <span class="rl-last" data-last>–</span>
     </div>
-    <ol class="rl-history" data-history aria-label={t.history}></ol>
+    <div class="rl-history-wrap">
+      <span class="rl-history-label" id="rl-history-label">{t.history}</span>
+      <ol class="rl-history" data-history aria-labelledby="rl-history-label"></ol>
+    </div>
+
+    {/* What has been coming up, from the results kept in this browser. */}
+    <div class="rl-stats" data-stats hidden>
+      <p class="rl-stats-title" data-stats-title></p>
+      <div class="rl-stats-row">
+        <span class="rl-stats-label" id="rl-hot-label">🔥 {t.hotNumbers}</span>
+        <ol class="rl-history rl-hot-list" data-hot aria-labelledby="rl-hot-label"></ol>
+      </div>
+      <div class="rl-stats-row">
+        <span class="rl-stats-label" id="rl-zones-label">🔥 {t.hotZones}</span>
+        <ul class="rl-zones" aria-labelledby="rl-zones-label">
+          {[1, 2, 3].map((d) => <li data-zone={`d${d}`}>{d * 12 - 11}–{d * 12} <b>0%</b></li>)}
+          {[1, 2, 3].map((k) => <li data-zone={`c${k}`}>{t.column} {k} <b>0%</b></li>)}
+        </ul>
+      </div>
+      <p class="rl-stats-note">{t.statsNote}</p>
+    </div>
   </div>
 
   <p class="result" data-result aria-live="polite">{t.place}</p>
@@ -78,16 +112,27 @@ const outs = ["low", "even", "red", "black", "odd", "high"] as const;
   <div class="rl-nums">
     <button type="button" class="rl-spot green rl-zero" data-spot="n0" data-label="0">0</button>
     {
-      numbers.map((n) => (
-        <button
-          type="button"
-          class={`rl-spot ${pocketColor(n)}`}
-          data-spot={`n${n}`}
-          data-label={n}
-          style={`--c:${Math.ceil(n / 3)};--r:${((n - 1) % 3) + 1}`}
-        >
-          {n}
-        </button>
+      numbers.map((n) => {
+        // c: which street (1-12); r: position inside it (1-3).
+        const c = Math.ceil(n / 3);
+        const r = ((n - 1) % 3) + 1;
+        return (
+          <div class="rl-cell" style={`--c:${c};--r:${r}`}>
+            <button type="button" class={`rl-spot ${pocketColor(n)}`} data-spot={`n${n}`} data-label={n}>{n}</button>
+            {/* Split with the next number in the street, and with the next street. */}
+            {r < 3 && <button type="button" class="rl-hot h-in" data-spot={`n${n}-${n + 1}`} data-label={`${n}/${n + 1}`} />}
+            {c < 12 && <button type="button" class="rl-hot h-out" data-spot={`n${n}-${n + 3}`} data-label={`${n}/${n + 3}`} />}
+            {r < 3 && c < 12 && (
+              <button type="button" class="rl-hot h-corner" data-spot={`n${n}-${n + 1}-${n + 3}-${n + 4}`} data-label={`${n}/${n + 1}/${n + 3}/${n + 4}`} />
+            )}
+            {r === 1 && <button type="button" class="rl-hot h-street" data-spot={`n${n}-${n + 1}-${n + 2}`} data-label={`${n}–${n + 2}`} />}
+          </div>
+        );
+      })
+    }
+    {
+      [1, 2, 3].map((k) => (
+        <button type="button" class="rl-spot rl-col" data-spot={`c${k}`} data-label={`${t.column} ${k}`} style={`--r:${k}`}>2:1</button>
       ))
     }
   </div>
@@ -135,19 +180,45 @@ const outs = ["low", "even", "red", "black", "odd", "high"] as const;
 .rl-last.green, .rl-history .green, .rl-spot.green { background: #16a34a; }
 .rl-last.pop { animation: result-pop 0.6s var(--spring); }
 
-.rl-history { display: flex; gap: 0.3rem; min-height: 1.7rem; list-style: none; padding: 0; margin: 0; }
-.rl-history li { width: 1.7rem; height: 1.7rem; border-radius: 9999px; display: grid; place-items: center; font-size: 0.72rem; font-weight: 700; color: #f4f2fb; border: 1px solid rgba(232, 230, 242, 0.18); }
+.rl-history-wrap { display: grid; justify-items: center; gap: 0.35rem; }
+.rl-history-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.12em; opacity: 0.6; }
+/* Newest first. Ten dots must fit a 360px phone. */
+.rl-history { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.25rem; min-height: 1.55rem; list-style: none; padding: 0; margin: 0; }
+.rl-history li { width: 1.55rem; height: 1.55rem; border-radius: 9999px; display: grid; place-items: center; font-size: 0.72rem; font-weight: 700; color: #f4f2fb; border: 1px solid rgba(232, 230, 242, 0.18); }
 .rl-history li:first-child { animation: result-pop 0.5s var(--spring); }
+
+.rl-stats { display: grid; gap: 0.6rem; width: 100%; max-width: 30rem; padding: 0.8rem 0.9rem; border-radius: 0.9rem; background: rgba(232, 230, 242, 0.04); border: 1px solid var(--surface-2); }
+.rl-stats-title, .rl-stats-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; margin: 0; }
+.rl-stats-title { opacity: 0.6; text-align: center; }
+.rl-stats-row { display: grid; gap: 0.35rem; justify-items: center; }
+.rl-hot-list { font-size: 0.85rem; opacity: 0.75; }
+.rl-hot-list li { position: relative; }
+/* How many times it came up, as a small badge on the dot. */
+.rl-hot-list li::after { content: "×" attr(data-count); position: absolute; top: -0.45rem; right: -0.55rem; padding: 0 0.2rem; border-radius: 9999px; font-size: 0.55rem; color: #0b0a14; background: #fb923c; }
+.rl-hot-list li:first-child { animation: none; }
+.rl-hot-list { gap: 0.7rem; padding-top: 0.3rem; }
+.rl-hot-list:has(li) { opacity: 1; }
+.rl-zones { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.3rem; list-style: none; padding: 0; margin: 0; }
+.rl-zones li { padding: 0.2rem 0.55rem; border-radius: 9999px; font-size: 0.75rem; background: var(--surface-2); border: 1px solid transparent; }
+.rl-zones b { margin-left: 0.25rem; opacity: 0.8; }
+.rl-zones li.hot { border-color: #fb923c; color: #fdba74; box-shadow: 0 0 14px -4px #fb923c; }
+.rl-stats-note { margin: 0; font-size: 0.72rem; opacity: 0.55; text-align: center; }
+/* The same heat, on the table itself. */
+.rl-spot.hot { box-shadow: inset 0 0 0 2px #fb923c, 0 0 12px -2px #fb923c; }
 
 /* Phones: three numbers per row, zero on top. Wide: the classic 12x3 layout. */
 .rl-nums { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; }
 .rl-zero { grid-column: 1 / -1; }
-.rl-nums .rl-spot:not(.rl-zero) { grid-column: var(--r); grid-row: calc(var(--c) + 1); }
+.rl-cell { position: relative; display: grid; grid-column: var(--r); grid-row: calc(var(--c) + 1); }
+.rl-col { grid-column: var(--r); grid-row: 14; }
 .rl-outs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; margin-top: 3px; }
 @media (min-width: 640px) {
-  .rl-nums { grid-template-columns: repeat(13, 1fr); }
+  .rl-nums { grid-template-columns: repeat(14, 1fr); }
   .rl-zero { grid-column: 1; grid-row: 1 / 4; }
-  .rl-nums .rl-spot:not(.rl-zero) { grid-column: calc(var(--c) + 1); grid-row: calc(4 - var(--r)); }
+  .rl-cell { grid-column: calc(var(--c) + 1); grid-row: calc(4 - var(--r)); }
+  .rl-col { grid-column: 14; grid-row: calc(4 - var(--r)); }
+  /* Room for the street hotspots that hang off the bottom row. */
+  .rl-dozens { margin-top: 0.8rem; }
   .rl-even { grid-template-columns: repeat(6, 1fr); }
 }
 
@@ -166,13 +237,49 @@ const outs = ["low", "even", "red", "black", "odd", "high"] as const;
 .rl-spot:hover, .rl-spot:focus-visible { filter: brightness(1.3); }
 .rl-spot:focus-visible { outline: 2px solid #f4f2fb; outline-offset: 1px; z-index: 1; }
 .rl-spot:active { transform: scale(0.93); }
-.rl-spot[data-stake]::after {
+/* Bets on two, three or four numbers go on the edge or corner they share.
+   On phones the streets run across; on wide screens they run down. */
+.rl-hot {
+  position: absolute;
+  z-index: 2;
+  width: 1.4rem;
+  height: 1.4rem;
+  translate: -50% -50%;
+  border-radius: 9999px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.rl-hot::before {
+  content: "";
+  width: 0.34rem;
+  height: 0.34rem;
+  border-radius: 9999px;
+  background: #f4f2fb;
+  opacity: 0.32;
+  transition: opacity 0.15s ease, scale 0.3s var(--spring), background-color 0.15s ease;
+}
+.rl-hot:hover::before, .rl-hot:focus-visible::before { opacity: 1; scale: 2; background: var(--amber); }
+.rl-hot:focus-visible { outline: 2px solid #f4f2fb; }
+.rl-hot[data-stake]::before { display: none; }
+/* 1.5px = half the gap between cells. */
+.h-in { left: calc(100% + 1.5px); top: 50%; }
+.h-out { left: 50%; top: calc(100% + 1.5px); }
+.h-corner { left: calc(100% + 1.5px); top: calc(100% + 1.5px); }
+.h-street { left: -1.5px; top: 50%; }
+@media (min-width: 640px) {
+  .h-in { left: 50%; top: -1.5px; }
+  .h-out { left: calc(100% + 1.5px); top: 50%; }
+  .h-corner { left: calc(100% + 1.5px); top: -1.5px; }
+  .h-street { left: 50%; top: calc(100% + 1.5px); }
+}
+
+.rl-spot[data-stake]::after, .rl-hot[data-stake]::after {
   content: attr(data-stake);
-  /* Top-right corner, so the number underneath stays readable. */
-  position: absolute; z-index: 1; top: -0.3rem; right: -0.3rem;
-  min-width: 1.5rem; height: 1.5rem; padding: 0 0.2rem; border-radius: 9999px;
+  position: absolute; z-index: 1; top: 50%; left: 50%; translate: -50% -50%;
+  min-width: 1.4rem; height: 1.4rem; padding: 0 0.2rem; border-radius: 9999px;
   display: grid; place-items: center;
-  font-size: 0.62rem; font-weight: 800; color: #0b0a14;
+  font-size: 0.6rem; font-weight: 800; color: #0b0a14;
   background: var(--amber); border: 1.5px dashed rgba(11, 10, 20, 0.6);
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5);
   animation: result-pop 0.3s var(--spring);
@@ -189,11 +296,23 @@ const outs = ["low", "even", "red", "black", "odd", "high"] as const;
 </style>
 
 <script>
-  import { pocketColor, randInt, rouletteReturn, WHEEL } from "../../games/logic";
-  import { addChips, burst, fmt, getChips, initBet, reducedMotion, say, sleep } from "../../games/ui";
+  import { pocketColor, randInt, rouletteReturn, rouletteStats, WHEEL } from "../../games/logic";
+  import { addChips, burst, fmt, getChips, initBet, reducedMotion, say, setRound, sleep } from "../../games/ui";
 
   const STEP = 360 / WHEEL.length;
   const short = (n: number) => (n >= 1000 ? `${n / 1000}k` : String(n));
+
+  // Past results, newest first, kept in this browser so the stats mean something.
+  const HISTORY_KEY = "yc-games-roulette-history";
+  const HISTORY_MAX = 100;
+  function readHistory(): number[] {
+    try {
+      const saved = JSON.parse(localStorage.getItem(HISTORY_KEY) ?? "[]");
+      return Array.isArray(saved) ? saved.filter((n) => Number.isInteger(n) && n >= 0 && n <= 36) : [];
+    } catch {
+      return [];
+    }
+  }
 
   function init(root: HTMLElement) {
     const t = JSON.parse(root.dataset.t!);
@@ -207,11 +326,52 @@ const outs = ["low", "even", "red", "black", "odd", "high"] as const;
     const clearBtn = $<HTMLButtonElement>("[data-clear]");
     const chip = initBet(root);
 
+    let past = readHistory();
     let bets: Record<string, number> = {};
     let spinning = false;
     let turn = 0; // wheel rotation so far, in degrees
 
     const total = () => Object.values(bets).reduce((sum, stake) => sum + stake, 0);
+
+    const dot = (n: number) => {
+      const li = document.createElement("li");
+      li.className = pocketColor(n);
+      li.textContent = String(n);
+      return li;
+    };
+
+    /** The last ten results, the hot numbers and the hot zones. */
+    function showPast() {
+      history.replaceChildren(...past.slice(0, 10).map(dot));
+      $("[data-stats]").hidden = past.length === 0;
+      $("[data-stats-title]").textContent = t.stats.replace("{n}", String(past.length));
+
+      const stats = rouletteStats(past);
+      root.querySelectorAll(".hot").forEach((el) => el.classList.remove("hot"));
+      const hotList = $("[data-hot]");
+      if (stats.hot.length) {
+        hotList.replaceChildren(
+          ...stats.hot.map(({ n, count }) => {
+            const li = dot(n);
+            li.dataset.count = String(count);
+            root.querySelector(`[data-spot="n${n}"]`)!.classList.add("hot");
+            return li;
+          }),
+        );
+      } else hotList.textContent = t.noHot;
+
+      // The dozen and the column with the most results (ties all count).
+      for (const [prefix, counts] of [["d", stats.dozens], ["c", stats.columns]] as const) {
+        const top = Math.max(...counts);
+        counts.forEach((count, i) => {
+          const zone = $(`[data-zone="${prefix}${i + 1}"]`);
+          zone.querySelector("b")!.textContent = `${past.length ? Math.round((100 * count) / past.length) : 0}%`;
+          const hot = top > 0 && count === top;
+          zone.classList.toggle("hot", hot);
+          root.querySelector(`[data-spot="${prefix}${i + 1}"]`)!.classList.toggle("hot", hot);
+        });
+      }
+    }
 
     function paint() {
       for (const spot of spots) {
@@ -238,6 +398,8 @@ const outs = ["low", "even", "red", "black", "odd", "high"] as const;
       bets = {};
       paint();
     });
+    paint(); // hotspots have no text: this gives each one its accessible name
+    showPast();
 
     spinBtn.addEventListener("click", async () => {
       const staked = total();
@@ -245,6 +407,7 @@ const outs = ["low", "even", "red", "black", "odd", "high"] as const;
       if (staked > getChips()) return say(result, t.noChips, "lose");
       spinning = true;
       addChips(-staked);
+      setRound(root, true);
       root.querySelector(".won")?.classList.remove("won");
       say(result, "");
       paint();
@@ -267,11 +430,11 @@ const outs = ["low", "even", "red", "black", "odd", "high"] as const;
       last.className = `rl-last ${color}`;
       void last.offsetWidth;
       last.classList.add("pop");
-      const dot = document.createElement("li");
-      dot.className = color;
-      dot.textContent = String(n);
-      history.prepend(dot);
-      while (history.children.length > 8) history.lastElementChild!.remove();
+      past = [n, ...past].slice(0, HISTORY_MAX);
+      try {
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(past));
+      } catch {}
+      showPast();
       root.querySelector(`[data-spot="n${n}"]`)!.classList.add("won");
 
       const what = `${n} ${t[color]}`;
@@ -283,6 +446,7 @@ const outs = ["low", "even", "red", "black", "odd", "high"] as const;
       // Bets stay down for the next spin, unless the balance no longer covers them.
       if (staked > getChips()) bets = {};
       spinning = false;
+      setRound(root, false);
       paint();
     });
   }

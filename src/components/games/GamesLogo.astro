@@ -1,0 +1,52 @@
+---
+// The section's lockup, following "Yongchivo Tools": the Y, then the brand in
+// white and the product word in its own colour (amber for Games). The Y sits
+// in a bubble ringed like a casino chip. Not translated — it's a name.
+import YMark from "../brand/YMark.astro";
+
+interface Props {
+  /** "lg" heads the hub; "sm" is the way back to it from a game. */
+  size?: "lg" | "sm";
+}
+const { size = "lg" } = Astro.props;
+---
+
+<span class={`glogo glogo-${size}`}>
+  <span class="glogo-mark" aria-hidden="true"><YMark strokeWidth={2.8} /></span>
+  <span class="glogo-word">Yongchivo <b>Games</b></span>
+</span>
+
+<style>
+  .glogo {
+    --amber: #fbbf24;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55em;
+    font-size: clamp(1.7rem, 7vw, 2.9rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    color: #f4f2fb;
+  }
+  .glogo-sm { font-size: 1.05rem; }
+  .glogo-word b { font-weight: inherit; color: var(--amber); }
+
+  .glogo-mark {
+    flex: none;
+    width: 1.5em;
+    aspect-ratio: 1;
+    border-radius: 9999px;
+    display: grid;
+    place-items: center;
+    background:
+      radial-gradient(circle at 30% 22%, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0) 32%),
+      radial-gradient(circle at 25% 25%, rgba(217, 70, 239, 0.32), transparent 58%),
+      radial-gradient(circle at 78% 82%, rgba(34, 211, 238, 0.22), transparent 55%),
+      #131120;
+    /* The chip edge: a dashed amber ring just outside the bubble. */
+    outline: 0.09em dashed var(--amber);
+    outline-offset: 0.09em;
+    box-shadow: 0 0 1em -0.3em var(--amber);
+  }
+  .glogo-mark :global(.ymark) { width: 56%; height: 56%; }
+</style>

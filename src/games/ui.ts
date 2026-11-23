@@ -25,6 +25,15 @@ export function setChips(n: number) {
 
 export const addChips = (delta: number) => setChips(getChips() + delta);
 
+/**
+ * Marks a round as under way (stake taken, result pending). The page only
+ * offers a refill between rounds, so it is told again when one ends.
+ */
+export function setRound(root: Element, on: boolean) {
+  root.classList.toggle("in-round", on);
+  setChips(getChips());
+}
+
 export const fmt = (n: number) => n.toLocaleString(document.documentElement.lang || "en");
 export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 export const reducedMotion = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -50,15 +59,15 @@ export function cardEl(card: Card | null): HTMLElement {
 }
 
 /**
- * Makes `el` show `cards` (index `hidden` face down), touching only the cards
- * that changed so the ones already on the table don't re-animate.
+ * Makes `el` show `cards` (the indexes in `hidden` face down), touching only
+ * the cards that changed so the ones already on the table don't re-animate.
  */
-export function showCards(el: Element, cards: Card[], hidden = -1) {
+export function showCards(el: Element, cards: Card[], hidden: number[] = []) {
   cards.forEach((card, i) => {
-    const want = i === hidden ? "" : cardLabel(card);
+    const want = hidden.includes(i) ? "" : cardLabel(card);
     const current = el.children[i] as HTMLElement | undefined;
     if (current?.dataset.c === want) return;
-    const next = cardEl(i === hidden ? null : card);
+    const next = cardEl(hidden.includes(i) ? null : card);
     if (current) current.replaceWith(next);
     else el.append(next);
   });
