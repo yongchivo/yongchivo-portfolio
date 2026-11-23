@@ -1,5 +1,5 @@
 ---
-title: "Yongchivo Games: six browser games, play money only, no dependencies"
+title: "YCGames: six browser games, play money only, no dependencies"
 description: "I added a games section to yongchivo.com: bubble pop, blackjack, Texas hold'em, roulette, a cascade slot and collectible card packs, in English and Spanish. No canvas, no game engine, no new dependencies — just buttons, CSS animations and a file of rules I can test with one command."
 pubDate: "Nov 23 2026"
 heroImage: "/games-cover.webp"
@@ -7,7 +7,7 @@ tags: ["astro", "web-development", "javascript", "css", "learning-in-public"]
 badge: "WEB DEVELOPMENT"
 ---
 
-Everything on this site so far has been useful: security tools, a file converter, an analytics dashboard. This one isn't. **[Yongchivo Games](/games/)** is a small corner of the site for a quick round of something.
+Everything on this site so far has been useful: security tools, a file converter, an analytics dashboard. This one isn't. **[YCGames](/games/)** — YC for Yongchivo — is a small corner of the site for a quick round of something.
 
 ## What's live
 
@@ -15,7 +15,7 @@ Everything on this site so far has been useful: security tools, a file converter
 - **[Blackjack](/games/blackjack/)** — hit, stand or double down. The dealer stands on 17 and a natural pays 3:2.
 - **[Texas Hold'em](/games/poker/)** — heads-up against the dealer: ante, see the flop, then call or fold. The winning five cards light up at the showdown.
 - **[Roulette](/games/roulette/)** — European, single zero: straight numbers, splits, streets, corners, columns, dozens and the even-money bets.
-- **[Cascade Slot](/games/slots/)** — a 5×5 grid. Seven or more matching symbols anywhere pay, pop, and let new ones fall, with a multiplier that climbs on every cascade. Five Yongchivo Ys in a line pay the ×500 jackpot.
+- **[Cascade Slot](/games/slots/)** — five reels of five symbols that spin down and stop one by one. Three or more in a row on the centre payline pay, and so do seven or more anywhere; winners pop and their reels spin again with a climbing multiplier. Five Yongchivo Ys on the payline pay the ×500 jackpot.
 - **[Card Packs](/games/packs/)** — spend chips on packs of five and collect 30 cyber-security cards across four rarities, from the everyday Firewall to the legendary Y. Duplicates give chips back.
 
 All six are in English and Spanish (under `/es/games/`), free, and need no account.
@@ -38,7 +38,7 @@ I built it with Astro, with Claude Code as my development hands, and **added no 
 
 **The roulette wheel is a static SVG.** Astro draws all 37 pockets at build time from the wheel's pocket order; the script's only job is to rotate it so the winning pocket stops under the pointer. The betting table is one set of buttons that CSS grid lays out as three columns on a phone and the classic 12×3 on a wide screen, using two custom properties per number. Splits, streets and corners are small buttons sitting on the edge or corner the numbers share, and they all pay by one rule: 36 divided by the numbers covered.
 
-**The slot is decided before it moves.** One function plays the whole spin — the opening grid and every cascade after it — and returns the steps; the page only animates them. That made the paytable something I could tune: I simulated about a million spins per paytable until it returned about 96% of what's staked — roughly a quarter of that from the jackpot, which lands about once in 2,000 spins — and the test file fails if a later change drifts far from that.
+**The slot is decided before it moves.** One function plays the whole spin — the opening grid and every cascade after it — and returns the steps; the page only animates them. That made the paytable something I could tune: I simulated several hundred thousand spins per paytable until it returned about 94% of what's staked — roughly a quarter of that from the payline, which hits about one spin in 24, with the jackpot around one in 18,000 — and the test file fails if a later change drifts far from that. The reels are plain DOM too: each one is a strip of symbols slid down with the Web Animations API, and the backdrop is a landscape I drew as SVG, so there is no image to license.
 
 **The hub is a menu, not a page I maintain.** Games and their categories are entries in a registry. The hub, the pages in both languages, the "more games" links and the sitemap all come from it — a new game is one entry and one component.
 

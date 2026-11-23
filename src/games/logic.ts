@@ -128,49 +128,44 @@ export function bestHand(cards: Card[]): { name: HandName; score: number[]; card
   return { name: HANDS[best!.score[0]], ...best! };
 }
 
-// ---------- slot (5 x 5, pays anywhere, cascades, line-of-Y jackpot) ----------
+// ---------- slot (5 x 5 reels, centre payline, pays anywhere, cascades) ----------
 
 export const SLOT_ROWS = 5;
 export const SLOT_COLS = 5;
 /** Fewest matching symbols anywhere on the grid that pay. */
 export const SLOT_MIN = 7;
+/** Fewest matching symbols in a row, from the left, that pay on the payline. */
+export const SLOT_LINE_MIN = 3;
 /** The cascade multiplier stops growing here. */
 export const SLOT_MAX_MULT = 5;
 
 /**
- * One entry per symbol, commonest first. `weight` is how often it lands;
+ * One entry per symbol, commonest first. `weight` is how often it lands.
  * `pays` is what one chip staked returns for SLOT_MIN, SLOT_MIN + 2 and
- * SLOT_MIN + 4 or more of it.
- * Tuned by simulation to return about 96% of what is staked over time
- * (roughly a quarter of that is the jackpot, about one spin in 2,000);
- * logic.test.ts fails if a change to this table moves it far from that.
+ * SLOT_MIN + 4 or more of it anywhere; `line` for three, four and five in a
+ * row on the payline.
+ * Tuned by simulation to return about 94% of what is staked over time (about
+ * a quarter of it from the payline, which hits roughly one spin in 24; the
+ * jackpot lands about once in 18,000). logic.test.ts fails if a change to
+ * this table moves the return far from that.
  */
 export const SLOT_SYMBOLS = [
-  { weight: 15, pays: [0.2, 0.4, 1] },
-  { weight: 15, pays: [0.2, 0.4, 1.5] },
-  { weight: 14, pays: [0.2, 0.5, 2] },
-  { weight: 14, pays: [0.3, 0.7, 3] },
-  { weight: 13, pays: [0.3, 1, 4] },
-  { weight: 12, pays: [0.5, 1.5, 8] },
-  { weight: 10, pays: [1, 3, 15] },
+  { weight: 15, pays: [0.2, 0.4, 1], line: [1, 3, 10] },
+  { weight: 15, pays: [0.2, 0.4, 1.5], line: [1, 3, 10] },
+  { weight: 14, pays: [0.2, 0.5, 2], line: [1.5, 4, 15] },
+  { weight: 14, pays: [0.3, 0.7, 3], line: [2, 5, 20] },
+  { weight: 13, pays: [0.3, 1, 4], line: [2, 6, 25] },
+  { weight: 12, pays: [0.5, 1.5, 8], line: [3, 10, 50] },
+  { weight: 10, pays: [1, 3, 15], line: [5, 25, 500] },
 ] as const;
 
-/** The brand Y: the last, rarest symbol. A straight line of them is the jackpot. */
+/** The brand Y: the last, rarest symbol. Five on the payline is the jackpot. */
 export const SLOT_TOP = SLOT_SYMBOLS.length - 1;
-/**
- * What one chip staked returns for each line of five Ys. A flat top prize:
- * the cascade multiplier does not apply to it.
- */
-export const SLOT_JACKPOT = 500;
+/** The top prize: five Ys on the payline. Flat — no cascade multiplier. */
+export const SLOT_JACKPOT = SLOT_SYMBOLS[SLOT_TOP].line[2];
 
-/** Every straight line of five on the 5x5 grid: rows, columns and both diagonals. */
-const SLOT_LINES: number[][] = [];
-for (let a = 0; a < 5; a++) {
-  SLOT_LINES.push([0, 1, 2, 3, 4].map((b) => a * SLOT_COLS + b)); // row
-  SLOT_LINES.push([0, 1, 2, 3, 4].map((b) => b * SLOT_COLS + a)); // column
-}
-SLOT_LINES.push([0, 1, 2, 3, 4].map((b) => b * SLOT_COLS + b));
-SLOT_LINES.push([0, 1, 2, 3, 4].map((b) => b * SLOT_COLS + (4 - b)));
+/** The payline: the middle row, left to right. */
+export const SLOT_LINE = Array.from({ length: SLOT_COLS }, (_, col) => Math.floor(SLOT_ROWS / 2) * SLOT_COLS + col);
 
 const SLOT_WEIGHT_SUM = SLOT_SYMBOLS.reduce((sum, symbol) => sum + symbol.weight, 0);
 
@@ -182,17 +177,20 @@ export function slotSymbol(): number {
 
 export interface SlotWin {
   symbol: number;
-  /** Grid indexes (row * SLOT_COLS + col) of every matching symbol. */
+  /** Grid indexes (row * SLOT_COLS + col) of the symbols that made the win. */
   cells: number[];
   /** What one chip staked returns, before the cascade multiplier. */
   pays: number;
-  /** A line of five Ys rather than a count of symbols. */
+  /** Made on the payline rather than by count. */
+  line?: true;
+  /** Five Ys on the payline. */
   jackpot?: true;
 }
 
 /**
- * Every symbol that appears SLOT_MIN times or more on the grid, plus one
- * jackpot win per straight line of five Ys.
+ * The wins on a grid: every symbol that appears SLOT_MIN times or more
+ * anywhere, and a run of SLOT_LINE_MIN or more of one symbol along the
+ * payline, starting from the left.
  */
 export function slotWins(grid: number[]): SlotWin[] {
   const wins: SlotWin[] = [];
@@ -202,43 +200,38 @@ export function slotWins(grid: number[]): SlotWin[] {
     const tier = cells.length >= SLOT_MIN + 4 ? 2 : cells.length >= SLOT_MIN + 2 ? 1 : 0;
     wins.push({ symbol, cells, pays: pays[tier] });
   });
-  for (const line of SLOT_LINES) {
-    if (line.every((i) => grid[i] === SLOT_TOP)) wins.push({ symbol: SLOT_TOP, cells: line, pays: SLOT_JACKPOT, jackpot: true });
+
+  const symbol = grid[SLOT_LINE[0]];
+  const broken = SLOT_LINE.findIndex((i) => grid[i] !== symbol);
+  const run = broken < 0 ? SLOT_LINE.length : broken;
+  if (run >= SLOT_LINE_MIN) {
+    const win: SlotWin = { symbol, cells: SLOT_LINE.slice(0, run), pays: SLOT_SYMBOLS[symbol].line[run - SLOT_LINE_MIN], line: true };
+    if (symbol === SLOT_TOP && run === SLOT_LINE.length) win.jackpot = true;
+    wins.push(win);
   }
   return wins;
 }
 
 /**
- * Removes the winning cells, lets what is above fall and fills the gaps from
- * the top. `fall` says how many rows each cell of the new grid dropped (0 for
- * cells that did not move), which is all the animation needs.
+ * Removes the winning cells, lets what is above them settle down the reel and
+ * fills the gaps from the top.
  */
-export function slotDrop(grid: number[], removed: number[], next = slotSymbol): { grid: number[]; fall: number[] } {
+export function slotDrop(grid: number[], removed: number[], next = slotSymbol): number[] {
   const gone = new Set(removed);
   const out = new Array<number>(grid.length);
-  const fall = new Array<number>(grid.length).fill(0);
   for (let col = 0; col < SLOT_COLS; col++) {
     let row = SLOT_ROWS - 1; // next free row, filling from the bottom
     for (let from = SLOT_ROWS - 1; from >= 0; from--) {
       const i = from * SLOT_COLS + col;
-      if (gone.has(i)) continue;
-      out[row * SLOT_COLS + col] = grid[i];
-      fall[row * SLOT_COLS + col] = row - from;
-      row--;
+      if (!gone.has(i)) out[row-- * SLOT_COLS + col] = grid[i];
     }
-    // `row + 1` cells are missing: new ones fall in from above the grid.
-    for (const missing = row + 1; row >= 0; row--) {
-      out[row * SLOT_COLS + col] = next();
-      fall[row * SLOT_COLS + col] = missing;
-    }
+    for (; row >= 0; row--) out[row * SLOT_COLS + col] = next();
   }
-  return { grid: out, fall };
+  return out;
 }
 
 export interface SlotStep {
   grid: number[];
-  /** Rows each cell fell to reach this grid. */
-  fall: number[];
   wins: SlotWin[];
   /** Cascade multiplier applied to this step's wins. */
   mult: number;
@@ -250,13 +243,12 @@ export interface SlotStep {
  */
 export function slotSpin(next = slotSymbol): SlotStep[] {
   let grid = Array.from({ length: SLOT_ROWS * SLOT_COLS }, next);
-  let fall = new Array<number>(grid.length).fill(SLOT_ROWS);
   const steps: SlotStep[] = [];
   for (let mult = 1; ; mult = Math.min(mult + 1, SLOT_MAX_MULT)) {
     const wins = slotWins(grid);
-    steps.push({ grid, fall, wins, mult });
+    steps.push({ grid, wins, mult });
     if (!wins.length) return steps;
-    ({ grid, fall } = slotDrop(grid, wins.flatMap((win) => win.cells), next));
+    grid = slotDrop(grid, wins.flatMap((win) => win.cells), next);
   }
 }
 

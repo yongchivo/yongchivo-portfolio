@@ -79,7 +79,7 @@ export const projects: Project[] = [
     section: "games",
     status: "live",
     cover: "/games-cover.webp",
-    title: { en: "Yongchivo Games — Browser Games", es: "Yongchivo Games — Juegos de navegador" },
+    title: { en: "YCGames — Browser Games", es: "YCGames — Juegos de navegador" },
     summary: {
       en: "Six quick browser games — bubble pop, blackjack, Texas hold'em, roulette, a cascade slot and collectible card packs — in English and Spanish. They use play-money chips only: no real money, no accounts, nothing to buy.",
       es: "Seis juegos rápidos de navegador — explota burbujas, blackjack, Texas Hold'em, ruleta, un slot de cascadas y sobres de cartas coleccionables — en inglés y en español. Usan solo fichas ficticias: sin dinero real, sin cuentas y sin nada que comprar.",
