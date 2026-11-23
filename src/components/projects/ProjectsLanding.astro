@@ -52,10 +52,10 @@ const t = es
   />
 */
 
-const [featured, ...rest] = projects;
+const [featured] = projects;
 const order: ProjectSection[] = ["security", "mobile", "games"];
 const sections = order
-  .map((id) => ({ id, ...sectionInfo[id], items: rest.filter((p) => p.section === id) }))
+  .map((id) => ({ id, ...sectionInfo[id], items: projects.filter((p) => p.section === id) }))
   .filter((s) => s.items.length > 0);
 
 const icons: Record<ProjectSection | "arrow", string> = {
@@ -102,7 +102,7 @@ const icons: Record<ProjectSection | "arrow", string> = {
           </a>
           <div>
             <div class="featured-kicker">
-              {t.latest} · {statusLabel[featured.status][lang]}
+              {t.latest} · {featured.statusText?.[lang] ?? statusLabel[featured.status][lang]}
             </div>
             <h2 class="featured-title">{featured.title[lang]}</h2>
             <p class="featured-desc">{featured.summary[lang]}</p>
@@ -150,7 +150,7 @@ const icons: Record<ProjectSection | "arrow", string> = {
                   <span class="project-body">
                     <span class="project-top">
                       <span class="project-name">{project.title[lang]}</span>
-                      <StatusPill status={project.status} lang={lang} />
+                      <StatusPill status={project.status} lang={lang} text={project.statusText?.[lang]} />
                     </span>
                     <span class="project-desc">{project.summary[lang]}</span>
                   </span>

@@ -49,7 +49,7 @@ const links = [
     <header class="head">
       <div class="title-row">
         <h1 class="title">{project.title[lang]}</h1>
-        <StatusPill status={project.status} lang={lang} />
+        <StatusPill status={project.status} lang={lang} text={project.statusText?.[lang]} />
       </div>
       {project.meta && <p class="meta">{project.meta[lang]}</p>}
     </header>

@@ -14,7 +14,7 @@ export type SiteLang = "en" | "es";
 type Localized<T> = Record<SiteLang, T>;
 
 export type ProjectSection = "security" | "mobile" | "games";
-export type ProjectStatus = "live" | "oss" | "dev" | "coursework";
+export type ProjectStatus = "live" | "oss" | "dev" | "soon" | "coursework";
 
 export interface ProjectLink {
   href: Localized<string>;
@@ -32,6 +32,8 @@ export interface Project {
   title: Localized<string>;
   /** One or two sentences for the card. */
   summary: Localized<string>;
+  /** Overrides the status pill text (e.g. "Coming soon · iOS & Android"). */
+  statusText?: Localized<string>;
   /** Stack / context line under the title. */
   meta?: Localized<string>;
   /** Hand-built detail page; when set, no page is generated from `body`. */
@@ -58,6 +60,66 @@ const post = (slug: string): ProjectLink => ({
 });
 
 export const projects: Project[] = [
+  {
+    slug: "meti",
+    section: "mobile",
+    status: "soon",
+    cover: "/meti-cover.webp",
+    title: { en: "Meti", es: "Meti" },
+    summary: {
+      en: "A goals app where every goal has a deadline and Meti, a small neon mascot, keeps you honest. Your goals count down on home-screen and Lock Screen widgets, and completing one triggers a celebration that scales with how long you worked for it, with no random rewards. Everything stays on your phone: no account, no network, no analytics.",
+      es: "Una app de objetivos en la que cada objetivo tiene fecha límite y Meti, una pequeña mascota de neón, se asegura de que no se te olvide. Tus objetivos cuentan los días en widgets de la pantalla de inicio y de bloqueo, y al alcanzar uno llega una celebración que crece con el tiempo que le has dedicado, sin premios al azar. Todo se queda en tu móvil: sin cuenta, sin red y sin analítica.",
+    },
+    meta: { en: "Flutter · Swift · Kotlin · Python", es: "Flutter · Swift · Kotlin · Python" },
+    statusText: { en: "Coming soon · iOS & Android", es: "Próximamente · iOS y Android" },
+    body: {
+      en: [
+        "A goals app where every goal has a deadline and Meti, a small neon mascot, keeps you honest. Your goals count down on home-screen and Lock Screen widgets, and completing one triggers a celebration that scales with how long you worked for it, with no random rewards. Everything stays on your phone: no account, no network, no analytics.",
+      ],
+      es: [
+        "Una app de objetivos en la que cada objetivo tiene fecha límite y Meti, una pequeña mascota de neón, se asegura de que no se te olvide. Tus objetivos cuentan los días en widgets de la pantalla de inicio y de bloqueo, y al alcanzar uno llega una celebración que crece con el tiempo que le has dedicado, sin premios al azar. Todo se queda en tu móvil: sin cuenta, sin red y sin analítica.",
+      ],
+    },
+    highlights: {
+      en: [
+        {
+          heading: "Skills learned",
+          items: [
+            "Privacy and security by design: data minimisation between the app and its widgets, Lock Screen redaction, validated deep links, non-exported Android components and logs that never contain user content.",
+            "Safe data migration on real devices: atomic writes, SHA-256 verification and recovery paths.",
+            "Native widgets on both platforms: SwiftUI/WidgetKit on iOS and Kotlin/RemoteViews on Android, fed by a single Flutter core.",
+            "Testing at scale: 1,600+ automated tests across Dart, Swift and Kotlin, including golden tests.",
+            "Accessibility: VoiceOver and TalkBack, Dynamic Type and reduced motion.",
+            "Procedural animation and sound: a mascot and celebrations drawn in code, and sounds synthesised in Python.",
+            "AI-assisted engineering: planning and reviewing Claude Code sessions with separate design, tech-lead and privacy reviews.",
+          ],
+        },
+        {
+          heading: "Tools",
+          items: ["Flutter, Dart, Swift, SwiftUI, WidgetKit, Kotlin, Android SDK, Xcode, Android Studio, Python (NumPy), Git, GitHub, Claude Code."],
+        },
+      ],
+      es: [
+        {
+          heading: "Habilidades aprendidas",
+          items: [
+            "Privacidad y seguridad desde el diseño: datos mínimos entre la app y sus widgets, contenido oculto en la pantalla de bloqueo, enlaces validados, componentes de Android no exportados y registros que nunca contienen datos del usuario.",
+            "Migración segura de datos en dispositivos reales: escritura atómica, verificación con SHA-256 y planes de recuperación.",
+            "Widgets nativos en las dos plataformas: SwiftUI/WidgetKit en iOS y Kotlin/RemoteViews en Android, alimentados por un único núcleo en Flutter.",
+            "Pruebas a gran escala: más de 1.600 tests automáticos en Dart, Swift y Kotlin, incluidos tests de golden.",
+            "Accesibilidad: VoiceOver y TalkBack, texto dinámico y movimiento reducido.",
+            "Animación y sonido procedurales: una mascota y celebraciones dibujadas con código, y sonidos sintetizados en Python.",
+            "Ingeniería asistida por IA: planificación y revisión de sesiones de Claude Code con revisiones separadas de diseño, técnica y privacidad.",
+          ],
+        },
+        {
+          heading: "Herramientas",
+          items: ["Flutter, Dart, Swift, SwiftUI, WidgetKit, Kotlin, Android SDK, Xcode, Android Studio, Python (NumPy), Git, GitHub, Claude Code."],
+        },
+      ],
+    },
+    secondary: [post("building-meti-goals-app")],
+  },
   {
     slug: "uno",
     section: "security",
@@ -440,6 +502,7 @@ export const statusLabel: Record<ProjectStatus, Localized<string>> = {
   live: { en: "Live", es: "En línea" },
   oss: { en: "Open source", es: "Código abierto" },
   dev: { en: "In development", es: "En desarrollo" },
+  soon: { en: "Coming soon", es: "Próximamente" },
   coursework: { en: "Coursework", es: "Trabajo de clase" },
 };
 
