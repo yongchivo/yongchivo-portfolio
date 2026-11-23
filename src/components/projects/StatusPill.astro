@@ -5,14 +5,16 @@ import { statusLabel, type ProjectStatus, type SiteLang } from "../../data/proje
 interface Props {
   status: ProjectStatus;
   lang: SiteLang;
+  /** Replaces the default label. */
+  text?: string;
 }
 
-const { status, lang } = Astro.props;
+const { status, lang, text } = Astro.props;
 ---
 
 <span class={`status status-${status}`}>
   {status === "live" && <span class="status-dot" aria-hidden="true"></span>}
-  {statusLabel[status][lang]}
+  {text ?? statusLabel[status][lang]}
 </span>
 
 <style>
@@ -49,7 +51,8 @@ const { status, lang } = Astro.props;
     border-color: rgba(34, 211, 238, 0.45);
   }
 
-  .status-dev {
+  .status-dev,
+  .status-soon {
     color: #c4b5fd;
     border-color: rgba(196, 181, 253, 0.45);
   }
